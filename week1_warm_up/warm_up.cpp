@@ -6,6 +6,7 @@ using namespace std;
 # include <cmath>
 # include <fstream>
 # include <iomanip>
+#include <cstdlib>
 
 ofstream ofile;
 
@@ -70,9 +71,10 @@ void second_derivative( int number_of_steps, double x,
 void write_to_file( double *relative_error, double *step_size, int number_of_steps, char *outfilename)
 {
   ofile.open(outfilename);
+  ofile << "step size,relative error"<< endl;
   for (int i = 0; i < number_of_steps; i++)
     {
-    ofile << setw(15) << setprecision(8)  << "Step size " << step_size[i]  << " Relative error " << relative_error[i] <<  endl;
+    ofile << setw(15) << setprecision(8) << step_size[i]  << "," << relative_error[i] <<  endl;
     }
     ofile.close();
 }
