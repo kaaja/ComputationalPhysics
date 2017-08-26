@@ -48,8 +48,11 @@ int main(int argc, char *argv[]){
 
 void initilize(double *x, double *initial_step, int *number_of_steps){
     /* Why star for non-pointers?*/
-  printf("Read in from screen x, initial step, and number of steps \n");
-  scanf("%lf %lf %d", initial_step, x, number_of_steps);
+  /* printf("Read in from screen x, initial step, and number of steps \n");
+     scanf("%lf %lf %d", initial_step, x, number_of_steps); */
+  x = argv[1];
+  initial_step = argv[2];
+  number_of_steps = argv[3];
   return;
 }
 
