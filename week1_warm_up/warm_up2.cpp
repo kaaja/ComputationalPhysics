@@ -1,5 +1,6 @@
 /* Program for 2nd derivative of atan(sqrt(2)).
- Heavily based on MHJ Ch 3.1. */
+   Heavily based on MHJ Ch 3.1. 
+    */
 
 using namespace std;
 #include <iostream>
@@ -63,7 +64,7 @@ void second_derivative(double *computed_derivative, double *h_step, double x, do
 }
 void output(double *computed_derivative, double *h_step, double x, int number_of_steps, char *outfile_name){
   ofile.open(outfile_name);
-  ofile << "log h,  log rel error" << endl;
+  ofile << "log_h,log_rel_error" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   ofile << setiosflags(ios::showpoint | ios::uppercase);
   for( int i = 0; i < number_of_steps; i++){
     ofile << setw(15) << setprecision(8) << log10(h_step[i]) << ", ";
