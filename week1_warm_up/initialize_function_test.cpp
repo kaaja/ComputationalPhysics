@@ -11,7 +11,7 @@ int main()
   int number_of_steps;
   double x, initial_step;
 
-  initialize( &x, &initial_step, &number_of_steps );
+  initialize( &x, &initial_step, &number_of_steps ); /* Need "&" since the input-variables are not defined as pointers */
   cout << x << initial_step << number_of_steps << endl;
   return 0;
 }

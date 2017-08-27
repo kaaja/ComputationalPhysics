@@ -46,13 +46,10 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-void initilize(double *x, double *initial_step, int *number_of_steps){
-    /* Why star for non-pointers?*/
-  /* printf("Read in from screen x, initial step, and number of steps \n");
-     scanf("%lf %lf %d", initial_step, x, number_of_steps); */
-  x = argv[1];
-  initial_step = argv[2];
-  number_of_steps = argv[3];
+void initialize( double *x, double *initial_step, int *number_of_steps )
+{
+  printf("Read in from screen:x,  initial step,  and number of steps\n");
+  scanf("%lf %lf %d",x,initial_step, number_of_steps);
   return;
 }
 
@@ -67,7 +64,7 @@ void second_derivative(double *computed_derivative, double *h_step, double x, do
 }
 void output(double *computed_derivative, double *h_step, double x, int number_of_steps){
 
-  ofile << "RESULTS:" << endl;
+  ofile << "log h:" <<  " log rel error:" << endl;
   ofile << setiosflags(ios::showpoint | ios::uppercase);
   for( int i = 0; i < number_of_steps; i++){
     ofile << setw(15) << setprecision(8) << log10(h_step[i]);
