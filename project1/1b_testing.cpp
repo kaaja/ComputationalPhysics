@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-  int k, m, row = 5, col = 5;
+  int k, m, row = 10 , col = 10;
 
   double ** A;
   double ** U;
