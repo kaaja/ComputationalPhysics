@@ -18,6 +18,8 @@ void generate_tridiagonal_matrix(int,double, double, double, double **);
 void generate_LU(int, double **, double **, double **);
 void generate_right_hand_side( int, double *, double *);
 void LU_tridiagonal_solver(double **, double **, double *, double *, int );
+void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
+void gassianTridiagonalSymmetricSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
 void generate_exact_solution(int, double *);
 void calculate_error(double *, double *, double *, int);
 void output_scalars( double, double, double);
@@ -65,10 +67,21 @@ int main(int argc, char *argv[]){
     generate_LU(N, computed_tridiagonal_matrix, LU_Lower, LU_Upper);
     generate_right_hand_side(N, computed_right_hand_side, &h_step);
 
-    start = clock();
-    LU_tridiagonal_solver(LU_Lower, LU_Upper, computed_numerical_solution, computed_right_hand_side, N);
+    /*start = clock();
+    if(outfile_name=="LU")
+        LU_tridiagonal_solver(LU_Lower, LU_Upper, computed_numerical_solution, computed_right_hand_side, N);
+    else if (outfile_name == "gaussianTridiagonal")
+        gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+    else if (outfile_name == "gaussianTridiagonalSymmetric")
+        gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+    else
+        cout << "define solver type. LU or gaussian" << endl;
     finish = clock();
     time_used = (double)((finish - start)/double(CLOCKS_PER_SEC));
+    */
+    gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+
+    //gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
 
     generate_exact_solution(N, computed_exact_solution);
     calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, N);
@@ -167,6 +180,35 @@ void LU_tridiagonal_solver(double **LU_Lower, double **LU_Upper, double *compute
             computed_numerical_solution[i] = y[i];
         else
             computed_numerical_solution[i] = y[i+1] - LU_Upper[i][i+1]*computed_numerical_solution[i+1]/LU_Upper[i][i];
+    }
+}
+
+void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N){
+    double multiplicationFactor;
+    for (int i = 1; i < N; i++){
+        multiplicationFactor = computed_tridiagonal_matrix[i][i-1]/computed_tridiagonal_matrix[i-1][i-1];
+        computed_tridiagonal_matrix[i][i-1] = 0;
+        computed_tridiagonal_matrix[i][i] += - multiplicationFactor*computed_tridiagonal_matrix[i-1][i];
+        computed_right_hand_side[i] += - multiplicationFactor*computed_right_hand_side[i-1];
+    }
+    for(int i = N-1; i > -1; i--){
+        if(i == N-1)
+            computed_numerical_solution[i] = computed_right_hand_side[i];
+        else
+            computed_numerical_solution[i] = computed_right_hand_side[i+1] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1]/computed_tridiagonal_matrix[i][i];
+    }
+
+}
+
+void gassianTridiagonalSymmetricSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N){
+    for (int i = 1 ; i < N; i++){
+        computed_tridiagonal_matrix[i][i] += -computed_tridiagonal_matrix[i-1][i]*computed_tridiagonal_matrix[i-1][i]/computed_tridiagonal_matrix[i-1][i-1];
+        computed_right_hand_side[i] += -computed_tridiagonal_matrix[i-1][i]*computed_right_hand_side[i-1]/computed_tridiagonal_matrix[i-1][i-1];
+    }
+
+    computed_numerical_solution[N-1] = computed_right_hand_side[N-1]/computed_tridiagonal_matrix[N-1][N-1];
+    for (int i = N-2; i > -1; i--){
+        computed_numerical_solution[i] = computed_right_hand_side[i] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1]/computed_tridiagonal_matrix[i+1][i+1];
     }
 }
 
