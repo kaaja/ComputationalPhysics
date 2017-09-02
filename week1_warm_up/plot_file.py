@@ -10,8 +10,9 @@ from scipy.optimize import curve_fit
 
 #%%
 #data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
-data = pd.read_table("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv", 
+data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/out_project1_scalars", 
                      delimiter=',') # Seems to need full addres
+data_vectors = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/out_project1_vectors") # Seems to need full addres
 
 #%% Plot cpp-output
 plt.plot(data.log_h, data.log_rel_error)
