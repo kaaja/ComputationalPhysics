@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\setlength\parindent{0pt}
+
+\usepackage{listings}
+%\usepackage{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+
+\usepackage{verbatim}
+\let\oldv\verbatim
+\let\oldendv\endverbatim
+
+%\userpackage{minted}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{light-gray}{gray}{0.95}
+
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=6mm,
+  belowskip=6mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  backgroundcolor=\color{light-gray},
+  language=Matlab
+}
+
+%\usepackage{natbib} replaced by line below to make refernces work
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[nottoc,numbib]{tocbibind} %to get references in table of contants
+\usepackage{graphicx}
+
+\usepackage{bm}
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+
+\usepackage{mdframed}
+\usepackage{lipsum} % for creating dummy text
+\mdfdefinestyle{MyFrame}{%
+	linecolor=black,	
+	backgroundcolor=gray!20!white,
+	skipbelow = 8mm,
+	skipabove = 8mm}
+
+\usepackage{scrextend}
+
+\title{Fys4150\\Project 1\\ }
+\author{Peter Killingstad and Karl Jacobsen}
+
+
+\begin{document}
+	
+\maketitle
+
+\tableofcontents
+
+\pagebreak
+\section{Abstract}
+
+
+\end{document}
