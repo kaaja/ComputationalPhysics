@@ -21,8 +21,8 @@ void LU_tridiagonal_solver(double **, double **, double *, double *, int );
 void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
 void gassianTridiagonalSymmetricSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
 void generate_exact_solution(int, double *);
-void calculate_error(double *, double *, double *, int);
-void output_scalars( double, double, double);
+void calculate_error(double *, double *, double *, double *, int);
+void output_scalars( double, double, double, double);
 void output_vectors( double *, int, int, string);
 
 
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
   // Declaration variables
   string outfile_name;
   int number_of_simulations, N;
-  double a, b, c, h_step, computed_error, time_used;
+  double a, b, c, h_step, computed_error, time_used, L2Norm;
   double ** computed_tridiagonal_matrix, ** LU_Lower, ** LU_Upper;
   double * computed_numerical_solution, * computed_right_hand_side, * computed_exact_solution;
   string outfile_name_scalars, outfile_name_computed_numerical,outfile_name_computed_exact;
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
   ofile1.open(outfile_name_scalars);
-  ofile1 << "log_h,log_rel_error,time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
+  ofile1 << "log_h,log_rel_error, l2norm, time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   //ofile2.open(outfile_name_vectors);
 
   for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
@@ -67,25 +67,28 @@ int main(int argc, char *argv[]){
     generate_LU(N, computed_tridiagonal_matrix, LU_Lower, LU_Upper);
     generate_right_hand_side(N, computed_right_hand_side, &h_step);
 
-    /*start = clock();
+    start = clock();
     if(outfile_name=="LU")
         LU_tridiagonal_solver(LU_Lower, LU_Upper, computed_numerical_solution, computed_right_hand_side, N);
     else if (outfile_name == "gaussianTridiagonal")
         gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
     else if (outfile_name == "gaussianTridiagonalSymmetric")
         gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
-    else
+    else {
         cout << "define solver type. LU or gaussian" << endl;
+        exit(0);
+    }
+
     finish = clock();
     time_used = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    */
-    gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+
+    //gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
 
     //gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
 
     generate_exact_solution(N, computed_exact_solution);
-    calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, N);
-    output_scalars( computed_error, h_step, time_used);
+    calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, &L2Norm, N);
+    output_scalars( L2Norm, computed_error, h_step, time_used);
     output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_numerical);
     output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_exact);
     if (simulation_number < number_of_simulations -1)
@@ -220,20 +223,29 @@ void generate_exact_solution(int N, double *computed_exact_solution){
     }
 }
 
-void calculate_error(double *computed_numerical_solution, double *computed_exact_solution, double *computed_error, int N){
+void calculate_error(double *computed_numerical_solution, double *computed_exact_solution, double *computed_error, double * L2Norm, int N){
     double temp_relative_error;
-    *computed_error = log10(fabs(computed_numerical_solution[0] - computed_exact_solution[0])/fabs(computed_exact_solution[0]));
+    *computed_error = log10(fabs((computed_numerical_solution[0] - computed_exact_solution[0])/computed_exact_solution[0]));
     for (int i = 1; i < N; i++){
-        temp_relative_error = log10(fabs(computed_numerical_solution[i] - computed_exact_solution[i])/computed_exact_solution[i]);
-        if(temp_relative_error > *computed_error)
+        temp_relative_error = log10(fabs((computed_numerical_solution[i] - computed_exact_solution[i])/computed_exact_solution[i]));
+        if(temp_relative_error > *computed_error){
             *computed_error = temp_relative_error;
+            cout << i << endl;
+        }
     }
+    double L2NormTemp;
+    for (int i = 0; i < N; i++){
+        L2NormTemp = (computed_numerical_solution - computed_exact_solution)*(computed_numerical_solution - computed_exact_solution);
+        *L2Norm += + L2NormTemp;
+    }
+    *L2Norm = sqrt(*L2Norm/double(N));
 }
 
-void output_scalars( double computed_error, double h_step, double time_used){
+void output_scalars( double L2Norm, double computed_error, double h_step, double time_used){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
   ofile1 << setw(15) << setprecision(8) << log10(h_step) << ", ";
   ofile1 << setw(15) << setprecision(8) << computed_error << ", ";
+  ofile1 << setw(15) << setprecision(8) << L2Norm << ", ";
   ofile1 << setw(15) << setprecision(10) << time_used << endl;
 }
 
