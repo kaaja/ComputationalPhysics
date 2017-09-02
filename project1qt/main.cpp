@@ -3,12 +3,15 @@
 
 */
 
-using namespace std;
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <cmath>
 #include <string>
+#include "time.h"
+
+using namespace std;
+
 
 void initialize(string& outfile_name, int& number_of_simulations, int& N, double& a, double& b, double& c, int , char** argv);
 void generate_tridiagonal_matrix(int,double, double, double, double **);
@@ -17,7 +20,7 @@ void generate_right_hand_side( int, double *, double *);
 void LU_tridiagonal_solver(double **, double **, double *, double *, int );
 void generate_exact_solution(int, double *);
 void calculate_error(double *, double *, double *, int);
-void output_scalars( double, double);
+void output_scalars( double, double, double);
 void output_vectors( double *, int, int, string);
 
 
@@ -29,10 +32,11 @@ int main(int argc, char *argv[]){
   // Declaration variables
   string outfile_name;
   int number_of_simulations, N;
-  double a, b, c, h_step, computed_error;
+  double a, b, c, h_step, computed_error, time_used;
   double ** computed_tridiagonal_matrix, ** LU_Lower, ** LU_Upper;
   double * computed_numerical_solution, * computed_right_hand_side, * computed_exact_solution;
   string outfile_name_scalars, outfile_name_computed_numerical,outfile_name_computed_exact;
+  clock_t start, finish;
 
   // Read variables from command line
   initialize(outfile_name, number_of_simulations, N, a, b, c, argc, argv);
@@ -40,7 +44,7 @@ int main(int argc, char *argv[]){
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
   ofile1.open(outfile_name_scalars);
-  ofile1 << "log_h,log_rel_error" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
+  ofile1 << "log_h,log_rel_error,time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   //ofile2.open(outfile_name_vectors);
 
   for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
@@ -60,10 +64,15 @@ int main(int argc, char *argv[]){
     generate_tridiagonal_matrix(N, a, b, c, computed_tridiagonal_matrix);
     generate_LU(N, computed_tridiagonal_matrix, LU_Lower, LU_Upper);
     generate_right_hand_side(N, computed_right_hand_side, &h_step);
+
+    start = clock();
     LU_tridiagonal_solver(LU_Lower, LU_Upper, computed_numerical_solution, computed_right_hand_side, N);
+    finish = clock();
+    time_used = (double)((finish - start)/double(CLOCKS_PER_SEC));
+
     generate_exact_solution(N, computed_exact_solution);
     calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, N);
-    output_scalars( computed_error, h_step);
+    output_scalars( computed_error, h_step, time_used);
     output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_numerical);
     output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_exact);
     if (simulation_number < number_of_simulations -1)
@@ -179,10 +188,11 @@ void calculate_error(double *computed_numerical_solution, double *computed_exact
     }
 }
 
-void output_scalars( double computed_error, double h_step){
+void output_scalars( double computed_error, double h_step, double time_used){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
   ofile1 << setw(15) << setprecision(8) << log10(h_step) << ", ";
-  ofile1 << setw(15) << setprecision(8) << computed_error << endl;
+  ofile1 << setw(15) << setprecision(8) << computed_error << ", ";
+  ofile1 << setw(15) << setprecision(10) << time_used << endl;
 }
 
 void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
