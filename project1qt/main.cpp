@@ -92,7 +92,7 @@ int main(int argc, char *argv[]){
     output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_exact);
     output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_numerical);
     if (simulation_number < number_of_simulations -1)
-        N *= 2;
+        N *= 10;
     }
   ofile1.close();
   ofile2.close();
