@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string>
 #include "time.h"
+#include "lib.h"
 
 using namespace std;
 
@@ -33,8 +34,8 @@ ofstream ofile2;
 int main(int argc, char *argv[]){
   // Declaration variables
   string outfile_name;
-  int number_of_simulations, N;
-  double a, b, c, h_step, computed_error, time_used, L2Norm;
+  int number_of_simulations, N, *indx;
+  double a, b, c, h_step, computed_error, time_used, L2Norm, d;
   double ** computed_tridiagonal_matrix, ** LU_Lower, ** LU_Upper;
   double * computed_numerical_solution, * computed_right_hand_side, * computed_exact_solution;
   string outfile_name_scalars, outfile_name_computed_numerical,outfile_name_computed_exact;
@@ -74,6 +75,11 @@ int main(int argc, char *argv[]){
         gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
     else if (outfile_name == "gaussianTridiagonalSymmetric")
         gassianTridiagonalSymmetricSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+    else if (outfile_name=="LU2" ){
+        ludcmp(computed_tridiagonal_matrix, N, indx, &d);
+        computed_exact_solution = computed_right_hand_side;
+        lubksb(computed_tridiagonal_matrix, N, indx, computed_exact_solution);
+    }
     else {
         cout << "define solver type. LU or gaussian" << endl;
         exit(0);
