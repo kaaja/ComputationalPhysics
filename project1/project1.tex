@@ -199,13 +199,56 @@ We will compare the speed of our algorithms with the speed of the LU-algorithm. 
 \section{Results}
 
 \subsection{Thomas algorithm}
-\textbf{Task 7} Insert 1 figure that has: 1) the numerical solutions for $N=10,100,1000$, 2) and the exact solution for $N=1000$.
+\textbf{Task 7} Comment on the figure.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	%\label{1}
+\end{figure}
 
 \subsection{Symmetric vs Thomas}
-\textbf{Task 8} Insert CPU time for symmetric and Thomas for $N=10^6$.
+
+
+\lstset{backgroundcolor=\color{white}}
+\begin{minipage}{.49\textwidth} %\noindent
+	\lstinputlisting[language={},title={Tridiagonal
+	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\lstinputlisting[language={},title={Symmetric
+	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeSymmetric.tex}
+\end{minipage}\hfill
+
+
 
 \subsection{Error}
-\textbf{Task 9} Choose eighter Thomas or symmetric, and make table and plot of errors for N up to $10^7$. Also compute least squares results and plot these along the errors.
+\begin{minipage}{.49\textwidth} %\noindent
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	%\label{1}
+\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	%\label{1}
+\end{figure}
+
+\end{minipage}\hfill
+
+
+
+
+Our computer crashes for $N = 10^6$, so the above figure to the right stops at $N = 10^5$. The figure shows that up to $N = 10^5$, the error seems to follow the expected truncation error, since the slope seems to be pretty close to 2.\\
+
+The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$.
+
 
 \subsection{LU}
 \textbf{Task 10} We compare the cpu time for LU with the CPU-times for the other two algorithms, for $N=10, 100, 1000$. \\

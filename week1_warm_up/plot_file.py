@@ -10,25 +10,77 @@ from scipy.optimize import curve_fit
 
 #%%
 #data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
-data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
+gaussianTridiagonalScalarData = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
                      delimiter=',') # Seems to need full addres
-numerical_solutions = {}
-for key in xrange(10):
-    numerical_solutions[key] = (pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d" %(key+1), 
+                                            
+gaussianSymmetricTridiagonalScalarData = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
+                     delimiter=',') # Seems to need full addres
+#%% Reading of arrays, numerical and exact solutions
+gaussianTridiagonal = {}
+gaussianTridiagonalSymmetric = {}
+exact_solutions = {}
+number_of_simulations = len(gaussianTridiagonalScalarData)
+x = {}
+for key in xrange(number_of_simulations):
+    gaussianTridiagonal[key] = (pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d" %(key+1), 
                       delim_whitespace=True)).values
+    gaussianTridiagonal[key] =  np.reshape(gaussianTridiagonal[key], -1)
+    exact_solutions[key] = (pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_exact%d" %(key+1), 
+                      delim_whitespace=True)).values
+    gaussianTridiagonalSymmetric[key] = (pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical%d" %(key+1), 
+                      delim_whitespace=True)).values
+    gaussianTridiagonalSymmetric[key] =  np.reshape(gaussianTridiagonalSymmetric[key], -1)
+                   
+    exact_solutions[key] =  np.reshape(exact_solutions[key], -1)
+    N = len(gaussianTridiagonal[key])
+    h = 1./(N+1)
+    x[key] = np.linspace(h, 1.-h, N)
+
+
+#%% Plotting numerical and exact solution
+plt.figure()
+labels = []
+for i in xrange(3):
+    plt.plot(x[i], gaussianTridiagonal[i])
+    labels.append('N = %d' %len(gaussianTridiagonal[i]))
+plt.plot(x[i], exact_solutions[i])
+labels.append('Exact')
+#plt.legend(labels)
+plt.legend(labels, fontsize = 'x-large', loc = 'upper right')
+plt.title(' Tridagonal Gaussian', fontsize = 'x-large')
+plt.xlabel('x',fontsize = 'x-large')
+plt.ylabel('v(x)',fontsize = 'x-large')
+plt.savefig('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf')
+plt.show()
+
+#%% Plot errors
+plt.figure()
+plt.plot(gaussianTridiagonalScalarData.log_h, gaussianTridiagonalScalarData.log_rel_error)
+plt.title(' Thomas algorithm', fontsize = 'x-large')
+plt.xlabel('log h',fontsize = 'x-large')
+plt.ylabel('log relative error',fontsize = 'x-large')
+plt.ylim((-9,-1))
+plt.savefig('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf')
+plt.show()
                         
                         
 #%% Errors
 
-exact_solution = lambda x: 1. - (1. - np.exp(-10.))*x - np.exp(-10.*x)
+#exact_solution = lambda x: 1. - (1. - np.exp(-10.))*x - np.exp(-10.*x)
 
 errors = {}
+x = {}
 for key in xrange(10):
+#%% Plot cpp-output
     N = len(numerical_solutions[key])
     h = 1./(N+1)
-    x = np.linspace(h, 1.-h, N)
+    x[key] = np.linspace(h, 1.-h, N)
     numerical_solutions[key] =  np.reshape(numerical_solutions[key], -1)
-    errors[key] = (numerical_solutions[key] - exact_solution(x))
+    errors[key] = (numerical_solutions[key] - exact_solution(x[key]))
+    
+
+plt.plot(x[0], numerical_solutions[0], x[0], exact_solution(x[0]))
+print numerical_solutions[0], exact_solution(x[0])
 
 #%% Plot cpp-output
 plt.figure()
