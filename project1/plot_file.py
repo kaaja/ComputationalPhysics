@@ -9,20 +9,32 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 #%%
-#data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
-data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
-                     delimiter=',') # Seems to need full addres
-"""
-numerical_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical4", 
-                      delim_whitespace=True) # Seems to need full addres
-exact_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact4", 
-                      delim_whitespace=True) # Seems to need full addres
 
-numerical_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical1", 
-                      delim_whitespace=True) # Seems to need full addres
-exact_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact1", 
-                      delim_whitespace=True) # Seems to need full addres
-"""
+#data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
+
+gaussianTridiagonalScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
+                     delimiter=',') # Seems to need full addres
+gaussianTridiagonalSymmetricScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
+                     delimiter=',') # Seems to need full addres
+                                                    
+numberOfSimulations = len(gaussianTridiagonalScalars)
+x = {}
+gaussianTridiagonal = {}
+gaussianTridiagonalSymmetric = {}
+exactSolution = {}
+
+for key in xrange(numberOfSimulations):    
+    gaussianTridiagonal[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_%d" %(key+1), 
+                     delimiter=',').values
+    gaussianTridiagonal[key] = np.reshape(gaussianTridiagonal[key], -1)
+    gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_%d" %(key+1), 
+                     delimiter=',').values
+    gaussianTridiagonalSymmetric[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
+    N = len(gaussianTridiagonal[key])
+    h = 1./(N+1)
+    x[key] = np.linspace(h, 1.-h, N)
+
+
                         
 #%% Plot cpp-output
 plt.figure()
