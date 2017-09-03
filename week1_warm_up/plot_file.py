@@ -15,12 +15,12 @@ data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Q
 
 numerical_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical4", 
                       delim_whitespace=True) # Seems to need full addres
-exact_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact4", 
+exact_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact3", 
                       delim_whitespace=True) # Seems to need full addres
 
 numerical_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical1", 
                       delim_whitespace=True) # Seems to need full addres
-exact_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact1", 
+exact_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_exact3", 
                       delim_whitespace=True) # Seems to need full addres
                         
                         
@@ -69,3 +69,12 @@ logError = (np.log10(np.abs(absolute_error/exact_2.values)))
 maxLogError = max(np.log10(np.abs(absolute_error/exact_2.values)))
 
 l2 = np.sqrt(np.sum(absolute_error**2)/len(absolute_error))
+
+#%% Comparison different algorithms
+x = np.linspace(0,1,len(exact_2))
+plt.figure()
+plt.subplot(2,1,1)
+plt.plot(x, exact_1, x, exact_2)
+plt.subplot(2,1,2)
+plt.plot(x, (exact_1-exact_2)/exact_1)
+(exact_1-exact_2)/exact_1

@@ -163,7 +163,7 @@ void generate_right_hand_side( int N, double *computed_right_hand_side, double *
     *h_step = h;
     for ( int i=0; i < N; i++ ){
         double x = (i+1)*h;
-        double source_term = 100*exp(-10*x);
+        double source_term = 100.*exp(-10.*x);
         computed_right_hand_side[i] = h*h*source_term;
     }
 }
@@ -190,15 +190,15 @@ void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * c
     double multiplicationFactor;
     for (int i = 1; i < N; i++){
         multiplicationFactor = computed_tridiagonal_matrix[i][i-1]/computed_tridiagonal_matrix[i-1][i-1];
-        computed_tridiagonal_matrix[i][i-1] = 0;
+        //computed_tridiagonal_matrix[i][i-1] = 0;
         computed_tridiagonal_matrix[i][i] += - multiplicationFactor*computed_tridiagonal_matrix[i-1][i];
         computed_right_hand_side[i] += - multiplicationFactor*computed_right_hand_side[i-1];
     }
     for(int i = N-1; i > -1; i--){
         if(i == N-1)
-            computed_numerical_solution[i] = computed_right_hand_side[i];
+            computed_numerical_solution[i] = computed_right_hand_side[i]/computed_tridiagonal_matrix[i][i];
         else
-            computed_numerical_solution[i] = computed_right_hand_side[i+1] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1]/computed_tridiagonal_matrix[i][i];
+            computed_numerical_solution[i] = (computed_right_hand_side[i] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1])/computed_tridiagonal_matrix[i][i];
     }
 
 }
@@ -219,7 +219,7 @@ void generate_exact_solution(int N, double *computed_exact_solution){
     for ( int i=0; i < N; i++ ){
         double h = 1./(N+1);
         double x = (i+1)*h;
-        computed_exact_solution[i] = 1 - (1 - exp(-10))*x - exp(-10*x);
+        computed_exact_solution[i] = 1. - (1. - exp(-10.))*x - exp(-10.*x);
     }
 }
 
@@ -243,10 +243,10 @@ void calculate_error(double *computed_numerical_solution, double *computed_exact
 
 void output_scalars( double L2Norm, double computed_error, double h_step, double time_used){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
-  ofile1 << setw(15) << setprecision(8) << log10(h_step) << ", ";
-  ofile1 << setw(15) << setprecision(8) << computed_error << ", ";
-  ofile1 << setw(15) << setprecision(8) << L2Norm << ", ";
-  ofile1 << setw(15) << setprecision(10) << time_used << endl;
+  ofile1 << setw(15) << setprecision(16) << log10(h_step) << ", ";
+  ofile1 << setw(15) << setprecision(16) << computed_error << ", ";
+  ofile1 << setw(15) << setprecision(16) << L2Norm << ", ";
+  ofile1 << setw(15) << setprecision(16) << time_used << endl;
 }
 
 void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
@@ -255,9 +255,9 @@ void output_vectors( double *output_array, int simulation_number, int N, string 
   ofile2 << "simulation_number_" << simulation_number+1 << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   ofile2 << setiosflags(ios::showpoint | ios::uppercase);
   for (int i = 0; i<N; i++){
-    ofile2 << setw(15) << setprecision(8) << output_array[i] << endl;;
+    ofile2 << setw(15) << setprecision(16) << output_array[i] << endl;;
     //ofile2 << setw(15) << setprecision(8) << computed_numerical_solution[i] << endl;
   }
-  ofile2 << setw(15) << setprecision(8) << endl;
+  ofile2 << setw(15) << setprecision(16) << endl;
   ofile2.close();
 }
