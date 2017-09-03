@@ -10,20 +10,26 @@ from scipy.optimize import curve_fit
 
 #%%
 #data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
-data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
+data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
                      delimiter=',') # Seems to need full addres
-
-numerical_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical4", 
-                      delim_whitespace=True) # Seems to need full addres
-exact_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact3", 
-                      delim_whitespace=True) # Seems to need full addres
-
-numerical_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical1", 
-                      delim_whitespace=True) # Seems to need full addres
-exact_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_exact3", 
-                      delim_whitespace=True) # Seems to need full addres
+numerical_solutions = {}
+for key in xrange(10):
+    numerical_solutions[key] = (pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d" %(key+1), 
+                      delim_whitespace=True)).values
                         
                         
+#%% Errors
+
+exact_solution = lambda x: 1. - (1. - np.exp(-10.))*x - np.exp(-10.*x)
+
+errors = {}
+for key in xrange(10):
+    N = len(numerical_solutions[key])
+    h = 1./(N+1)
+    x = np.linspace(h, 1.-h, N)
+    numerical_solutions[key] =  np.reshape(numerical_solutions[key], -1)
+    errors[key] = (numerical_solutions[key] - exact_solution(x))
+
 #%% Plot cpp-output
 plt.figure()
 x = np.linspace(0,1,len(exact_2))

@@ -89,10 +89,10 @@ int main(int argc, char *argv[]){
     generate_exact_solution(N, computed_exact_solution);
     calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, &L2Norm, N);
     output_scalars( L2Norm, computed_error, h_step, time_used);
-    output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_numerical);
-    output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_exact);
+    output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_exact);
+    output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_numerical);
     if (simulation_number < number_of_simulations -1)
-        N *= 10;
+        N *= 2;
     }
   ofile1.close();
   ofile2.close();

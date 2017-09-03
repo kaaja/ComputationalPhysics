@@ -10,9 +10,9 @@ from scipy.optimize import curve_fit
 
 #%%
 #data = pd.read_csv("/home/karl/doc/subj/att/fys4150/week1_warm_up/out_warm_up2.csv") # Seems to need full addres
-data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
+data = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
                      delimiter=',') # Seems to need full addres
-
+"""
 numerical_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical4", 
                       delim_whitespace=True) # Seems to need full addres
 exact_2 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact4", 
@@ -22,7 +22,7 @@ numerical_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-De
                       delim_whitespace=True) # Seems to need full addres
 exact_1 = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact1", 
                       delim_whitespace=True) # Seems to need full addres
-                        
+"""
                         
 #%% Plot cpp-output
 plt.figure()
