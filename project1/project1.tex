@@ -127,16 +127,16 @@ v_1 - 2v_2 +v_3 &=& f_2h^2 \\ \nonumber
 v_2 - 2v_1 +v_4 &=& f_3h^2 \\ \nonumber
 v_3 - 2v_2 +v_5 &=& f_4h^2 \\ \nonumber
 \vdots &=& \vdots \\ \nonumber
-v_{n-1} - 2v-n + v_{n+1} &=& f_nh^2. \\ \nonumber
+v_{n-1} - 2v_n &=& f_nh^2. \\ \nonumber
 \end{eqnarray}
-As the equation is written out, it is clear that the values $1, -2$ and $1$ is repeating. We can now rewrite the system of equations into a matrix made up of the coefficients and two vectors, one containing the unknowns $v_1$ to $v_{i-1}$ and the other containing the inhomogeneous terms $f_1$ to $f_{i-1}$. The system would then be 
+As the equation is written out, it is clear that the values $1, -2$ and $1$ is repeating. We can now rewrite the system of equations into a matrix made up of the coefficients and two vectors, one containing the unknowns $v_1$ to $v_{n}$ and the other containing the inhomogeneous terms $f_1$ to $f_{n}$. The system would then be 
 
 \begin{equation}
 \underbrace{\begin{bmatrix} -2 & 1 & \cdots & 0 \\ 1 & -2 & 1 & \vdots \\
 \vdots & &  \ddots & \vdots \\ 
 0 & \cdots & 1 & -2 \end{bmatrix}}_{\mathbf{A}} 
-\underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_{i-1} \end{bmatrix}}_{\mathbf{V}} = 
-\underbrace{\begin{bmatrix} f_1h_^2\\ f_2h^2 \\ \vdots \\ f_{i-1}h^2\end{bmatrix}}_{\mathbf{\tilde{b}}} 
+\underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_{n} \end{bmatrix}}_{\mathbf{V}} = 
+\underbrace{\begin{bmatrix} f_1h_^2\\ f_2h^2 \\ \vdots \\ f_{n}h^2\end{bmatrix}}_{\mathbf{\tilde{b}}} 
 \end{equation}
 
 
