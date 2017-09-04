@@ -138,11 +138,7 @@ As the equation is written out, it is clear that the values $1, -2$ and $1$ is r
 \underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_{n} \end{bmatrix}}_{\mathbf{V}} = 
 \underbrace{\begin{bmatrix} f_1h_^2\\ f_2h^2 \\ \vdots \\ f_{n}h^2\end{bmatrix}}_{\mathbf{\tilde{b}}} 
 \end{equation}
-
-
-
-
-\textbf{Task 1} We get to the linear system by setting in the first couple of values in the above equation with v's, and notice the pattern. 
+ 
 
 \subsection{Gaussian elimination tridiagonal systems}
 We use standard Gaussian elimination, utlizing the sparsity of the matrix by ignoring the zero terms when doing the forward and backward substitution. This gives the Thomas algorithm. The algorithm can be seen in our code, which follows:
