@@ -16,7 +16,33 @@ gaussianTridiagonalScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/buil
                      delimiter=',') # Seems to need full addres
 gaussianTridiagonalSymmetricScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
                      delimiter=',') # Seems to need full addres
-                                                    
+LUScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib_scalars", 
+                     delimiter=',') # Seems to need full addres                                                    
+                          
+gaussianTridiagonalScalars.columns = gaussianTridiagonalScalars.columns.str.strip().str.replace(' ', '_') # Fixing white space issue variable names
+gaussianTridiagonalSymmetricScalars.columns = gaussianTridiagonalSymmetricScalars.columns.str.strip().str.replace(' ', '_')
+LUScalars.columns = LUScalars.columns.str.strip().str.replace(' ', '_')
+
+gaussianTridiagonalLogTimes = np.log10(gaussianTridiagonalScalars.time_used)
+gaussianTridiagonalSymmetricLogTimes = np.log10(gaussianTridiagonalSymmetricScalars.time_used)
+LuLogTimes = np.log10(LUScalars.time_used)
+#logGaussianTridiangoanlTime = np.log10(gaussianTridiagonalScalars.time_used)
+
+#%% Plot of log times
+plt.figure()
+plt.plot(gaussianTridiagonalScalars.log_h, gaussianTridiagonalLogTimes)
+plt.hold('on')
+plt.plot(gaussianTridiagonalSymmetricScalars.log_h, gaussianTridiagonalSymmetricLogTimes)
+plt.plot(LUScalars.log_h, LuLogTimes)         
+plt.legend(['Thomas', 'Symmetric', 'LU'], fontsize = 'large', loc = 'upper right')
+plt.title('CPU times', fontsize = 'xx-large')
+plt.xlabel('log h', fontsize = 'xx-large')
+plt.ylabel('log time', fontsize = 'xx-large')
+plt.savefig('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/logTimes.pdf')
+
+
+
+#%%
 numberOfSimulations = len(gaussianTridiagonalScalars)
 x = {}
 gaussianTridiagonal = {}

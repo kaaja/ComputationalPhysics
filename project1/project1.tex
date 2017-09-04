@@ -94,9 +94,9 @@ with Dirichlet boundary conditions by rewriting it as a set of linear equations.
 
 To be more explicit we will solve the equation
 
-\begin{equation*}
+\begin{equation}\
 -u''(x) = f(x), \hspace{0.5cm} x\in(0,1), \hspace{0.5cm} u(0) = u(1) = 0.
-\end{equation*}
+\end{equation}
 and we define the discretized approximation  to $u$ as $v_i$  with 
 grid points $x_i=ih$   in the interval from $x_0=0$ to $x_{n+1}=1$.
 The step length or spacing is defined as $h=1/(n+1)$. 
@@ -194,6 +194,16 @@ As an alternative we also computed the L2-error norm, which basically sums up al
 \subsection{LU}
 We will compare the speed of our algorithms with the speed of the LU-algorithm. According to Hjorth-Jensen \cite{MHJ} p. 173, solving a system with LU is $\mathcal{O}(n^2)$ requires FLOPS, but the composition itself requires  $\mathcal{O}(n^3)$ FLOPS. Based on this, we expect our algorithms to outperform the LU-algorithm, independentlyu of whether one includes the composition itself in the comparison or not.\\
 
+Here we will try ourself to compute the FLOP requirements for solving a system with LU. One starts by solving $Ly = w$ for $y$, where L is lower tridiagonal $N\; X\; N$ with 1 on the diagonal. Seting up the first few iterations of the loop solving the system, we hopefully see a pattern:
+\begin{align}
+y_1 &= w_1\\
+y_2 &= w_2 - L_{21} y_1\\
+y_3 &= w_3 - L_{31} y_1 - L_{32}y_2\\
+\vdots\\
+y_{N}& = w_N - \sum_{i}^{N-1} L_{Ni} y_i
+\end{align}
+
+
 \textbf{Task 6} Insert code for importing LU from Armadillo and the commands used.
 
 \section{Results}
@@ -208,20 +218,35 @@ We will compare the speed of our algorithms with the speed of the LU-algorithm. 
 	%\label{1}
 \end{figure}
 
-\subsection{Symmetric vs Thomas}
-
+\subsection{Iterations times}
+The below table displays the times used by the different algorithms. Not that the LU-time includes also the time for the LU-decomposition, in addition to the time solving the system.
 
 \lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.49\textwidth} %\noindent
+\begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Tridiagonal
 	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
+\begin{minipage}{.32\textwidth}
 	\lstinputlisting[language={},title={Symmetric
 	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonalSymmetric.tex}
 \end{minipage}\hfill
+\begin{minipage}{.32\textwidth}
+	\lstinputlisting[language={},title={LU
+	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeLU.tex}
+\end{minipage}\hfill
 
+From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
 
+The figure below may perhaps give a better impression on the times for the different algorithms, at least on how the results compare to the theoretical FLOP-estimations.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/logTimes.pdf}
+	\caption{Log CPU-times}
+	%\label{1}
+\end{figure}
+
+The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the incline is about $-1$ in the figure. For the LU we get a slope somewhere between 2 and 3. Knowing that the decomposition is of order 3 and the solution of the system by LU is of order 2, we had expected an incline of 3 in our graph, since the largest $N$ should dominate. We are not sure why we do not get a slope of 3 for LU. 
 
 \subsection{Error}
 \begin{minipage}{.49\textwidth} %\noindent
