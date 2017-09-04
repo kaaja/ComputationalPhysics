@@ -40,6 +40,12 @@ plt.xlabel('log h', fontsize = 'xx-large')
 plt.ylabel('log time', fontsize = 'xx-large')
 plt.savefig('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/logTimes.pdf')
 
+#%%
+N = len(LUscalars)
+
+for i in xrange(N):
+    
+
 
 
 #%%
@@ -50,17 +56,28 @@ gaussianTridiagonalSymmetric = {}
 exactSolution = {}
 
 for key in xrange(numberOfSimulations):    
-    gaussianTridiagonal[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_%d" %(key+1), 
+    gaussianTridiagonal[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d" %(key+1), 
                      delimiter=',').values
     gaussianTridiagonal[key] = np.reshape(gaussianTridiagonal[key], -1)
-    gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_%d" %(key+1), 
+    gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical%d" %(key+1), 
                      delimiter=',').values
     gaussianTridiagonalSymmetric[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
+    
+    exactSolution[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact%d" %(key+1), 
+                     delimiter=',').values
+    exactSolution[key] = np.reshape(exactSolution[key], -1)
+    
     N = len(gaussianTridiagonal[key])
     h = 1./(N+1)
     x[key] = np.linspace(h, 1.-h, N)
 
 
+#%% Plot nymerical exact
+plt.figure()
+for key in xrange(numberOfSimulations):
+    plt.plot(x[key], gaussianTridiagonalSymmetric[key])#, x[key], gaussianTridiagonal[key])
+#plt.plot(x[key], exactSolution[key])
+plt.savefig('/home/karl/doc/subj/att/fys4150/project1/piazzaFigure.pdf')
                         
 #%% Plot cpp-output
 plt.figure()

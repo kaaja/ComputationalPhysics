@@ -79,7 +79,6 @@ int main(int argc, char *argv[]){
     else if (outfile_name=="luLib" ){
         ludcmp(computed_tridiagonal_matrix, N, indxLu, &dLu);
         for ( int i = 0; i < N; i++) computed_numerical_solution[i] = computed_right_hand_side[i];
-        //computed_numerical_solution = computed_right_hand_side;
         lubksb(computed_tridiagonal_matrix, N, indxLu, computed_numerical_solution);
     }
     else {
@@ -213,20 +212,56 @@ void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * c
 }
 
 void gassianTridiagonalSymmetricSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N){
-    double multiplicationFactor;
-    for (int i = 1; i < N; i++){
-        multiplicationFactor = computed_tridiagonal_matrix[i][i-1]/computed_tridiagonal_matrix[i-1][i-1];
-        //computed_tridiagonal_matrix[i][i-1] = 0;
-        computed_tridiagonal_matrix[i][i] += - multiplicationFactor*computed_tridiagonal_matrix[i-1][i];
-        computed_right_hand_side[i] += - multiplicationFactor*computed_right_hand_side[i-1];
-    }
-    for(int i = N-1; i > -1; i--){
-        if(i == N-1)
-            computed_numerical_solution[i] = computed_right_hand_side[i]/computed_tridiagonal_matrix[i][i];
-        else
-            computed_numerical_solution[i] = (computed_right_hand_side[i] - computed_tridiagonal_matrix[0][1]*computed_numerical_solution[i+1])/computed_tridiagonal_matrix[i][i];
+    double diagonal = 2.;
+    double * f;
+    f = new double[N];
+    f[0] = computed_right_hand_side[0];
+    diagonal = 2.;
+    for (int i=1; i < N; i++){
+        diagonal = (i+2.)/(i+1.);
+        f[i] = computed_right_hand_side[i] + double(i)/(i+1.)*f[i-1];
     }
 
+    computed_numerical_solution[N-1] = f[N-1]/diagonal;
+    for (int i = N-1; i >0; i--){
+        computed_numerical_solution[i-1] = double(i)/(i+1.)*(f[i-1] + computed_numerical_solution[i]);
+    }
+
+    delete [] f;
+    /*
+    // Set up arrays for the simple case
+
+  double *d = new double [N]; double *b = new double [N]; double *solution = new double [N];
+
+  double *x = new double[N];
+
+  // we solve Au = b, u = solution below
+
+  // Quick setup of updated diagonal elements and value of   <===   NOTE the set up of the diagonal ones
+
+  //d[0] = d[N] = 2; solution[0] = solution[n] = 0.0;
+
+  for (int i = 0; i < N-1; i++) d[i] = (i+2.0)/( (double) i +1.0);
+
+ //  set up x, keep in mind x0 and xn
+
+  for (int i = 0; i <= N-1; i++){
+
+    //x[i]= (i+1.0)*h;
+
+    //b[i] = hh*f(i*h);
+
+  }
+
+  // Forward substitution is now simple, only vector b changes
+
+  for (int i = 1; i < N-1; i++) computed_right_hand_side[i] = computed_right_hand_side[i] + computed_right_hand_side[i-1]/d[i-1];
+
+  // Backward substitution, next to end point first
+
+  computed_numerical_solution[N-1] = computed_right_hand_side[N-1]/d[N-1];
+
+  for (int i = N-2; i > 0; i--) computed_numerical_solution[i] = (computed_right_hand_side[i]+computed_numerical_solution[i+1])/d[i];*/
 }
 
 void generate_exact_solution(int N, double *computed_exact_solution){
