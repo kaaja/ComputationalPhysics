@@ -94,9 +94,10 @@ with Dirichlet boundary conditions by rewriting it as a set of linear equations.
 
 To be more explicit we will solve the equation
 
-\begin{equation*}
+\begin{equation}
 -u''(x) = f(x), \hspace{0.5cm} x\in(0,1), \hspace{0.5cm} u(0) = u(1) = 0.
-\end{equation*}
+\label{eqn:diffEquation}
+\end{equation}
 and we define the discretized approximation  to $u$ as $v_i$  with 
 grid points $x_i=ih$   in the interval from $x_0=0$ to $x_{n+1}=1$.
 The step length or spacing is defined as $h=1/(n+1)$. 
@@ -104,9 +105,10 @@ We have then the boundary conditions $v_0 = v_{n+1} = 0$.
 We  approximate the second
 derivative of $u$ with
 
-\begin{equation*}
+\begin{equation}
 -\frac{v_{i+1}+v_{i-1}-2v_i}{h^2} = f_i  \hspace{0.5cm} \mathrm{for} \hspace{0.1cm} i=1,\dots, n,
-\end{equation*}
+\label{eqn:discretizeEquation}
+\end{equation}
 where $f_i=f(x_i)$. \\
 
 Now we will show that the discrete problem can be rewritten to a linear system of the type 
@@ -115,7 +117,30 @@ Now we will show that the discrete problem can be rewritten to a linear system o
 \mathbf{A}\mathbf{v} = \tilde{\mathbf{b}}.
 \end{equation*}
 
-The reason for wanting the rewrite to a linear system, is that we know of methods that solve such linear systems. Hence, by solving the linear system we will also solve our discrete differential eauquation problem!\\
+The reason for wanting the rewrite to a linear system, is that we know of methods that solve such linear systems. Hence, by solving the linear system we will also solve our discrete differential equation problem!\\
+
+To obtain the linear system, we can write out the discretized approximation into a system of equations. We start by setting $i=1$, multiply the discretize equation (\ref{eqn:discretizeEquation}) with $h^2$ and write out the first couple of equations to look for a pattern
+\begin{eqnarray}
+\nonumber
+-2v_1 + v_2 &=& f_1h^2 \\ \nonumber
+v_1 - 2v_2 +v_3 &=& f_2h^2 \\ \nonumber
+v_2 - 2v_1 +v_4 &=& f_3h^2 \\ \nonumber
+v_3 - 2v_2 +v_5 &=& f_4h^2 \\ \nonumber
+\vdots &=& \vdots \\ \nonumber
+v_{n-1} - 2v-n + v_{n+1} &=& f_nh^2. \\ \nonumber
+\end{eqnarray}
+As the equation is written out, it is clear that the values $1, -2$ and $1$ is repeating. We can now rewrite the system of equations into a matrix made up of the coefficients and two vectors, one containing the unknowns $v_1$ to $v_{i-1}$ and the other containing the inhomogeneous terms $f_1$ to $f_{i-1}$. The system would then be 
+
+\begin{equation}
+\underbrace{\begin{bmatrix} -2 & 1 & \cdots & 0 \\ 1 & -2 & 1 & \vdots \\
+\vdots & &  \ddots & \vdots \\ 
+0 & \cdots & 1 & -2 \end{bmatrix}}_{\mathbf{A}} 
+\underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_{i-1} \end{bmatrix}}_{\mathbf{V}} = 
+\underbrace{\begin{bmatrix} f_1h_^2\\ f_2h^2 \\ \vdots \\ f_{i-1}h^2\end{bmatrix}}_{\mathbf{\tilde{b}}} 
+\end{equation}
+
+
+
 
 \textbf{Task 1} We get to the linear system by setting in the first couple of values in the above equation with v's, and notice the pattern. 
 
@@ -145,7 +170,7 @@ computed_numerical_solution[i] = computed_right_hand_side[i+1] - computed_tridia
 
 Now we want to calculate the number of floating points operations (FLOPS) needed to solve the linear system with the above algorithm. This is an extremely important topic, since the number of FLOPS typically will be very large in physics problems, and having an algorithm that reduces the FLOPS can be the difference between being able to solve the problem and not!\\
 
-According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To check our understanding, we will try calculating the number of FLOPS ourself. Looking at the code above, we start by caunting FLOPS in the forward substitution, which is the first for loop. The variable 'mutliplicationfactor' equals a division, which counts as one FLOP. 'coputed_tridiagonal_matrix' enveolves a sum of two terms, which gives one FLOP, and a multiplication, which gives another FLOP. So in total for 'computed_tridiagonal_matrix' we have 2 FLOPS. Next the calculation of 'computed_right_hand_side' envolves a multiplication (1 FLOP) and a summation (1 FLOP), giving 2 FLOPS for 'computed_right_hand_side'. For each iteration in the loop, we have a total of 5 FLOPS. The loop goes from $1$ to $N-1$, giving $N-1$ iterations. This, in total we have $5(N-1)$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS, which is the same as given on Wikipedia.
+According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To check our understanding, we will try calculating the number of FLOPS ourself. Looking at the code above, we start by caunting FLOPS in the forward substitution, which is the first for loop. The variable 'mutliplicationfactor' equals a division, which counts as one FLOP. '\texttt{coputed\_tridiagonal\_matrix}' enveolves a sum of two terms, which gives one FLOP, and a multiplication, which gives another FLOP. So in total for '\texttt{computed\_tridiagonal\_matrix}' we have 2 FLOPS. Next the calculation of '\texttt{computed\_right\_hand\_side}' envolves a multiplication (1 FLOP) and a summation (1 FLOP), giving 2 FLOPS for '\texttt{computed\_right\_hand\_side}'. For each iteration in the loop, we have a total of 5 FLOPS. The loop goes from $1$ to $N-1$, giving $N-1$ iterations. This, in total we have $5(N-1)$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS, which is the same as given on Wikipedia.
 
 \subsection{Gaussian elimination symmetric tridiagonal systems}
 If the tridiagonal system is symmetric, $A = A^T$, the Gaussian elimination method can be made even simpler than in the Thomas algorithm. The program below shows the algorithm and its implementation.
@@ -201,46 +226,46 @@ We will compare the speed of our algorithms with the speed of the LU-algorithm. 
 \subsection{Thomas algorithm}
 \textbf{Task 7} Comment on the figure.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
-	\caption{Results Tridiagonal Gaussian}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
+%	\caption{Results Tridiagonal Gaussian}
 	%\label{1}
-\end{figure}
+%\end{figure}
 
 \subsection{Symmetric vs Thomas}
 
 
-\lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.49\textwidth} %\noindent
-	\lstinputlisting[language={},title={Tridiagonal
-	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
-\end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
-	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonalSymmetric.tex}
-\end{minipage}\hfill
+%\lstset{backgroundcolor=\color{white}}
+%\begin{minipage}{.49\textwidth} %\noindent
+%	\lstinputlisting[language={},title={Tridiagonal
+%	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
+%\end{minipage}\hfill
+%\begin{minipage}{.49\textwidth}
+%	\lstinputlisting[language={},title={Symmetric
+%	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonalSymmetric.tex}
+%\end{minipage}\hfill
 
 
 
 \subsection{Error}
-\begin{minipage}{.49\textwidth} %\noindent
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
-	\caption{Results Tridiagonal Gaussian}
+%\begin{minipage}{.49\textwidth} %\noindent
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
+%	\caption{Results Tridiagonal Gaussian}
 	%\label{1}
-\end{figure}
-\end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
-	\caption{Results Tridiagonal Gaussian}
+%\end{figure}
+%\end{minipage}\hfill
+%\begin{minipage}{.49\textwidth}
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
+%	\caption{Results Tridiagonal Gaussian}
 	%\label{1}
-\end{figure}
+%\end{figure}
 
-\end{minipage}\hfill
+%\end{minipage}\hfill
 
 
 
