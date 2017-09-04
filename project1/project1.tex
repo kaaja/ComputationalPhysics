@@ -94,15 +94,15 @@ with Dirichlet boundary conditions by rewriting it as a set of linear equations.
 
 To be more explicit we will solve the equation
 
-<<<<<<< HEAD
 \begin{equation}\
 -u''(x) = f(x), \hspace{0.5cm} x\in(0,1), \hspace{0.5cm} u(0) = u(1) = 0.
-=======
+\end{equation}
+
 \begin{equation}
 -u''(x) = f(x), \hspace{0.5cm} x\in(0,1), \hspace{0.5cm} u(0) = u(1) = 0.
 \label{eqn:diffEquation}
->>>>>>> refs/remotes/origin/master
 \end{equation}
+
 and we define the discretized approximation  to $u$ as $v_i$  with 
 grid points $x_i=ih$   in the interval from $x_0=0$ to $x_{n+1}=1$.
 The step length or spacing is defined as $h=1/(n+1)$. 
@@ -125,6 +125,7 @@ Now we will show that the discrete problem can be rewritten to a linear system o
 The reason for wanting the rewrite to a linear system, is that we know of methods that solve such linear systems. Hence, by solving the linear system we will also solve our discrete differential equation problem!\\
 
 To obtain the linear system, we can write out the discretized approximation into a system of equations. We start by setting $i=1$, multiply the discretize equation (\ref{eqn:discretizeEquation}) with $h^2$ and write out the first couple of equations to look for a pattern
+
 \begin{eqnarray}
 \nonumber
 -2v_1 + v_2 &=& f_1h^2 \\ \nonumber
@@ -134,16 +135,17 @@ v_3 - 2v_2 +v_5 &=& f_4h^2 \\ \nonumber
 \vdots &=& \vdots \\ \nonumber
 v_{n-1} - 2v_n &=& f_nh^2. \\ \nonumber
 \end{eqnarray}
+
 As the equation is written out, it is clear that the values $1, -2$ and $1$ is repeating. We can now rewrite the system of equations into a matrix made up of the coefficients and two vectors, one containing the unknowns $v_1$ to $v_{n}$ and the other containing the inhomogeneous terms $f_1$ to $f_{n}$. The system would then be 
 
 \begin{equation}
 \underbrace{\begin{bmatrix} -2 & 1 & \cdots & 0 \\ 1 & -2 & 1 & \vdots \\
 \vdots & &  \ddots & \vdots \\ 
 0 & \cdots & 1 & -2 \end{bmatrix}}_{\mathbf{A}} 
-\underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_{n} \end{bmatrix}}_{\mathbf{V}} = 
-\underbrace{\begin{bmatrix} f_1h_^2\\ f_2h^2 \\ \vdots \\ f_{n}h^2\end{bmatrix}}_{\mathbf{\tilde{b}}} 
+\underbrace{\begin{bmatrix} v_1\\ v_2 \\ \vdots\\ v_n \end{bmatrix}}_{\mathbf{V}} = 
+\underbrace{\begin{bmatrix} f_1 h^2\\ f_2 h^2 \\ \vdots \\ f_nh^2\end{bmatrix}}_{\mathbf{\tilde{b}}}
 \end{equation}
- 
+
 
 \subsection{Gaussian elimination tridiagonal systems}
 We use standard Gaussian elimination, utlizing the sparsity of the matrix by ignoring the zero terms when doing the forward and backward substitution. This gives the Thomas algorithm. The algorithm can be seen in our code, which follows:
@@ -230,24 +232,23 @@ y_{N}& = w_N - \sum_{i}^{N-1} L_{Ni} y_i
 \end{align}
 
 
-\textbf{Task 6} Insert code for importing LU from Armadillo and the commands used.
 
 \section{Results}
 
 \subsection{Thomas algorithm}
-\textbf{Task 7} Comment on the figure.
 
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
-%	\caption{Results Tridiagonal Gaussian}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
+	\caption{Results Tridiagonal Gaussian}
 	%\label{1}
-%\end{figure}
+\end{figure}
+
+We see that except for the coarsest grid, $N=10$, the fit is really good. Knowing that our approximator for the 2nd derivative is 2nd order, and the fact that the simulations in the figure has 10, 100 and 1000 grid points, it is not surprising that the error is reduced considerably when the grid is made 10 times finser in each step. With a convergence rate of 2, a ten fold refinement in the grid should lead to a 100 fold refinement in the truncation error.
 
 \subsection{Iterations times}
 The below table displays the times used by the different algorithms. Not that the LU-time includes also the time for the LU-decomposition, in addition to the time solving the system.
 
-<<<<<<< HEAD
 \lstset{backgroundcolor=\color{white}}
 \begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Tridiagonal
@@ -262,18 +263,7 @@ The below table displays the times used by the different algorithms. Not that th
 	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeLU.tex}
 \end{minipage}\hfill
 
-From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
-=======
-%\lstset{backgroundcolor=\color{white}}
-%\begin{minipage}{.49\textwidth} %\noindent
-%	\lstinputlisting[language={},title={Tridiagonal
-%	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
-%\end{minipage}\hfill
-%\begin{minipage}{.49\textwidth}
-%	\lstinputlisting[language={},title={Symmetric
-%	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonalSymmetric.tex}
-%\end{minipage}\hfill
->>>>>>> refs/remotes/origin/master
+From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3)$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
 
 The figure below may perhaps give a better impression on the times for the different algorithms, at least on how the results compare to the theoretical FLOP-estimations.
 
@@ -287,23 +277,23 @@ The figure below may perhaps give a better impression on the times for the diffe
 The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the incline is about $-1$ in the figure. For the LU we get a slope somewhere between 2 and 3. Knowing that the decomposition is of order 3 and the solution of the system by LU is of order 2, we had expected an incline of 3 in our graph, since the largest $N$ should dominate. We are not sure why we do not get a slope of 3 for LU. 
 
 \subsection{Error}
-%\begin{minipage}{.49\textwidth} %\noindent
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
-%	\caption{Results Tridiagonal Gaussian}
-	%\label{1}
-%\end{figure}
-%\end{minipage}\hfill
-%\begin{minipage}{.49\textwidth}
-%\begin{figure}[H]
-%	\centering
-%	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
-%	\caption{Results Tridiagonal Gaussian}
-	%\label{1}
-%\end{figure}
+\begin{minipage}{.49\textwidth} %\noindent
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	\label{1}
+\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	\label{1}
+\end{figure}
 
-%\end{minipage}\hfill
+\end{minipage}\hfill
 
 
 
@@ -312,13 +302,23 @@ Our computer crashes for $N = 10^6$, so the above figure to the right stops at $
 
 The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$.
 
+\textbf{task 10} Comment uppon the error (truncation verson round-off). Where to expect turning point....
 
 \subsection{LU}
-\textbf{Task 10} We compare the cpu time for LU with the CPU-times for the other two algorithms, for $N=10, 100, 1000$. \\
+The below table shows the errors for LU and the Thomas algorithm. It was expected that these two algorithms should produce results equal to each other, whithin machine precision. Both algorithms solves exactly the same system. The table below confirms our expectation. However, we suspect that there could have appeared larger errors, due to numerical issues, knowing e.g. that zeros in matrices can cause trouble.
 
-\textbf{Task 11} Copmute error for $N=1000$ for LU and one of the other two algorithms. The results should be identical.
+\lstset{backgroundcolor=\color{white}}
+\begin{minipage}{.49\textwidth} %\noindent
+	\lstinputlisting[language={},title={LU
+	}]{/home/karl/doc/subj/att/fys4150/project1/errorLu.txt}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\lstinputlisting[language={},title={Thomas
+	}]{/home/karl/doc/subj/att/fys4150/project1/errorTridiagonal.txt}
+\end{minipage}\hfill
 
-\textbf{Task 12} LU possible $N=10^5$? Find out.
+
+We were asked if it would be possible to run LU for $N=10^5.$ From before, we know that the Thomas algorithm, which is $\mathcal{O}(N)$, makes the computed crash for $N = 10^6$. Solving LU, which is $\mathcal{O}(N^3)$ for $N = 10^5$, would give FLOPS of order $10^15$, which would never be solved on our computer.
 
 \section{Conclusions}
 \textbf{Task 13} Sum up the results here.
