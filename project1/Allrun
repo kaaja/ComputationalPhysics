@@ -2,8 +2,11 @@
 cd ${0%/*} || exit 1    # run from this directory
 # to make executable: chmod u+x Allrun
 
-g++ -o main.exe main.cpp
+cd ../project1qt
+g++ -o main.exe main.cpp lib.cpp
 ./main.exe $1 $2 $3 $4 $5 $6 $7
+cd ../build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug
+cp ../project1qt/*.csv .
 
 
 

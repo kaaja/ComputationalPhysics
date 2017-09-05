@@ -6,21 +6,24 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import argparse
 from scipy.optimize import curve_fit
+from subprocess import call
+import os
 
 #%%
 def initializeSolvers(numberOfSimulations,amplificationFactor, N, a, b, c):
 	call(["./Allclean"])
 	solvers = ["gaussianTridiagonal","gaussianTridiagonalSymmetric","luLib"]
 	for i in solvers:
-		call(["./Allrun", i, numberOfSimulations,amplificationFactors, N, a, b, c)
+		call(["./Allrun", i, numberOfSimulations,amplificationFactor, N, a, b, c])
 	
 def readScalarValues():
-	gaussianTridiagonalScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars", 
+	gaussianTridiagonalScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars.csv", 
 			             delimiter=',') # Seems to need full addres
-	gaussianTridiagonalSymmetricScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars", 
+	gaussianTridiagonalSymmetricScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_scalars.csv", 
 			             delimiter=',') # Seems to need full addres
-	LUScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib_scalars", 
+	LUScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib_scalars.csv", 
 			             delimiter=',') # Seems to need full addres
 	
 	return gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars
@@ -32,20 +35,21 @@ def readSolutionVectors(numberOfSimulations):
 	gaussianTridiagonal = {}
 	gaussianTridiagonalSymmetric = {}
 	exactSolution = {}
+	LU = {}
 
 	for key in xrange(numberOfSimulations):    
-		gaussianTridiagonal[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d" %(key+1), 
+		gaussianTridiagonal[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_numerical%d.csv" %(key+1), 
 		                 delimiter=',').values
 		gaussianTridiagonal[key] = np.reshape(gaussianTridiagonal[key], -1)
-		gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical%d" %(key+1), 
+		gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical%d.csv" %(key+1), 
 		                 delimiter=',').values
 		gaussianTridiagonalSymmetric[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
 		
-		LU[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib%d" %(key+1), 
+		LU[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib_numerical%d.csv" %(key+1), 
 		                 delimiter=',').values
 		LU[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
 		
-		exactSolution[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact%d" %(key+1), 
+		exactSolution[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_exact%d.csv" %(key+1), 
 		                 delimiter=',').values
 		exactSolution[key] = np.reshape(exactSolution[key], -1)
 		
@@ -79,30 +83,31 @@ def plot_logTimes(gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalar
 #%%
 def plot_errors(algorithmScalarValues, algorithmNname):
 	relativeError = algorithmScalarValues.log_rel_error
+	plt.figure()
 	log_h = algorithmScalarValues.log_h
 	plt.plot(log_h, relativeError)
-	plt.legend([algorithmName], fontsize = 'large', loc = 'upper right')
-	plt.title('relative error'+algorithmName, fontsize = 'xx-large')
+	plt.title('Relative error '+algorithmNname, fontsize = 'xx-large')
 	plt.xlabel('log h', fontsize = 'xx-large')
-	plt.ylabel('relative error', fontsize = 'xx-large')
-	filename = ('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/relativeError_'+algorithmName+'.pdf'
-
+	plt.ylabel('Relative error', fontsize = 'xx-large')
+	filename = ('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/relativeError_'+algorithmNname+'.pdf')
+      #plt.savefig(filename)
 
 
 #%% Plot numerical and exact
-def plot_numericalAndExactSolution(x, numericalSolution, exactSolution,algorithm):
+def plot_numericalAndExactSolution(x, numberOfSimulations, numericalSolution, exactSolution,algorithm):
 	plt.figure()
 	legends = []
 	for key in xrange(numberOfSimulations):
 		plt.plot(x[key], numericalSolution[key])#, x[key], gaussianTridiagonal[key])
-		legends.append(len(numericalSolution[key]))
+		N = len(numericalSolution[key])    
+		legends.append('N = %d' %N)
 	plt.plot(x[key], exactSolution[key])
 	legends.append("exact solution")
-	plt.legend(legends, fontsize = 'large', loc = 'upper right')
-	plt.title('Comparison numerical and exact solution' + algorithm, fontsize = 'xx-large')
+	plt.legend(legends, fontsize = 'xx-large', loc = 'upper right')
+	plt.title( algorithm, fontsize = 'xx-large')
 	plt.xlabel('x', fontsize = 'xx-large')
 	plt.ylabel('v(x)', fontsize = 'xx-large')
-	filename = '/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/comparison_'+algorithm'.pdf'
+	filename = ('/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/comparison_'+algorithm+'.pdf')
 	plt.savefig(filename)
 
 
@@ -112,7 +117,7 @@ if __name__ == "__main__":
     
     parser.add_argument("amplificationFactor", type=str, default=10, help="amplification of mesh size")
 
-    parser.add_argument("initalMesh", type=str, default=10, help="inital dimension of mesh. ex: 10")
+    parser.add_argument("initialMesh", type=str, default=10, help="inital dimension of mesh. ex: 10")
 
     parser.add_argument("a", type=str, default=-1.0,
                         help="lower diagonal value")
@@ -122,15 +127,15 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    initializeSolvers(args.numberOfSimulations, args.initialMesh, args.a, args.b, args.c)
+    initializeSolvers(args.numberOfSimulations, args.amplificationFactor, args.initialMesh, args.a, args.b, args.c)
     
-    gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars = readScalars()
+    gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars = readScalarValues()
     
     x, gaussianTridiagonal, gaussianTridiagonalSymmetric, LU, exactSolution = readSolutionVectors(int(args.numberOfSimulations))
     
     plot_logTimes(gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars)
     
-    plot_numericalAndExactSolution(x, gaussianTridiagonalSymmetric, exactSolution, "gaussianTridiagonalSymmetric")
+    plot_numericalAndExactSolution(x, int(args.numberOfSimulations), gaussianTridiagonalSymmetric, exactSolution, "gaussianTridiagonalSymmetric")
     plot_errors(gaussianTridiagonalSymmetricScalars, "gaussianTridiagonalSymmetric")
     plt.show()
 

@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
   clock_t start, finish;
 
   // Read variables from command line
-  initialize(outfile_name, number_of_simulations,amplificationFactor N, a, b, c, argc, argv);
+  initialize(outfile_name, number_of_simulations,amplificationFactor, N, a, b, c, argc, argv);
   outfile_name_scalars = (outfile_name) + string("_scalars")+string(".csv");
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
@@ -125,10 +125,11 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
       outfile_name=argv[1];
     }
     number_of_simulations = atoi(argv[2]);
-    N = atoi(argv[3]);
-    a = atof(argv[4]);
-    b = atof(argv[5]);
-    c = atof(argv[6]);
+    amplificationFactor = atoi(argv[3]);
+    N = atoi(argv[4]);
+    a = atof(argv[5]);
+    b = atof(argv[6]);
+    c = atof(argv[7]);
 }
 
 void generate_tridiagonal_matrix(int N,double a, double b, double c, double **computed_tridiagonal_matrix ){
