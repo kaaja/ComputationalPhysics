@@ -14,7 +14,7 @@
 using namespace std;
 
 
-void initialize(string& outfile_name, int& number_of_simulations, int& N, double& a, double& b, double& c, int , char** argv);
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int , char** argv);
 void generate_tridiagonal_matrix(int,double, double, double, double **);
 void generate_LU(int, double **, double **, double **);
 void generate_right_hand_side( int, double *, double *);
@@ -34,7 +34,7 @@ ofstream ofile2;
 int main(int argc, char *argv[]){
   // Declaration variables
   string outfile_name;
-  int number_of_simulations, N, *indxLu;
+  int number_of_simulations, N, amplificationFactor, *indxLu;
   double a, b, c, h_step, computed_error, time_used, L2Norm, dLu;
   double ** computed_tridiagonal_matrix, ** LU_Lower, ** LU_Upper;
   double * computed_numerical_solution, * computed_right_hand_side, * computed_exact_solution;
@@ -42,12 +42,12 @@ int main(int argc, char *argv[]){
   clock_t start, finish;
 
   // Read variables from command line
-  initialize(outfile_name, number_of_simulations, N, a, b, c, argc, argv);
-  outfile_name_scalars = (outfile_name) + string("_scalars");
+  initialize(outfile_name, number_of_simulations,amplificationFactor, N, a, b, c, argc, argv);
+  outfile_name_scalars = (outfile_name) + string("_scalars")+string(".csv");
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
   ofile1.open(outfile_name_scalars);
-  ofile1 << "log_h,log_rel_error, l2norm, time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
+  ofile1 << "log_h,log_rel_error,l2norm,time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   //ofile2.open(outfile_name_vectors);
 
   for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
     output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_exact);
     output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_numerical);
     if (simulation_number < number_of_simulations -1)
-        N *= 10;
+        N *= amplificationFactor;
     }
   ofile1.close();
   ofile2.close();
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations, int& N, double& a, double& b, double& c, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int argc, char** argv )
 {
     if( argc <= 1){
       cout << "Insert: outfile-name, number of simulations, start dimension, tridiagonal elements" << endl;
@@ -125,10 +125,11 @@ void initialize(string& outfile_name, int& number_of_simulations, int& N, double
       outfile_name=argv[1];
     }
     number_of_simulations = atoi(argv[2]);
-    N = atoi(argv[3]);
-    a = atof(argv[4]);
-    b = atof(argv[5]);
-    c = atof(argv[6]);
+    amplificationFactor = atoi(argv[3]);
+    N = atoi(argv[4]);
+    a = atof(argv[5]);
+    b = atof(argv[6]);
+    c = atof(argv[7]);
 }
 
 void generate_tridiagonal_matrix(int N,double a, double b, double c, double **computed_tridiagonal_matrix ){
@@ -260,7 +261,7 @@ void output_scalars( double L2Norm, double computed_error, double h_step, double
 }
 
 void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
-  string filename = outfile_name + to_string(simulation_number+1);
+  string filename = outfile_name + to_string(simulation_number+1)+string(".csv");
   ofile2.open(filename);
   ofile2 << "simulation_number_" << simulation_number+1 << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   ofile2 << setiosflags(ios::showpoint | ios::uppercase);
