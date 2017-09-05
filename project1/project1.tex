@@ -76,15 +76,28 @@
 	
 \maketitle
 
+\section*{Abstract}
+A 1D Poisson problem is solved numerically with three different algorithms in C++. The Thomas algorithm, a simplified version of this algorithm, and the LU decomposition are used. Dynamical memory allocation is used. Theoretical derivations of algorithm efficiency (FLOPS) and truncation and round-off error are derived. The numerical simulations confirms the analytical derivations, with a truncation error of order 2 and a given mesh size that gives a minumim error.
+
 \tableofcontents
 
 \pagebreak
-\section{Abstract}
-\textbf{Task 1} Write.
-\section{Introduction}
-\textbf{Task 2} Put into sentences.\\
 
-Goals: Learn C++, dynamic memory allocation, discretizing differential equations and setting up a linear system, algorithms for solving tridiagonal linear systems, error-analysis (truncation and precision), efficiency analysis.
+
+\section{Introduction}
+Many real life physical problems are formed as differential equations. However, most of these problems are not possible to solve analytically. With the rise of computational power, many real life problems can now we solved numerically. Hence, knowledge of numerical approximation theory and about practical numerical simulations is very important.\\
+
+Computational speed is a crucial variable when it comes to numerical solutions of differential equations. A fast computational language is necessary, and knowledge of a fast computer language is essential. In this project we are starting to learn the C++ language, which is one of the fastes programming languages. In the project we learn about how to implement dynamic memory allocation in C++. Dynamic memory allocation and pointers lets us take advantage of the computational potential of C++.\\
+
+The first task when it comes to solving a differential equation numerically, is to discretize the equation. This is done in this project. Solving large problems on a computer, often ends in solving a linear system. In this project we learn how rewrite a numerical problem to a set of linear equations. \\
+
+The linear systems resulting from differential equations are ofte large. Hence it is important with knowledge about different solution algorithms for linear systems, among other things about the speed of the algorithms. In this project we derive two algorithms, the Thomas algorithm and a simplified version of the Thomas algorithm, and we compute the FLOPS (number of floating point operations) for each algorithm. Finally, we program these algorithms and run them.\\
+
+Often one does not write the algorithms, but use functinos written by others. In this project we learn how to implement externally given programs, in this case the famnous LU-decomposition.\\
+
+A differential equation that shows up in many physical cases, is the Poisson equataion. Electromagnetism, heat transfer, and linear elasticity are example of importan areas where the Poisson equation arises. Knowledge about the numerical issues relating to solution of the Poisson equation is essential. We solve a Poisson equation in this project. \\
+
+Numerical simulations has additional challanges compared to anaytical solutions. Firstly, the limited data implies that we will never get fully continuous solutions on a computed. We will only get an approximation. Knowledge about errors in these approximatinos is essential. There are several type of errors that may occour. Firstly there can be a truncation error in the numerical approximation. Secondly there can be errors du to limited precision on the computer. Both of these errors can destroy the numerical approximations, giving so large errors that the solutions are worhless. In this project we derive expressions for both truncation error and precision error, so that we know how our numerical solution is supposed to act. All simulations fits well with the theoretical error estimates.
 
 \section{Theory}
 
@@ -417,11 +430,22 @@ Our computer crashes for $N = 10^6$, so the above figure to the right stops at $
 The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$. The figures above suggest that the optimal $h$ is around $h = 10^{-5}$, and this corresponds well with our expecations of optimal h in the area $[10^{-5}, 10^{-4}]$ derived in the theory section. 
 
 \section{Conclusions}
-\textbf{Task 13} Sum up the results here.
+In this project we discretized the 1D Poisson equation, rewrote the problem to a linear system, and solved the linear system with three different algorithms in C++.\\
+
+For all algorithms we calculated the number of FLOPS. The C++ simulations confirmed our theoretical FLOP calculations. Out of the three algorithms, we found that the symmetric algorithm was fastest, while the LU-decomposition was slowest. \\
+
+Knowing the anaytical solution to our problem, we calculated the numerical error, represented by the sup-norm. We found that the numerical error was 2nd order up to a point, but that further mesh refinement after this point increased the error. All this is consistent with theoretical derivations we did for the total error. 
 
 \section{Feedback}
-\textbf{Task 14} What has been good, something that could have been done better?
+This project has been extremely educational. We learned about about c++, especially pointers and dynamic memory allocoation. Also which for us was a well forgotten subject, we learned about dangerous of numerical round-off errors. \\
 
+We feel the size of the project is large, much larger than typical assignments in other courses. However, the quality and quantity of the teaching without a doubt made the workload managable. The detailed lectures, combined with the fast and good respones on Piazze helped a lot!\\
+
+We think the project could have gone even smoother, if we on the 2nd lab-session had learned basic branching in Github. We used a considerable amount of time finding out of this.\\
+
+All in all, two thumbs up!
+
+\pagebreak
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 
 	Hjorth-Jensen, M.(2015)
