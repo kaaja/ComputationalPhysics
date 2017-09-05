@@ -354,15 +354,15 @@ The below table displays the times used by the different algorithms. Not that th
 \lstset{backgroundcolor=\color{white}}
 \begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesThomas.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesThomas.txt}
 \end{minipage}\hfill
 \begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesSymmetric2.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesSymmetric2.txt}
 \end{minipage}\hfill
 \begin{minipage}{.32\textwidth}
 	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesLu.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesLu.txt}
 \end{minipage}\hfill
 
 From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3)$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
@@ -371,7 +371,7 @@ The figure below may perhaps give a better impression on the times for the diffe
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/logTimes.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/logTimes.pdf}
 	\caption{Log CPU-times}
 	\label{fig:logtimes}
 \end{figure}
@@ -390,22 +390,22 @@ The below table shows the errors for the different algorithms. It was expected t
 \lstset{backgroundcolor=\color{white}}
 \begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorThomas.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorThomas.txt}
 \end{minipage}\hfill
 \begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorSymmetric.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorSymmetric.txt}
 \end{minipage}\hfill
 \begin{minipage}{.32\textwidth}
 	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorLu.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorLu.txt}
 \end{minipage}\hfill
 
 Since the algorithms give the same error, we use only the results from one of the algorithms when analysing the error. The below figure shows the numerical results from the Thomas algorithm and the exact solution.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/comparison_gaussianTridiagonalSymmetric.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/comparison_gaussianTridiagonalSymmetric.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{fig:comparisongaussiantridiagonalsymmetric}
 \end{figure}
@@ -418,7 +418,7 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 \begin{minipage}{.49\textwidth} %\noindent
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/relativeError_gaussianTridiagonal2.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/relativeError_gaussianTridiagonal2.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{1}
 \end{figure}
@@ -426,7 +426,7 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 \begin{minipage}{.49\textwidth}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/relativeError_gaussianTridiagonal10.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/relativeError_gaussianTridiagonal10.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{1}
 \end{figure}
