@@ -147,7 +147,7 @@ As the equation is written out, it is clear that the values $1, -2$ and $1$ is r
 \end{equation}
 
 \subsection{Linear system solvers}
-
+We will apply three different algorithms for solving the above linear system. These algorithms and their theoretical efficiency (FLOP-calculations) will be described below.
 
 \subsubsection{Gaussian elimination tridiagonal systems}
 We use standard Gaussian elimination, utlizing the sparsity of the matrix by ignoring the zero terms when doing the forward and backward substitution. This gives the Thomas algorithm. The algorithm can be seen in our code, which follows:
@@ -207,7 +207,47 @@ y_1 &= w_1\\
 y_2 &= w_2 - L_{21} y_1\\
 y_3 &= w_3 - L_{31} y_1 - L_{32}y_2\\
 \vdots\\
-y_{N}& = w_N - \sum_{i}^{N-1} L_{Ni} y_i
+y_{N}& = w_N - \sum_{i=1}^{N} L_{Ni} y_i
+\end{align}
+
+From the above, we see
+\begin{equation}
+y_i= w_i -\sum_{j=1}^{i}L_{ij}y_j
+\end{equation}
+
+In terms of flop, the above gives
+
+\begin{equation}\label{eq:flYi}
+fl(y_i) = 1 - 2(i - 1) = 3-2i
+\end{equation}
+
+In total we get
+
+\begin{align}
+fl(y) &= \sum_{i=1}^{N} fl(y_i)\\
+&\stackrel{(\ref{eq:flYi})}{=} \sum_{i=1}^{N} 3 -2i\\
+&\stackrel{\sum_{i=1}^{N-1} i\approx n^2/2}{\approx}{3N - N^2  }\\
+&\approx \mathcal{O}(N^2)
+\end{align}
+
+The next step in the algorithm for solving a system with $LU$, is to solve $Ux = y$ for $y$.\\
+
+We skip some of the steps, and start with the following
+
+\begin{equation}\label{eq:luXflop}
+x_i = \frac{(y_i - \sum_{j=i+1}^N A_{ij} x_j)}{A_{ii}}
+\end{equation}
+
+We get
+
+\begin{align}
+fl(x_i) & \stackrel{\ref{eq:luXflop})}{=} 1 + 2N(i+1) + 1
+\end{align}
+
+In total we get
+
+\begin{align}
+fl(x) &= \sum
 \end{align}
 
 \subsection{Error calculations}
@@ -241,7 +281,7 @@ as function of $log_{10}(h)$ for the function values $u_i$ and $v_i$, and extrac
 
 \section{Results}
 
-\subsection{Efficiency}
+\subsection{Efficiency of the linear system solvers}
 The below table displays the times used by the different algorithms. Not that the LU-time includes also the time for the LU-decomposition, in addition to the time solving the system.
 
 \lstset{backgroundcolor=\color{white}}
