@@ -97,7 +97,7 @@ Often one does not write the algorithms, but use functinos written by others. In
 
 A differential equation that shows up in many physical cases, is the Poisson equataion. Electromagnetism, heat transfer, and linear elasticity are example of importan areas where the Poisson equation arises. Knowledge about the numerical issues relating to solution of the Poisson equation is essential. We solve a Poisson equation in this project. \\
 
-Numerical simulations has additional challanges compared to anaytical solutions. Firstly, the limited data implies that we will never get fully continuous solutions on a computed. We will only get an approximation. Knowledge about errors in these approximatinos is essential. There are several type of errors that may occour. Firstly there can be a truncation error in the numerical approximation. Secondly there can be errors du to limited precision on the computer. Both of these errors can destroy the numerical approximations, giving so large errors that the solutions are worhless. In this project we derive expressions for both truncation error and precision error, so that we know how our numerical solution is supposed to act. All simulations fits well with the theoretical error estimates.
+Numerical simulations has additional challanges compared to anaytical solutions. Firstly, the limited data implies that we will never get fully continuous solutions on a computed. We will only get an approximation. Knowledge about errors in these approximatinos is essential. There are several type of errors that may occour. Firstly there can be a truncation error in the numerical approximation. Secondly there can be errors du to limited precision on the computer. Both of these errors can destroy the numerical approximations, giving so large errors that the solutions are worhless. In this project we derive expressions for both truncation error and precision error, so that we know how our numerical solution is supposed to act. Most of the simulations fits well with the theoretical error estimates.
 
 \section{Theory}
 
@@ -353,16 +353,16 @@ The below table displays the times used by the different algorithms. Not that th
 
 \lstset{backgroundcolor=\color{white}}
 \begin{minipage}{.32\textwidth} %\noindent
-	\lstinputlisting[language={},title={Tridiagonal
-	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonal.tex}
+	\lstinputlisting[language={},title={Thomas
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesThomas.txt}
 \end{minipage}\hfill
-\begin{minipage}{.32\textwidth}
+\begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeTridiagonalSymmetric.tex}
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesSymmetric2.txt}
 \end{minipage}\hfill
 \begin{minipage}{.32\textwidth}
 	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/cpuTimeLU.tex}
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/timesLu.txt}
 \end{minipage}\hfill
 
 From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3)$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
@@ -371,35 +371,43 @@ The figure below may perhaps give a better impression on the times for the diffe
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/logTimes.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/logTimes.pdf}
 	\caption{Log CPU-times}
-	%\label{1}
+	\label{fig:logtimes}
 \end{figure}
 
 The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the incline is about $-1$ in the figure. For the LU we get a slope somewhere between 2 and 3. Knowing that the decomposition is of order 3 and the solution of the system by LU is of order 2, we had expected an incline of 3 in our graph, since the largest $N$ should dominate. We are not sure why we do not get a slope of 3 for LU. \\
 
+Also the plot above for the Thomas algorithm and the simpplified algorithm does not correspond with our FLOP-calculations from the theory section. From thepry we had expected these to much closer.\\
+
+A final note about the above figure is that the plots varied when we ran the simulations again. This we thought was very strange, but we guess the reason is that the state of the computer's CPU and memory are non-constant between different simulations, explaining the varying plots.\\
+
 We were asked if it would be possible to run LU for $N=10^5.$ From before, we know that the Thomas algorithm, which is $\mathcal{O}(N)$, makes the computed crash for $N = 10^6$. Solving LU, which is $\mathcal{O}(N^3)$ for $N = 10^5$, would give FLOPS of order $10^15$, which would never be solved on our computer.
 
 \subsection{Error analysis}
-The below table shows the errors for LU and the Thomas algorithm. It was expected that these two algorithms should produce results equal to each other, whithin machine precision. Both algorithms solves exactly the same system. The table below confirms our expectation. However, we suspect that there could have appeared larger errors, due to numerical issues, knowing e.g. that zeros in matrices can cause trouble.
+The below table shows the errors for the different algorithms. It was expected that the algorithms should produce results equal to each other, whithin machine precision. All algorithms solves exactly the same system. The table below confirms our expectation. 
 
 \lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.49\textwidth} %\noindent
-	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/errorLu.txt}
-\end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
+\begin{minipage}{.32\textwidth} %\noindent
 	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/errorTridiagonal.txt}
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorThomas.txt}
+\end{minipage}\hfill
+\begin{minipage}{.32\textwidth} %\noindent
+	\lstinputlisting[language={},title={Symmetric
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorSymmetric.txt}
+\end{minipage}\hfill
+\begin{minipage}{.32\textwidth}
+	\lstinputlisting[language={},title={LU
+	}]{/home/karl/doc/subj/att/fys4150/project1/results/errorLu.txt}
 \end{minipage}\hfill
 
 Since the algorithms give the same error, we use only the results from one of the algorithms when analysing the error. The below figure shows the numerical results from the Thomas algorithm and the exact solution.
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/comparison_gaussianTridiagonalSymmetric.pdf}
 	\caption{Results Tridiagonal Gaussian}
-	%\label{1}
+	\label{fig:comparisongaussiantridiagonalsymmetric}
 \end{figure}
 
 We see that except for the coarsest grid, $N=10$, the fit is really good. Knowing that our approximator for the 2nd derivative is 2nd order, and the fact that the simulations in the figure has 10, 100 and 1000 grid points, it is not surprising that the error is reduced considerably when the grid is made 10 times finser in each step. With a convergence rate of 2, a ten fold refinement in the grid should lead to a 100 fold refinement in the truncation error.\\
@@ -410,7 +418,7 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 \begin{minipage}{.49\textwidth} %\noindent
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error2.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/relativeError_gaussianTridiagonal2.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{1}
 \end{figure}
@@ -418,7 +426,7 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 \begin{minipage}{.49\textwidth}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_error.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/plotsFinal/relativeError_gaussianTridiagonal10.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{1}
 \end{figure}
@@ -427,7 +435,9 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 
 Our computer crashes for $N = 10^6$, so the above figure to the right stops at $N = 10^5$. The figure shows that up to $N = 10^5$, the error seems to follow the expected truncation error, since the slope seems to be pretty close to 2.\\
 
-The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$. The figures above suggest that the optimal $h$ is around $h = 10^{-5}$, and this corresponds well with our expecations of optimal h in the area $[10^{-5}, 10^{-4}]$ derived in the theory section. 
+The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$. The figures above suggest that the optimal $h$ is around $h = 10^{-5}$, and this corresponds well with our expecations of optimal h in the area $[10^{-5}, 10^{-4}]$ derived in the theory section.\\
+ 
+We must however note that the results was not as clear for the symmetric algorithm. For the symmetric algorithm, the error still declined when we doubled the mesh refinement from the right to the left figure above. However, the slope was much lower than 2.
 
 \section{Conclusions}
 In this project we discretized the 1D Poisson equation, rewrote the problem to a linear system, and solved the linear system with three different algorithms in C++.\\

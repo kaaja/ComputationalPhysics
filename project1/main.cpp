@@ -12,6 +12,7 @@ Peter Even Killingstad and Karl Jacobsen
 
 using namespace std;
 
+
 void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int , char** argv);
 void generate_tridiagonal_matrix(int,double, double, double, double **);
 void generate_right_hand_side( int, double *, double *);
@@ -22,8 +23,10 @@ void calculate_error(double *, double *, double *, double *, int);
 void output_scalars( double, double, double, double, double);
 void output_vectors( double *, int, int, string);
 
+
 ofstream ofile1; // File for scalars
 ofstream ofile2; // File for vectors
+
 
 int main(int argc, char *argv[]){
   string outfile_name;

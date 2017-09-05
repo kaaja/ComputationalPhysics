@@ -2,5 +2,5 @@
 cd ${0%/*} || exit 1    # Run from this directory
 
 
-cd ../build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug
+cd results
 rm *.csv
