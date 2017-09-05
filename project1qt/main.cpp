@@ -77,9 +77,9 @@ int main(int argc, char *argv[]){
     else if (outfile_name == "gaussianTridiagonalSymmetric")
         gassianTridiagonalSymmetricSolver(computed_right_hand_side, computed_numerical_solution, N);
     else if (outfile_name=="luLib" ){
-        ludcmp(computed_tridiagonal_matrix, N, indxLu, &dLu);
-        for ( int i = 0; i < N; i++) computed_numerical_solution[i] = computed_right_hand_side[i];
-        lubksb(computed_tridiagonal_matrix, N, indxLu, computed_numerical_solution);
+            ludcmp(computed_tridiagonal_matrix, N, indxLu, &dLu);
+            for ( int i = 0; i < N; i++) computed_numerical_solution[i] = computed_right_hand_side[i];
+            lubksb(computed_tridiagonal_matrix, N, indxLu, computed_numerical_solution);
     }
     else {
         cout << "define solver type. LU or gaussian" << endl;

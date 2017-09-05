@@ -15,8 +15,10 @@ import os
 def initializeSolvers(numberOfSimulations,amplificationFactor, N, a, b, c):
 	call(["./Allclean"])
 	solvers = ["gaussianTridiagonal","gaussianTridiagonalSymmetric","luLib"]
-	for i in solvers:
-		call(["./Allrun", i, numberOfSimulations,amplificationFactor, N, a, b, c])
+	for solver in solvers:
+	    if solver == "luLib" and int(numberOfSimulations) >= 2:
+	        numberOfSimulations = str(2)
+	    call(["./Allrun", solver, numberOfSimulations,amplificationFactor, N, a, b, c])
 	
 def readScalarValues():
 	gaussianTridiagonalScalars = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_scalars.csv", 
@@ -44,7 +46,7 @@ def readSolutionVectors(numberOfSimulations):
 		gaussianTridiagonalSymmetric[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonalSymmetric_numerical%d.csv" %(key+1), 
 		                 delimiter=',').values
 		gaussianTridiagonalSymmetric[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
-		
+		        
 		LU[key] = pd.read_table("/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/luLib_numerical%d.csv" %(key+1), 
 		                 delimiter=',').values
 		LU[key] = np.reshape(gaussianTridiagonalSymmetric[key], -1)
