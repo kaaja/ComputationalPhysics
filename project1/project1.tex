@@ -80,8 +80,10 @@
 
 \pagebreak
 \section{Abstract}
-
+\textbf{Task 1} Write.
 \section{Introduction}
+\textbf{Task 2} Put into sentences.\\
+
 Goals: Learn C++, dynamic memory allocation, discretizing differential equations and setting up a linear system, algorithms for solving tridiagonal linear systems, error-analysis (truncation and precision), efficiency analysis.
 
 \section{Theory}
@@ -154,24 +156,27 @@ We use standard Gaussian elimination, utlizing the sparsity of the matrix by ign
 
 \begin{lstlisting}
 void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N){
-double multiplicationFactor;
-for (int i = 1; i < N; i++){
-multiplicationFactor = computed_tridiagonal_matrix[i][i-1]/computed_tridiagonal_matrix[i-1][i-1];
-computed_tridiagonal_matrix[i][i-1] = 0;
-computed_tridiagonal_matrix[i][i] += - multiplicationFactor*computed_tridiagonal_matrix[i-1][i];
-computed_right_hand_side[i] += - multiplicationFactor*computed_right_hand_side[i-1];
-}
-for(int i = N-1; i > -1; i--){
-if(i == N-1)
-computed_numerical_solution[i] = computed_right_hand_side[i];
-else
-computed_numerical_solution[i] = computed_right_hand_side[i+1] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1]/computed_tridiagonal_matrix[i][i];
-}
+	double multiplicationFactor;
+	
+	for (int i = 1; i < N; i++){
+		multiplicationFactor = computed_tridiagonal_matrix[i][i-1]/computed_tridiagonal_matrix[i-1][i-1];
 
+		computed_tridiagonal_matrix[i][i] += - multiplicationFactor*computed_tridiagonal_matrix[i-1][i];
+
+		computed_right_hand_side[i] += - multiplicationFactor*computed_right_hand_side[i-1];
+	}
+	
+	for(int i = N-1; i > -1; i--){
+		if(i == N-1)
+			computed_numerical_solution[i] = computed_right_hand_side[i]/computed_tridiagonal_matrix[i][i];
+		else
+			computed_numerical_solution[i] = (computed_right_hand_side[i] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1])
+			/computed_tridiagonal_matrix[i][i];
+	}
 }
 \end{lstlisting}
 
-\textbf{Task 2} We can insert a few comments in the top of the function, explaining the algorithm. \\
+As can be seen from the code, the algorithm simply consist of two basic steps: one forward substitution and one backward substitution.\\
 
 Now we want to calculate the number of floating points operations (FLOPS) needed to solve the linear system with the above algorithm. This is an extremely important topic, since the number of FLOPS typically will be very large in physics problems, and having an algorithm that reduces the FLOPS can be the difference between being able to solve the problem and not!\\
 
