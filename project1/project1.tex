@@ -282,7 +282,36 @@ In our differential equation, we approximate the 2nd derivative with a truncated
 In our case the truncation error is of $\mathcal{O}(h^2)$. From this we expect the truncation error to depend on the step lenght, $h$, to a order of 2, meaning that a reduction of $h$ by a factor of 10 should reduce the truncation error by a factor of 20.
 
 \subsubsection{Round-off errors}
-\textbf{Task 6} Write something about this.
+With double precision the computer is only accurate up to $\epsilon_{ro} = 10^{-16}$, where $\epsilon_{ro}$ stands for round of error. Now we will calculate an expression for the round-off error in our approximation of the 2nd derivative.\\
+
+We approximate the 2nd derivative with
+\begin{align}
+f'' &= \frac{f_{-} + f_{+} - 2f_0}{h^2}  \\
+&= \frac{(f_{+} - f_0) + (f_{-} - f_0)}{h^2}
+\end{align}
+
+For small $h$, the subtractions in the above expression is $ (f_+ - f_0) \approx (f_- - f_0) \approx \epsilon_{ro}$. Insertion of this into the above equation gives
+
+\begin{align}
+|f''| \leq \frac{2 \epsilon_{ro}}{h^2}
+\end{align}
+
+For the truncation error we have the expression $ \frac{f_0^{(4)}h^2}{12}$.  \\
+
+Using the expressions for truncation error and round-off error, we get the following expression for the total error
+
+\begin{align}
+|\epsilon_{Total}| \leq \frac{2 \epsilon_{ro}}{h^2} + \frac{f_0^{(4)}h^2}{12}
+\end{align}
+
+We see that the truncation error decreases in smaller $h$, while the round-off error increases. Since we are so luck having the analytical exprresion, we can calculate the truncation error. Being able to do this, we can find the optimal $h$, which minimizes the total error. Optimal h is found by differentiation of the above expression with respect to h. The differentiation yields
+
+\begin{align}
+h^{optimal} &= \frac{24 \epsilon_{ro}}{f_0^{(4)}}\\
+&= \frac{24 \cdot 10^{-16}}{-10^4 e^{-10x}},
+\end{align}
+
+where we in the last step have differentiated the expression for the anlytical solution four times. Now the optimal $h$ depends on which value of x that is chosen. $x = 0$ gives $2\cdot10^{-5}$, while $x = 1$ gives $3 \cdot 10^{-4}$. From this we expect the optimal $h$ to be found somewhere around $h \approx [10^{-5}, 10^{-4}]$.
 
 \subsubsection{Total error}
 We are more interested in the relative error, meaning the difference between the numerical and exact solution, relateive to the exact solution, than in the pure error. The reason for this, is that a small pure error could be physically insignificant if the quantities are big, while on the other hand a small pure error could be very significant if the quantities we are measuring are small. Example: 1 cm in error when simulating trajectories of planets is probably less physically significant than 1 cm error when doing simulations on molecular level.\\
@@ -380,14 +409,7 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 
 Our computer crashes for $N = 10^6$, so the above figure to the right stops at $N = 10^5$. The figure shows that up to $N = 10^5$, the error seems to follow the expected truncation error, since the slope seems to be pretty close to 2.\\
 
-The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$.\\
-
-\textbf{task 10} Comment uppon the error (truncation verson round-off). Where to expect turning point....
-
-
-
-
-
+The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$. The figures above suggest that the optimal $h$ is around $h = 10^{-5}$, and this corresponds well with our expecations of optimal h in the area $[10^{-5}, 10^{-4}]$ derived in the theory section. 
 
 \section{Conclusions}
 \textbf{Task 13} Sum up the results here.
