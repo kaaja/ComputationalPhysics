@@ -146,8 +146,10 @@ As the equation is written out, it is clear that the values $1, -2$ and $1$ is r
 \underbrace{\begin{bmatrix} f_1 h^2\\ f_2 h^2 \\ \vdots \\ f_nh^2\end{bmatrix}}_{\mathbf{\tilde{b}}}
 \end{equation}
 
+\subsection{Linear system solvers}
 
-\subsection{Gaussian elimination tridiagonal systems}
+
+\subsubsection{Gaussian elimination tridiagonal systems}
 We use standard Gaussian elimination, utlizing the sparsity of the matrix by ignoring the zero terms when doing the forward and backward substitution. This gives the Thomas algorithm. The algorithm can be seen in our code, which follows:
 
 \begin{lstlisting}
@@ -175,7 +177,7 @@ Now we want to calculate the number of floating points operations (FLOPS) needed
 
 According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To check our understanding, we will try calculating the number of FLOPS ourself. Looking at the code above, we start by caunting FLOPS in the forward substitution, which is the first for loop. The variable 'mutliplicationfactor' equals a division, which counts as one FLOP. '\texttt{coputed\_tridiagonal\_matrix}' enveolves a sum of two terms, which gives one FLOP, and a multiplication, which gives another FLOP. So in total for '\texttt{computed\_tridiagonal\_matrix}' we have 2 FLOPS. Next the calculation of '\texttt{computed\_right\_hand\_side}' envolves a multiplication (1 FLOP) and a summation (1 FLOP), giving 2 FLOPS for '\texttt{computed\_right\_hand\_side}'. For each iteration in the loop, we have a total of 5 FLOPS. The loop goes from $1$ to $N-1$, giving $N-1$ iterations. This, in total we have $5(N-1)$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS, which is the same as given on Wikipedia.
 
-\subsection{Gaussian elimination symmetric tridiagonal systems}
+\subsubsection{Gaussian elimination symmetric tridiagonal systems}
 If the tridiagonal system is symmetric, $A = A^T$, the Gaussian elimination method can be made even simpler than in the Thomas algorithm. The program below shows the algorithm and its implementation.
 
 \begin{lstlisting}
@@ -196,13 +198,33 @@ computed_numerical_solution[i] = computed_right_hand_side[i] - computed_tridiago
 
 \textbf{Task 5} Here we should do, and show, FLOP-count for the above listed algorithm.
 
+\subsubsection{LU}
+We will compare the speed of our algorithms with the speed of the LU-algorithm. According to Hjorth-Jensen \cite{MHJ} p. 173, solving a system with LU is $\mathcal{O}(n^2)$ requires FLOPS, but the composition itself requires  $\mathcal{O}(n^3)$ FLOPS. Based on this, we expect our algorithms to outperform the LU-algorithm, independentlyu of whether one includes the composition itself in the comparison or not.\\
+
+Here we will try ourself to compute the FLOP requirements for solving a system with LU. One starts by solving $Ly = w$ for $y$, where L is lower tridiagonal $N\; X\; N$ with 1 on the diagonal. Seting up the first few iterations of the loop solving the system, we hopefully see a pattern:
+\begin{align}
+y_1 &= w_1\\
+y_2 &= w_2 - L_{21} y_1\\
+y_3 &= w_3 - L_{31} y_1 - L_{32}y_2\\
+\vdots\\
+y_{N}& = w_N - \sum_{i}^{N-1} L_{Ni} y_i
+\end{align}
+
 \subsection{Error calculations}
 Having knowledge about the errors of the numerical solutions is essential, because without this knowledge, it is difficult to know the validity of the results. Without knowledge of validity of the results, we are exiting the subject of (natural) science. \\
 
+Leaving out probably the largest error source, our selves, there will be two possible sources of errors: truncation error due to numerical approximation of continuous operators (the 2nd derivative), and round-off errors due to limited computer precision. Below we will derive some expressions for these errors, giving us knowledge about what to expect from the numerical solutions.
+
+\subsubsection{Truncation error}
+
 In our differential equation, we approximate the 2nd derivative with a truncated Taylor-polynomial. A nice thing by using Taylor ploynomials is that we have knowledge about the truncation error, the difference between numerical and exact solution due to terms in the Taylor series being left out. It turns out that in our case the truncation error depends on the step size, $h$. Hence we know what to expect of the truncation error when varying $h$. \\
 
-In our case the truncation error is of $\mathcal{O}(h^2)$. From this we expect the truncation error to depend on the step lenght, $h$, to a order of 2, meaning that a reduction of $h$ by a factor of 10 should reduce the truncation error by a factor of 20.\\
+In our case the truncation error is of $\mathcal{O}(h^2)$. From this we expect the truncation error to depend on the step lenght, $h$, to a order of 2, meaning that a reduction of $h$ by a factor of 10 should reduce the truncation error by a factor of 20.
 
+\subsubsection{Round-off errors}
+\textbf{Task 6} Write something about this.
+
+\subsubsection{Total error}
 We are more interested in the relative error, meaning the difference between the numerical and exact solution, relateive to the exact solution, than in the pure error. The reason for this, is that a small pure error could be physically insignificant if the quantities are big, while on the other hand a small pure error could be very significant if the quantities we are measuring are small. Example: 1 cm in error when simulating trajectories of planets is probably less physically significant than 1 cm error when doing simulations on molecular level.\\
 
 For inspection of errors, and relating them to the expected convergence rates from Taylor series theory, it is neat to take the log the the errors and of the step lengths. Plotting this, the slopes could be directly compared with the expected convergence rate, the $\mathcal{O}$-term from the Taylor approximation of the 2nd derivative.\\
@@ -215,38 +237,11 @@ By the methods mentioned above, we compute the relative error in the data set $i
 \epsilon_i=log_{10}\left(\left|\frac{v_i-u_i}
 {u_i}\right|\right),
 \]
-as function of $log_{10}(h)$ for the function values $u_i$ and $v_i$, and extract the maximum for each step length.\\
-
-As an alternative we also computed the L2-error norm, which basically sums up all the local errors to one single measure. The reason for also including this norm, is that it can give some extra information about the overall performance of the numerical approximation over the whole domain.
-
-\subsection{LU}
-We will compare the speed of our algorithms with the speed of the LU-algorithm. According to Hjorth-Jensen \cite{MHJ} p. 173, solving a system with LU is $\mathcal{O}(n^2)$ requires FLOPS, but the composition itself requires  $\mathcal{O}(n^3)$ FLOPS. Based on this, we expect our algorithms to outperform the LU-algorithm, independentlyu of whether one includes the composition itself in the comparison or not.\\
-
-Here we will try ourself to compute the FLOP requirements for solving a system with LU. One starts by solving $Ly = w$ for $y$, where L is lower tridiagonal $N\; X\; N$ with 1 on the diagonal. Seting up the first few iterations of the loop solving the system, we hopefully see a pattern:
-\begin{align}
-y_1 &= w_1\\
-y_2 &= w_2 - L_{21} y_1\\
-y_3 &= w_3 - L_{31} y_1 - L_{32}y_2\\
-\vdots\\
-y_{N}& = w_N - \sum_{i}^{N-1} L_{Ni} y_i
-\end{align}
-
-
+as function of $log_{10}(h)$ for the function values $u_i$ and $v_i$, and extract the maximum for each step length.
 
 \section{Results}
 
-\subsection{Thomas algorithm}
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
-	\caption{Results Tridiagonal Gaussian}
-	%\label{1}
-\end{figure}
-
-We see that except for the coarsest grid, $N=10$, the fit is really good. Knowing that our approximator for the 2nd derivative is 2nd order, and the fact that the simulations in the figure has 10, 100 and 1000 grid points, it is not surprising that the error is reduced considerably when the grid is made 10 times finser in each step. With a convergence rate of 2, a ten fold refinement in the grid should lead to a 100 fold refinement in the truncation error.
-
-\subsection{Iterations times}
+\subsection{Efficiency}
 The below table displays the times used by the different algorithms. Not that the LU-time includes also the time for the LU-decomposition, in addition to the time solving the system.
 
 \lstset{backgroundcolor=\color{white}}
@@ -274,9 +269,37 @@ The figure below may perhaps give a better impression on the times for the diffe
 	%\label{1}
 \end{figure}
 
-The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the incline is about $-1$ in the figure. For the LU we get a slope somewhere between 2 and 3. Knowing that the decomposition is of order 3 and the solution of the system by LU is of order 2, we had expected an incline of 3 in our graph, since the largest $N$ should dominate. We are not sure why we do not get a slope of 3 for LU. 
+The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the incline is about $-1$ in the figure. For the LU we get a slope somewhere between 2 and 3. Knowing that the decomposition is of order 3 and the solution of the system by LU is of order 2, we had expected an incline of 3 in our graph, since the largest $N$ should dominate. We are not sure why we do not get a slope of 3 for LU. \\
 
-\subsection{Error}
+We were asked if it would be possible to run LU for $N=10^5.$ From before, we know that the Thomas algorithm, which is $\mathcal{O}(N)$, makes the computed crash for $N = 10^6$. Solving LU, which is $\mathcal{O}(N^3)$ for $N = 10^5$, would give FLOPS of order $10^15$, which would never be solved on our computer.
+
+\subsection{Error analysis}
+The below table shows the errors for LU and the Thomas algorithm. It was expected that these two algorithms should produce results equal to each other, whithin machine precision. Both algorithms solves exactly the same system. The table below confirms our expectation. However, we suspect that there could have appeared larger errors, due to numerical issues, knowing e.g. that zeros in matrices can cause trouble.
+
+\lstset{backgroundcolor=\color{white}}
+\begin{minipage}{.49\textwidth} %\noindent
+	\lstinputlisting[language={},title={LU
+	}]{/home/karl/doc/subj/att/fys4150/project1/errorLu.txt}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\lstinputlisting[language={},title={Thomas
+	}]{/home/karl/doc/subj/att/fys4150/project1/errorTridiagonal.txt}
+\end{minipage}\hfill
+
+Since the algorithms give the same error, we use only the results from one of the algorithms when analysing the error. The below figure shows the numerical results from the Thomas algorithm and the exact solution.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/build-project1qt-Desktop_Qt_5_9_1_GCC_64bit-Debug/gaussianTridiagonal_comparison.pdf}
+	\caption{Results Tridiagonal Gaussian}
+	%\label{1}
+\end{figure}
+
+We see that except for the coarsest grid, $N=10$, the fit is really good. Knowing that our approximator for the 2nd derivative is 2nd order, and the fact that the simulations in the figure has 10, 100 and 1000 grid points, it is not surprising that the error is reduced considerably when the grid is made 10 times finser in each step. With a convergence rate of 2, a ten fold refinement in the grid should lead to a 100 fold refinement in the truncation error.\\
+
+Below follows figures for the relative error. Not that the scales on the x-axis on the two figures are not the same. The reason for different scale is that our computed crashed when we increased N tenfold from the last N in the right figure.\\
+
+
 \begin{minipage}{.49\textwidth} %\noindent
 \begin{figure}[H]
 	\centering
@@ -295,30 +318,16 @@ The figure above shows that the Thomas algorithm is $\mathcal{O}(N)$, the inclin
 
 \end{minipage}\hfill
 
-
-
-
 Our computer crashes for $N = 10^6$, so the above figure to the right stops at $N = 10^5$. The figure shows that up to $N = 10^5$, the error seems to follow the expected truncation error, since the slope seems to be pretty close to 2.\\
 
-The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$.
+The figure to the left above shows the error-development staring where the previous figure left off, but with smaller increases in $N$.\\
 
 \textbf{task 10} Comment uppon the error (truncation verson round-off). Where to expect turning point....
 
-\subsection{LU}
-The below table shows the errors for LU and the Thomas algorithm. It was expected that these two algorithms should produce results equal to each other, whithin machine precision. Both algorithms solves exactly the same system. The table below confirms our expectation. However, we suspect that there could have appeared larger errors, due to numerical issues, knowing e.g. that zeros in matrices can cause trouble.
-
-\lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.49\textwidth} %\noindent
-	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/errorLu.txt}
-\end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
-	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/errorTridiagonal.txt}
-\end{minipage}\hfill
 
 
-We were asked if it would be possible to run LU for $N=10^5.$ From before, we know that the Thomas algorithm, which is $\mathcal{O}(N)$, makes the computed crash for $N = 10^6$. Solving LU, which is $\mathcal{O}(N^3)$ for $N = 10^5$, would give FLOPS of order $10^15$, which would never be solved on our computer.
+
+
 
 \section{Conclusions}
 \textbf{Task 13} Sum up the results here.
