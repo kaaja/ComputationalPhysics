@@ -181,22 +181,28 @@ According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To
 If the tridiagonal system is symmetric, $A = A^T$, the Gaussian elimination method can be made even simpler than in the Thomas algorithm. The program below shows the algorithm and its implementation.
 
 \begin{lstlisting}
-void gassianTridiagonalSymmetricSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N){
-for (int i = 1 ; i < N; i++){
-computed_tridiagonal_matrix[i][i] += -computed_tridiagonal_matrix[i-1][i]*computed_tridiagonal_matrix[i-1][i]/computed_tridiagonal_matrix[i-1][i-1];
-computed_right_hand_side[i] += -computed_tridiagonal_matrix[i-1][i]*computed_right_hand_side[i-1]/computed_tridiagonal_matrix[i-1][i-1];
-}
+void gassianTridiagonalSymmetricSolver( double * computed_right_hand_side, 
+										double * computed_numerical_solution, int N){
+    double diagonal;
+    double * f;
+    f = new double[N];
+    f[0] = computed_right_hand_side[0];
+    diagonal = 2.;
+    for (int i=1; i < N; i++){
+        f[i] = computed_right_hand_side[i] + double(i)/(i+1.)*f[i-1];
+    }
+    diagonal = ((N-1)+2.)/((N-1)+1.);
+    computed_numerical_solution[N-1] = f[N-1]/diagonal;
+    for (int i = N-1; i >0; i--){
+        computed_numerical_solution[i-1] = double(i)/(i+1.)*(f[i-1] 
+        									+ computed_numerical_solution[i]);
+    }
 
-computed_numerical_solution[N-1] = computed_right_hand_side[N-1]/computed_tridiagonal_matrix[N-1][N-1];
-for (int i = N-2; i > -1; i--){
-computed_numerical_solution[i] = computed_right_hand_side[i] - computed_tridiagonal_matrix[i][i+1]*computed_numerical_solution[i+1]/computed_tridiagonal_matrix[i+1][i+1];
-}
+    delete [] f;
 }
 \end{lstlisting}
 
-\textbf{Task 4} The above listing must be made more pretty bby fixing the spaces, but that can wait tuil we know we have the final program. Also for this function, we should in the top add lines describing the algorithm.\\
-
-\textbf{Task 5} Here we should do, and show, FLOP-count for the above listed algorithm.
+We can again calculate the FLOPS needed to solve the linear system with the above algorithm. For the forward substitution we have the variable f that contains a division, two summations and a multiplication. This leads to a flop count of $4(N-1)$ FLOPS. Outside of the two loops in the algorithm, we have to calculate the diagonal, that is needed to start of the backward substituion. The diagonal contains two summations and a division, giving us a count of three FLOPS. We need the last computed numerical solution to start of the backward substituion. It contains one division, giving one FLOP. In the backward substitution we have one division, two summations and a multiplication giving 4(N-1) FLOPS. In total we get $8(N-\frac{1}{2})$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS. 
 
 \subsubsection{LU}
 We will compare the speed of our algorithms with the speed of the LU-algorithm. According to Hjorth-Jensen \cite{MHJ} p. 173, solving a system with LU is $\mathcal{O}(n^2)$ requires FLOPS, but the composition itself requires  $\mathcal{O}(n^3)$ FLOPS. Based on this, we expect our algorithms to outperform the LU-algorithm, independentlyu of whether one includes the composition itself in the comparison or not.\\
