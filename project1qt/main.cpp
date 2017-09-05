@@ -43,11 +43,11 @@ int main(int argc, char *argv[]){
 
   // Read variables from command line
   initialize(outfile_name, number_of_simulations, N, a, b, c, argc, argv);
-  outfile_name_scalars = (outfile_name) + string("_scalars");
+  outfile_name_scalars = (outfile_name) + string("_scalars")+string(".csv");
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
   ofile1.open(outfile_name_scalars);
-  ofile1 << "log_h,log_rel_error, l2norm, time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
+  ofile1 << "log_h,log_rel_error,l2norm,time_used" << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   //ofile2.open(outfile_name_vectors);
 
   for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
@@ -260,7 +260,7 @@ void output_scalars( double L2Norm, double computed_error, double h_step, double
 }
 
 void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
-  string filename = outfile_name + to_string(simulation_number+1);
+  string filename = outfile_name + to_string(simulation_number+1)+string(".csv");
   ofile2.open(filename);
   ofile2 << "simulation_number_" << simulation_number+1 << endl; // DO NOT USE WHITESPACE BETWEEN VAR-NAMES. Pandas does not handle it.
   ofile2 << setiosflags(ios::showpoint | ios::uppercase);
