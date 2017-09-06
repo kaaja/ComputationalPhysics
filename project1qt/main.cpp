@@ -13,6 +13,7 @@ Peter Even Killingstad and Karl Jacobsen
 using namespace std;
 
 void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int , char** argv);
+void run_simulations(int N, int number_of_simulations, int amplificationFactor, double ** computed_tridiagonal_matrix, double * computed_numerical_solution, double * computed_right_hand_side, double * computed_exact_solution, int *indxLu, double time_used, clock_t start, clock_t finish);
 void generate_tridiagonal_matrix(int,double, double, double, double **);
 void generate_right_hand_side( int, double *, double *);
 void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
@@ -42,47 +43,7 @@ int main(int argc, char *argv[]){
   ofile1 << "log_h,log_rel_error,l2norm,time_used,logTimeUsed" << endl;
 
   // Running solvers for different mesh sizes, N
-  for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
-    computed_tridiagonal_matrix = new double*[N];
-    computed_right_hand_side = new double[N];
-    computed_numerical_solution = new double[N];
-    computed_exact_solution = new double[N];
-    indxLu = new int[N];
-
-    for (int i = 0; i < N; i++ ){
-      computed_tridiagonal_matrix[i] = new double[N];
-    }
-
-    generate_tridiagonal_matrix(N, a, b, c, computed_tridiagonal_matrix);
-    generate_right_hand_side(N, computed_right_hand_side, &h_step);
-
-    start = clock();
-    if (outfile_name == "gaussianTridiagonal")
-        gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
-    else if (outfile_name == "gaussianTridiagonalSymmetric")
-        gassianTridiagonalSymmetricSolver(computed_right_hand_side, computed_numerical_solution, N);
-    else if (outfile_name=="luLib" ){
-            ludcmp(computed_tridiagonal_matrix, N, indxLu, &dLu);
-            for ( int i = 0; i < N; i++) computed_numerical_solution[i] = computed_right_hand_side[i];
-            lubksb(computed_tridiagonal_matrix, N, indxLu, computed_numerical_solution);
-    }
-    else {
-        cout << "define solver type. " << endl;
-        exit(0);
-    }
-
-    finish = clock();
-    time_used = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    double logTimeUsed = log10(time_used);
-
-    generate_exact_solution(N, computed_exact_solution);
-    calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, &L2Norm, N);
-    output_scalars( L2Norm, computed_error, h_step, time_used, logTimeUsed);
-    output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_exact);
-    output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_numerical);
-    if (simulation_number < number_of_simulations -1)
-        N *= amplificationFactor;
-    }
+  run_simulations(N, number_of_simulations, amplificationFactor, computed_tridiagonal_matrix, computed_numerical_solution, computed_right_hand_side, computed_exact_solution, indxLu,time_used, start, finish);
 
   ofile1.close();
   ofile2.close();
@@ -114,6 +75,49 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     a = atof(argv[5]); // Lower diagonal
     b = atof(argv[6]); // Digonal
     c = atof(argv[7]); // Upper diagonal
+}
+
+void run_simulations(int N, int number_of_simulations, int amplificationFactor, double ** computed_tridiagonal_matrix, double * computed_numerical_solution, double * computed_right_hand_side, double * computed_exact_solution, int *indxLu, double time_used, clock_t start, clock_t finish){
+    for (int simulation_number = 0; simulation_number < number_of_simulations; simulation_number++){
+      computed_tridiagonal_matrix = new double*[N];
+      computed_right_hand_side = new double[N];
+      computed_numerical_solution = new double[N];
+      computed_exact_solution = new double[N];
+      indxLu = new int[N];
+
+      for (int i = 0; i < N; i++ )
+        computed_tridiagonal_matrix[i] = new double[N];
+
+      generate_tridiagonal_matrix(N, a, b, c, computed_tridiagonal_matrix);
+      generate_right_hand_side(N, computed_right_hand_side, &h_step);
+
+      start = clock();
+      if (outfile_name == "gaussianTridiagonal")
+          gaussianTridiagonalSolver(computed_tridiagonal_matrix, computed_right_hand_side, computed_numerical_solution, N);
+      else if (outfile_name == "gaussianTridiagonalSymmetric")
+          gassianTridiagonalSymmetricSolver(computed_right_hand_side, computed_numerical_solution, N);
+      else if (outfile_name=="luLib" ){
+              ludcmp(computed_tridiagonal_matrix, N, indxLu, &dLu);
+              for ( int i = 0; i < N; i++) computed_numerical_solution[i] = computed_right_hand_side[i];
+              lubksb(computed_tridiagonal_matrix, N, indxLu, computed_numerical_solution);
+      }
+      else {
+          cout << "define solver type. " << endl;
+          exit(0);
+      }
+
+      finish = clock();
+      time_used = (double)((finish - start)/double(CLOCKS_PER_SEC));
+      double logTimeUsed = log10(time_used);
+
+      generate_exact_solution(N, computed_exact_solution);
+      calculate_error(computed_numerical_solution, computed_exact_solution, &computed_error, &L2Norm, N);
+      output_scalars( L2Norm, computed_error, h_step, time_used, logTimeUsed);
+      output_vectors( computed_exact_solution, simulation_number, N, outfile_name_computed_exact);
+      output_vectors( computed_numerical_solution, simulation_number, N, outfile_name_computed_numerical);
+      if (simulation_number < number_of_simulations -1)
+          N *= amplificationFactor;
+      }
 }
 
 void generate_tridiagonal_matrix(int N,double a, double b, double c, double **computed_tridiagonal_matrix ){
