@@ -1,3 +1,5 @@
+Dependencies: all files in the directory, excluding the folder 'texPlotsTableData'.
+
 Project1 contains two files of importance:
 main.cpp, which does all numerical computations.
 runProject1.py, which runs main.cpp, reads output from main.cpp and plots figures from the main.cpp output results.
