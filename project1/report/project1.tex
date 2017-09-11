@@ -193,7 +193,9 @@ As can be seen from the code, the algorithm simply consist of two basic steps: o
 
 Now we want to calculate the number of floating points operations (FLOPS) needed to solve the linear system with the above algorithm. This is an extremely important topic, since the number of FLOPS typically will be very large in physics problems, and having an algorithm that reduces the FLOPS can be the difference between being able to solve the problem and not!\\
 
-According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To check our understanding, we will try calculating the number of FLOPS ourself. Looking at the code above, we start by caunting FLOPS in the forward substitution, which is the first for loop. The variable 'mutliplicationfactor' equals a division, which counts as one FLOP. '\texttt{coputed\_tridiagonal\_matrix}' enveolves a sum of two terms, which gives one FLOP, and a multiplication, which gives another FLOP. So in total for '\texttt{computed\_tridiagonal\_matrix}' we have 2 FLOPS. Next the calculation of '\texttt{computed\_right\_hand\_side}' envolves a multiplication (1 FLOP) and a summation (1 FLOP), giving 2 FLOPS for '\texttt{computed\_right\_hand\_side}'. For each iteration in the loop, we have a total of 5 FLOPS. The loop goes from $1$ to $N-1$, giving $N-1$ iterations. This, in total we have $5(N-1)$ FLOPS for the forward substitution.\\
+According to Wikipedia, the Thomas algorithm requires $\mathcal{O}(n)$ FLOPS. To check our understanding, we will try calculating the number of FLOPS ourself.\\
+ 
+Looking at the code above, we start by caunting FLOPS in the forward substitution, which is the first for loop. The variable 'mutliplicationfactor' equals a division, which counts as one FLOP. '\texttt{coputed\_tridiagonal\_matrix}' enveolves a sum of two terms, which gives one FLOP, and a multiplication, which gives another FLOP. So in total for '\texttt{computed\_tridiagonal\_matrix}' we have 2 FLOPS. Next the calculation of '\texttt{computed\_right\_hand\_side}' envolves a multiplication (1 FLOP) and a summation (1 FLOP), giving 2 FLOPS for '\texttt{computed\_right\_hand\_side}'. For each iteration in the loop, we have a total of 5 FLOPS. The loop goes from $1$ to $N-1$, giving $N-1$ iterations. This, in total we have $5(N-1)$ FLOPS for the forward substitution.\\
 
 On the backward substitution we have one multiplication (1 FLOP), one division (1 FLOP), and one subtraction (1 FLOP), ginving a total of 3 FLOPS per iteration. With $N-1$ iterations, we get $3(N-1)$ FLOPS on the backwards step.\\
 
@@ -224,7 +226,11 @@ void gassianTridiagonalSymmetricSolver( double * computed_right_hand_side,
 }
 \end{lstlisting}
 
-We can again calculate the FLOPS needed to solve the linear system with the above algorithm. For the forward substitution we have the variable f that contains a division, two summations and a multiplication. This leads to a flop count of $4(N-1)$ FLOPS. Outside of the two loops in the algorithm, we have to calculate the diagonal, that is needed to start of the backward substituion. The diagonal contains two summations and a division, giving us a count of three FLOPS. We need the last computed numerical solution to start of the backward substituion. It contains one division, giving one FLOP. In the backward substitution we have one division, two summations and a multiplication giving 4(N-1) FLOPS. In total we get $8(N-\frac{1}{2})$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS. 
+We can again calculate the FLOPS needed to solve the linear system with the above algorithm. For the forward substitution we have the variable f that contains a division, two summations and a multiplication. This leads to a flop count of $4(N-1)$ FLOPS. Outside of the two loops in the algorithm, we have to calculate the diagonal, that is needed to start of the backward substituion. The diagonal contains two summations and a division, giving us a count of three FLOPS. We need the last computed numerical solution to start of the backward substituion. It contains one division, giving one FLOP. In the backward substitution we have one division, two summations and a multiplication giving 4(N-1) FLOPS. In total we get $8(N-\frac{1}{2})$ FLOPS, which is equal to $\mathcal{O}(N)$ FLOPS.\\
+
+The above algorithm could have been more efficient. The factor $\frac{i}{i+1}$ could have been precalculated outside the loop using vectorization. Such a vectorization would not count in the FLOP-calculations, so it should be kept outside of the timing function 'clock' in the program. Having precalculated the mentioned factor, we would reduce the FLOP-count with $2(N-1)$ for the forward substitution, and the same for the backward substitution, in total reducing the FLOP count by $4(N-1)$ FLOPS. In total we would then have reduced our FLOPS for this algorithm from $8(N-\frac{1}{2})$ to $4N$ FLOPS.\\
+
+Another improvement for this special case with equal off-diagonals and equal diagaonals, we could have avoided computing the full $A$-matrix. Instead we only need the two element values for the special tridiagonal matrix. Using only the two values, and avoiding computing the full $A$-matrix, would make our program faster, especially for fine grids.
 
 \subsubsection{LU}
 We will compare the speed of our algorithms with the speed of the LU-algorithm. According to Hjorth-Jensen \cite{MHJ} p. 173, solving a system with LU is $\mathcal{O}(n^2)$ requires FLOPS, but the composition itself requires  $\mathcal{O}(n^3)$ FLOPS. Based on this, we expect our algorithms to outperform the LU-algorithm, independentlyu of whether one includes the composition itself in the comparison or not.\\
@@ -352,18 +358,22 @@ as function of $log_{10}(h)$ for the function values $u_i$ and $v_i$, and extrac
 The below table displays the times used by the different algorithms. Not that the LU-time includes also the time for the LU-decomposition, in addition to the time solving the system.
 
 \lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.32\textwidth} %\noindent
-	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesThomas.txt}
-\end{minipage}\hfill
-\begin{minipage}{.32\textwidth} %\noindent
-	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesSymmetric2.txt}
-\end{minipage}\hfill
-\begin{minipage}{.32\textwidth}
-	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/timesLu.txt}
-\end{minipage}\hfill
+\begin{table}[H]
+	\begin{minipage}{.32\textwidth} %\noindent
+		\lstinputlisting[language={},title={Thomas
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/timesThomas.txt}
+	\end{minipage}\hfill
+	\begin{minipage}{.32\textwidth} %\noindent
+		\lstinputlisting[language={},title={Symmetric
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/timesSymmetric2.txt}
+	\end{minipage}\hfill
+	\begin{minipage}{.32\textwidth}
+		\lstinputlisting[language={},title={LU
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/timesLu.txt}
+	\end{minipage}\hfill
+	\caption{Log CPU-times}
+	\label{table:logtimes}
+\end{table}
 
 From the above table we that LU clearly uses more time than the other algorithms. This is in according to expectations, knowing that LU should be $\mathcal{O}(N^3)$ in FLOPS, while at least the tridiagaonal solver should be $\mathcal{O}(N)$ FLOPS.\\
 
@@ -371,7 +381,7 @@ The figure below may perhaps give a better impression on the times for the diffe
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/logTimes.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/report/logTimes.pdf}
 	\caption{Log CPU-times}
 	\label{fig:logtimes}
 \end{figure}
@@ -387,25 +397,29 @@ We were asked if it would be possible to run LU for $N=10^5.$ From before, we kn
 \subsection{Error analysis}
 The below table shows the errors for the different algorithms. It was expected that the algorithms should produce results equal to each other, whithin machine precision. All algorithms solves exactly the same system. The table below confirms our expectation. 
 
+\begin{table}[H]
 \lstset{backgroundcolor=\color{white}}
-\begin{minipage}{.32\textwidth} %\noindent
-	\lstinputlisting[language={},title={Thomas
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorThomas.txt}
-\end{minipage}\hfill
-\begin{minipage}{.32\textwidth} %\noindent
-	\lstinputlisting[language={},title={Symmetric
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorSymmetric.txt}
-\end{minipage}\hfill
-\begin{minipage}{.32\textwidth}
-	\lstinputlisting[language={},title={LU
-	}]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/errorLu.txt}
-\end{minipage}\hfill
+	\begin{minipage}{.32\textwidth} %\noindent
+		\lstinputlisting[language={},title={Thomas
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/errorThomas.txt}
+	\end{minipage}\hfill
+	\begin{minipage}{.32\textwidth} %\noindent
+		\lstinputlisting[language={},title={Symmetric
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/errorSymmetric.txt}
+	\end{minipage}\hfill
+	\begin{minipage}{.32\textwidth}
+		\lstinputlisting[language={},title={LU
+		}]{/home/karl/doc/subj/att/fys4150/project1/report/errorLu.txt}
+	\end{minipage}\hfill
+	\caption{Log relative errors}
+	\label{table: logErrors}
+\end{table}
 
 Since the algorithms give the same error, we use only the results from one of the algorithms when analysing the error. The below figure shows the numerical results from the Thomas algorithm and the exact solution.
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/comparison_gaussianTridiagonalSymmetric.pdf}
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/report/comparison_gaussianTridiagonalSymmetric.pdf}
 	\caption{Results Tridiagonal Gaussian}
 	\label{fig:comparisongaussiantridiagonalsymmetric}
 \end{figure}
@@ -416,22 +430,22 @@ Below follows figures for the relative error. Not that the scales on the x-axis 
 
 
 \begin{minipage}{.49\textwidth} %\noindent
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/relativeError_gaussianTridiagonal2.pdf}
-	\caption{Results Tridiagonal Gaussian}
-	\label{1}
-\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/report/relativeError_gaussianTridiagonal2.pdf}
+		\caption{Results Tridiagonal Gaussian}
+		\label{1}
+	\end{figure}
+	\end{minipage}\hfill
+	\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/report/relativeError_gaussianTridiagonal10.pdf}
+		\caption{Results Tridiagonal Gaussian}
+		\label{1}
+	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project1/texPlotsTableData/relativeError_gaussianTridiagonal10.pdf}
-	\caption{Results Tridiagonal Gaussian}
-	\label{1}
-\end{figure}
 
-\end{minipage}\hfill
 
 Our computer crashes for $N = 10^6$, so the above figure to the right stops at $N = 10^5$. The figure shows that up to $N = 10^5$, the error seems to follow the expected truncation error, since the slope seems to be pretty close to 2.\\
 
