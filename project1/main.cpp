@@ -13,7 +13,7 @@ Peter Even Killingstad and Karl Jacobsen
 using namespace std;
 
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int , char** argv);
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& lowerDiagonal, double& diagonal, double& upperDiagonal, int , char** argv);
 void generate_tridiagonal_matrix(int,double, double, double, double **);
 void generate_right_hand_side( int, double *, double *);
 void gaussianTridiagonalSolver(double ** computed_tridiagonal_matrix, double * computed_right_hand_side, double * computed_numerical_solution, int N);
@@ -31,13 +31,13 @@ ofstream ofile2; // File for vectors
 int main(int argc, char *argv[]){
   string outfile_name;
   int number_of_simulations, N, amplificationFactor, *indxLu;
-  double a, b, c, h_step, computed_error, time_used, L2Norm, dLu;
+  double lowerDiagonal, diagonal,  upperDiagonal, h_step, computed_error, time_used, L2Norm, dLu;
   double ** computed_tridiagonal_matrix, ** LU_Lower, ** LU_Upper;
   double * computed_numerical_solution, * computed_right_hand_side, * computed_exact_solution;
   string outfile_name_scalars, outfile_name_computed_numerical,outfile_name_computed_exact;
   clock_t start, finish;
 
-  initialize(outfile_name, number_of_simulations, amplificationFactor, N, a, b, c, argc, argv);
+  initialize(outfile_name, number_of_simulations, amplificationFactor, N, lowerDiagonal, diagonal,  upperDiagonal, argc, argv);
   outfile_name_scalars = (outfile_name) + string("_scalars")+string(".csv");
   outfile_name_computed_numerical = (outfile_name) + string("_numerical");
   outfile_name_computed_exact = (outfile_name) + string("_exact");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
       computed_tridiagonal_matrix[i] = new double[N];
     }
 
-    generate_tridiagonal_matrix(N, a, b, c, computed_tridiagonal_matrix);
+    generate_tridiagonal_matrix(N, lowerDiagonal, diagonal,  upperDiagonal, computed_tridiagonal_matrix);
     generate_right_hand_side(N, computed_right_hand_side, &h_step);
 
     start = clock();
@@ -102,9 +102,9 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& a, double& b, double& c, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& lowerDiagonal, double& diagonal, double& upperDiagonal, int argc, char** argv )
 {
-    if( argc <= 1){
+    if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension, tridiagonal elements" << endl;
       exit(1);
     }
@@ -114,21 +114,21 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     number_of_simulations = atoi(argv[2]);
     amplificationFactor = atoi(argv[3]);
     N = atoi(argv[4]);
-    a = atof(argv[5]); // Lower diagonal
-    b = atof(argv[6]); // Digonal
-    c = atof(argv[7]); // Upper diagonal
+    lowerDiagonal= atof(argv[5]); // Lower diagonal
+    diagonal= atof(argv[6]); // Digonal
+    upperDiagonal= atof(argv[7]); // Upper diagonal
 }
 
-void generate_tridiagonal_matrix(int N,double a, double b, double c, double **computed_tridiagonal_matrix ){
-  computed_tridiagonal_matrix[0][1] = c;
-  computed_tridiagonal_matrix[0][0] = b;
-  computed_tridiagonal_matrix[N-1][N-2] = a;
-  computed_tridiagonal_matrix[N-1][N-1] = b;
+void generate_tridiagonal_matrix(int N,double lowerDiagonal, double diagonal, double  upperDiagonal, double **computed_tridiagonal_matrix ){
+  computed_tridiagonal_matrix[0][1] =  upperDiagonal;
+  computed_tridiagonal_matrix[0][0] = diagonal;
+  computed_tridiagonal_matrix[N-1][N-2] = lowerDiagonal;
+  computed_tridiagonal_matrix[N-1][N-1] = diagonal;
 
   for (int k = 1; k < N-1; k++){
-    computed_tridiagonal_matrix[k][k] = b;
-    computed_tridiagonal_matrix[k][k-1] = a;
-    computed_tridiagonal_matrix[k][k+1] = c;
+    computed_tridiagonal_matrix[k][k] = diagonal;
+    computed_tridiagonal_matrix[k][k-1] = lowerDiagonal;
+    computed_tridiagonal_matrix[k][k+1] =  upperDiagonal;
     }
 }
 
