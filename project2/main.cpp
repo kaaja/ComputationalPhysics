@@ -13,7 +13,7 @@ void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, in
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
 void rotate(mat &aMatrix, int k, int l, int N);
 void createEigenvalueVector( mat A, colvec &eigenValues, int N );
-
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin);
 
 
 int main()
@@ -22,7 +22,7 @@ int main()
   double tolerance = pow(10, -10);
   int maxIterations = pow(10, 4);
 
-  mat A(3,3);
+  /*mat A(3,3);
   A(0,0) = 1;
   A(0,1) = 2;
   A(0,2) = 3;
@@ -32,12 +32,15 @@ int main()
   A(2,0) = 5;
   A(2,1) = 1;
   A(2,2) = 3;
+  */
+  mat A;
+  createTridiagonalMatrix(A, N, 3, 0);
+  A.print("A:");
 
 
   colvec eigenValues  = zeros<colvec>(N);
   jacobi(A, eigenValues, tolerance, maxIterations, N);
   eigenValues.print("Eigenvalues =");
-  A.print("A:");
   return 0;
 }
 
@@ -50,11 +53,8 @@ void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, in
     while ( fabs(aMaxNonDiagonal) > tolerance && counter < maxIterations ){
         aMaxNonDiagonal  = findMaxNonDiagonalElement(A, &k, &l, N);
         rotate(A, k, l, N);
-        //findMaxNonDiagonalElement(A, &k, &l, N);
         counter += 1;
     }
-    cout << "max a: " << fabs(A(k, l)) << endl;
-    cout << "counter  " << counter << endl;
     createEigenvalueVector( A, eigenValues,  N);
 }
 
@@ -98,8 +98,6 @@ void rotate(mat &aMatrix, int k, int l, int N){
 }
 
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N){
-    //*k = 0;
-    //*l = 0;
     double aMaxTemp = 0.0;
     for (int row = 0; row < N; row++){
          for (int col = row + 1; col < N; col++){
@@ -107,7 +105,6 @@ double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N){
                  *k = row;
                  *l = col;
                  aMaxTemp = fabs(A(row, col));
-                 cout << "non diag max: " << aMaxTemp << endl;
              }
          }
     }
@@ -123,3 +120,19 @@ void createEigenvalueVector( mat A, colvec &eigenValues, int N ){
     }
 }
 
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin){
+    double h = (rhoMax - rhoMin)/N;
+    A.zeros(N,N);
+    double offDiagonal = -1.0/(h*h);
+    double diagonalFirstTerm = 2.0/(h*h);
+    A(0, 1) =  offDiagonal;
+    A(0, 0) = 2.0/(h*h);
+    A(N-1, N-2) = offDiagonal;
+
+    for (int row = 1; row < N-1; row++){
+      A(row, row) = diagonalFirstTerm + pow(row*h,2);
+      A(row, row - 1) = offDiagonal;
+      A(row, row + 1) =  offDiagonal;
+      }
+    A(N-1, N-1) = 2.0/(h*h) + pow((N-1),2);
+}
