@@ -4,6 +4,8 @@
 #include <armadillo>
 #include <cmath>
 
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
 
 using namespace std;
 using namespace arma;
@@ -16,23 +18,12 @@ void createEigenvalueVector( mat A, colvec &eigenValues, int N );
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin);
 
 
-int main()
-{
+main(int argc, char* argv[]){ 
+  int result = Catch::Session().run( argc, argv );
   int N = 3;
   double tolerance = pow(10, -10);
   int maxIterations = pow(10, 4);
 
-  /*mat A(3,3);
-  A(0,0) = 1;
-  A(0,1) = 2;
-  A(0,2) = 3;
-  A(1,0) = 2;
-  A(1,1) = 1;
-  A(1,2) = 3;
-  A(2,0) = 5;
-  A(2,1) = 1;
-  A(2,2) = 3;
-  */
   mat A;
   createTridiagonalMatrix(A, N, 3, 0);
   A.print("A:");
@@ -135,4 +126,10 @@ void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin){
       A(row, row + 1) =  offDiagonal;
       }
     A(N-1, N-1) = 2.0/(h*h) + pow((N-1),2);
+}
+
+TEST_CASE( "Testing createTridiagonalMatrix", "[createTridiagonalMatrix]" ) {
+  mat A;
+  createTridiagonalMatrix(A, 10, 10, 0);
+  REQUIRE( A(0,0)== 2);
 }
