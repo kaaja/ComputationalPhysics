@@ -20,18 +20,25 @@ void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin);
 
 main(int argc, char* argv[]){ 
   int result = Catch::Session().run( argc, argv );
-  int N = 3;
+  int N = 600;
+  double rhoMax = pow(10,1);
   double tolerance = pow(10, -10);
-  int maxIterations = pow(10, 4);
+  int maxIterations = pow(10, 6);
+
 
   mat A;
-  createTridiagonalMatrix(A, N, 3, 0);
-  A.print("A:");
+  createTridiagonalMatrix(A, N, rhoMax, 0);
+  //A.print("Our A: ");
 
+  vec Eigval;
+  //eig_sym(Eigval, A);
+  //Eigval.print("Armadillo eigval: ");
 
   colvec eigenValues  = zeros<colvec>(N);
   jacobi(A, eigenValues, tolerance, maxIterations, N);
   eigenValues.print("Eigenvalues =");
+
+
   return 0;
 }
 
@@ -47,6 +54,7 @@ void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, in
         counter += 1;
     }
     createEigenvalueVector( A, eigenValues,  N);
+    cout << "Counter: " << counter << endl;
 }
 
 void rotate(mat &aMatrix, int k, int l, int N){
@@ -109,15 +117,17 @@ void createEigenvalueVector( mat A, colvec &eigenValues, int N ){
                 eigenValues(col) = A(row, col);
         }
     }
+    eigenValues = sort(eigenValues);
 }
 
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin){
     double h = (rhoMax - rhoMin)/N;
-    A.zeros(N,N);
+    //A.zeros(N,N);
+    A = zeros<mat>(N,N);
     double offDiagonal = -1.0/(h*h);
     double diagonalFirstTerm = 2.0/(h*h);
     A(0, 1) =  offDiagonal;
-    A(0, 0) = 2.0/(h*h);
+    A(0, 0) = 2.0/(h*h) + h*h; // Check this
     A(N-1, N-2) = offDiagonal;
 
     for (int row = 1; row < N-1; row++){
@@ -133,3 +143,16 @@ TEST_CASE( "Testing createTridiagonalMatrix", "[createTridiagonalMatrix]" ) {
   createTridiagonalMatrix(A, 10, 10, 0);
   REQUIRE( A(0,0)== 2);
 }
+
+/*
+TEST_CASE( "Testing jacobi", "[jacobi]" ) {
+  mat A;
+  int N = pow(10,3)
+  createTridiagonalMatrix(A, N, 10, 0);
+  colvec eigenValues;
+  jacobi(A, eigenValues, pow(10,-7), pow(10,3), N );
+  vec Eigval(N);
+  eig_sym(Eigval, A);
+  REQUIRE( A(0,0)== 2);
+}
+*/
