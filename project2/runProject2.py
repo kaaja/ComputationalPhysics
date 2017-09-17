@@ -1,0 +1,111 @@
+#%%
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import argparse
+from subprocess import call
+import os
+
+#%% 2b Varying dimension for given rhoMax=10
+if not os.path.isdir('results'):
+    os.mkdir('results')
+
+tolerance = str(1e-9)
+numberOfSimulations = str(6)
+amplificationFactor = str(2)
+maxIterations = str(1e8)
+firstH = 0.4
+#N = str(25)
+
+rhoMaxVals = ['1', '2.5']#, '5', '7.5', '10'] # For filename
+rhoMaxVals2 = [1, 2.5]#, 5, 7.5, 10] # For calculations
+
+call(["./Allclean"])
+counter = 1
+
+
+for rhoMax in rhoMaxVals:
+    N = rhoMaxVals2[counter-1]/firstH
+    N = int(round(N))
+    N = str(N)
+    outfileName = 'oneElectron%1d' %counter
+    print outfileName, N
+    call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance])
+    counter += 1
+
+# Open cpp output
+oneElectronScalars = {}
+for counter in xrange(len(rhoMaxVals2)):
+    print counter
+    oneElectronScalars[counter+1] = pd.read_table("results/oneElectron%d_scalars.csv" %(counter+1), 
+			            delimiter=',')
+ #%% Plot 1 project 2b   
+plt.figure()
+legends = []
+counter = 1
+for key in oneElectronScalars:
+    plt.plot(oneElectronScalars[key].h, oneElectronScalars[key].relError)
+    legends.append('rhoMax '+rhoMaxVals[key-1])
+    counter += 1
+plt.legend(legends, fontsize = 'large', loc = 'upper right')
+plt.title( 'Eigenvalues. Maximum relative errors', fontsize = 'xx-large')
+plt.xlabel('h', fontsize = 'xx-large')
+plt.ylabel('Max relative error', fontsize = 'xx-large')
+filename = ('results/oneElectronRelativeErrorEigenvalues.pdf')
+plt.savefig(filename)
+
+#%% Plot 2 project 2b   
+plt.figure()
+plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logCounter)
+plt.title( 'Iterations and dimensions', fontsize = 'xx-large')
+plt.xlabel('log N', fontsize = 'xx-large')
+plt.ylabel('log similarity transformations', fontsize = 'xx-large')
+filename = ('results/oneElectronIterationsDimensions.pdf')
+plt.savefig(filename)
+
+
+
+#%% 2b plot 3
+'''
+plt.figure()
+plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logTime, oneElectronScalars[1].logN,oneElectronScalars[1].logArmadilloTime)
+plt.title( 'Time used and dimensions Jacobi and armadillo', fontsize = 'xx-large')
+plt.legend(['Jacobi', 'Armadillo'], fontsize = 'xx-large')
+plt.xlabel('log N', fontsize = 'xx-large')
+plt.ylabel('log time', fontsize = 'xx-large')
+filename = ('results/oneElectronLogTimeDimensions.pdf')
+plt.savefig(filename)
+'''
+
+#%%  
+def plot_logTimes(gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars, noLU):
+	plt.figure()
+	legends = ['Thomas', 'Symmetric']
+	plt.plot(gaussianTridiagonalScalars.log_h, gaussianTridiagonalScalars.logTimeUsed)
+	plt.hold('on')
+	plt.plot(gaussianTridiagonalSymmetricScalars.log_h, gaussianTridiagonalSymmetricScalars.logTimeUsed)
+	if not noLU:
+	    plt.plot(LUScalars.log_h, LUScalars.logTimeUsed)         
+	    legends.append('LU')                 
+	plt.legend(legends, fontsize = 'large', loc = 'upper right')
+	plt.title('CPU times', fontsize = 'xx-large')
+	plt.xlabel('log h', fontsize = 'xx-large')
+	plt.ylabel('log time', fontsize = 'xx-large')
+	plt.savefig('results/logTimes.pdf')
+
+#%%
+def plot_errors(algorithmScalarValues, algorithmNname, amplificationFactor):
+	relativeError = algorithmScalarValues.log_rel_error
+	plt.figure()
+	log_h = algorithmScalarValues.log_h
+	plt.plot(log_h, relativeError)
+	plt.title('Relative error '+algorithmNname, fontsize = 'xx-large')
+	plt.xlabel('log h', fontsize = 'xx-large')
+	plt.ylabel('Relative error', fontsize = 'xx-large')
+	if int(amplificationFactor) == 2:
+	    plt.ylim(-10,-1)        
+	filename = ('results/relativeError_'+ algorithmNname + amplificationFactor +'.pdf')
+	plt.savefig(filename)
+
+
+#%% 
