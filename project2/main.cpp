@@ -14,11 +14,11 @@ using namespace std;
 using namespace arma;
 
 void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, int argc, char** argv );
-void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N);
+void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter);
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
 void rotate(mat &aMatrix, int k, int l, int N);
 void createEigenvalueVector( mat A, colvec &eigenValues, int N );
-void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin);
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h);
 void output_scalars( double computedError, double h, double timeUsed, int N, int counter);
 void output_vectors( double *, int, int, string);
 void calculateError(colvec eigenValues, double *computedError);
@@ -31,8 +31,8 @@ main(int argc, char* argv[]){
   if (3 == 3)
       int result = Catch::Session().run( argc, argv );
 
-  double tolerance, computedError;
-  int N, rhoMax, amplificationFactor, numberOfSimulations, maxIterations;
+  double tolerance, computedError, h, timeUsed;
+  int N, rhoMax, amplificationFactor, numberOfSimulations, maxIterations, counter;
   string outfileName, outfileNameComputedNumerical, outfileNameScalars;
   clock_t start, finish;
 
@@ -44,7 +44,7 @@ main(int argc, char* argv[]){
   ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
 
   mat A;
-  createTridiagonalMatrix(A, N, rhoMax, 0);
+  createTridiagonalMatrix(A, N, rhoMax, 0, &h);
   //A.print("Our A: ");
 
   vec Eigval;
@@ -52,9 +52,10 @@ main(int argc, char* argv[]){
   //Eigval.print("Armadillo eigval: ");
 
   colvec eigenValues  = zeros<colvec>(N);
-  jacobi(A, eigenValues, tolerance, maxIterations, N);
+  jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
   eigenValues.print("Eigenvalues =");
   calculateError(eigenValues, &computedError);
+  output_scalars(computedError, h, timeUsed, N, counter);
   ofile1.close();
   ofile2.close();
 
@@ -106,19 +107,19 @@ void output_vectors( double *output_array, int simulation_number, int N, string 
   ofile2.close();
 }
 
-void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N){
-    int k,l, counter;
-    counter = 0;
+void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter){
+    int k,l;
+    *counter = 0;
 
     double aMaxNonDiagonal = findMaxNonDiagonalElement(A, &k, &l, N);
 
-    while ( fabs(aMaxNonDiagonal) > tolerance && counter < maxIterations ){
+    while ( fabs(aMaxNonDiagonal) > tolerance && *counter < maxIterations ){
         aMaxNonDiagonal  = findMaxNonDiagonalElement(A, &k, &l, N);
         rotate(A, k, l, N);
-        counter += 1;
+        *counter += 1;
     }
     createEigenvalueVector( A, eigenValues,  N);
-    cout << "Counter: " << counter << endl;
+    cout << "Counter: " << *counter << endl;
 }
 
 void rotate(mat &aMatrix, int k, int l, int N){
@@ -184,22 +185,24 @@ void createEigenvalueVector( mat A, colvec &eigenValues, int N ){
     eigenValues = sort(eigenValues);
 }
 
-void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin){
-    double h = (rhoMax - rhoMin)/N;
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h){
+    double hTemp = (rhoMax - rhoMin)/N;
     //A.zeros(N,N);
     A = zeros<mat>(N,N);
-    double offDiagonal = -1.0/(h*h);
-    double diagonalFirstTerm = 2.0/(h*h);
+    double offDiagonal = -1.0/(hTemp*hTemp);
+    double diagonalFirstTerm = 2.0/(hTemp*hTemp);
     A(0, 1) =  offDiagonal;
-    A(0, 0) = 2.0/(h*h) + h*h; // Check this
+    A(0, 0) = 2.0/(hTemp*hTemp) + hTemp*hTemp; // Check this
     A(N-1, N-2) = offDiagonal;
 
     for (int row = 1; row < N-1; row++){
-      A(row, row) = diagonalFirstTerm + pow(row*h,2);
+      A(row, row) = diagonalFirstTerm + pow(row*hTemp,2);
       A(row, row - 1) = offDiagonal;
       A(row, row + 1) =  offDiagonal;
       }
-    A(N-1, N-1) = 2.0/(h*h) + pow((N-1),2);
+    A(N-1, N-1) = 2.0/(hTemp*hTemp) + pow((N-1),2);
+    *h = hTemp;
+    cout << "*h: " << *h << endl;
 }
 
 void calculateError(colvec eigenValues, double *computedError){
@@ -208,15 +211,16 @@ void calculateError(colvec eigenValues, double *computedError){
     analyticalSolution(0) = 3.0;
     analyticalSolution(1) = 7.0;
     analyticalSolution(2) = 11.0;
-    *computedError = 0.0;
+    *computedError = log10(fabs((analyticalSolution(0) - eigenValues(0))/analyticalSolution(0)));;
     double temp;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 1; i < 3; i++) {
         temp = log10(fabs((analyticalSolution(i) - eigenValues(i))/analyticalSolution(i)));
+        cout << "temp: " << temp << endl;
         if (temp > *computedError)
             *computedError = temp;
     }
+   cout << "cmputed error: " << *computedError << endl;
 }
-
 
 TEST_CASE( "Testing maxDiagonal", "[findMaxNonDiagonalElement]" ) {
   // Checks that function finds max abs non-diagonal element in known symmetric matrix
@@ -259,9 +263,9 @@ TEST_CASE( "Testing Jacobi eigenvalues", "[jacobi]" ) {
   A(2,0) = -6.;
   A(2,1) = 3.;
   A(2,2) = 30.;
-
+  int counter;
   eig_sym(EigvalArmadillo, A);
-  jacobi(A, eigenValues, tolerance, maxIterations, N);
+  jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
   for (int i = 0; i < N; i++){
           REQUIRE( fabs((eigenValues(i) - EigvalArmadillo(i))/EigvalArmadillo(i)) < tol);
   }
