@@ -14,10 +14,11 @@ if not os.path.isdir('results'):
     os.mkdir('results')
 
 tolerance = str(1e-9)
-numberOfSimulations = str(7)
+numberOfSimulations = str(6)
 amplificationFactor = str(2)
 maxIterations = str(1e8)
 firstH = 0.4
+
 #N = str(25)
 
 rhoMaxVals = ['1', '2.5']#, '5', '7.5', '10'] # For filename
@@ -26,6 +27,7 @@ rhoMaxVals2 = [1, 2.5]#, 5, 7.5, 10] # For calculations
 #call(["./Allclean"])
 
 #%% 2b Calling cpp 
+omega = str(1)
 counter = 1
 for rhoMax in rhoMaxVals:
     N = rhoMaxVals2[counter-1]/firstH
@@ -33,7 +35,7 @@ for rhoMax in rhoMaxVals:
     N = str(N)
     outfileName = 'oneElectron%1d' %counter
     print outfileName, N
-    call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, 'false'])
+    call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, 'false', 'oneElectron123', omega])
     counter += 1
 
 # Open cpp output
@@ -60,7 +62,7 @@ plt.savefig(filename)
 
 #%% Plot 2 project 2b   
 plt.figure()
-plt.plot(oneElectronScalars[1].N, oneElectronScalars[1].Counter)
+plt.plot(oneElectronScalars[1].N, oneElectronScalars[1].counter)
 plt.title( 'Iterations and dimensions', fontsize = 'xx-large')
 plt.xlabel('N', fontsize = 'xx-large')
 plt.ylabel('Similarity transformations', fontsize = 'xx-large')
@@ -90,10 +92,10 @@ N = int(round(N))
 N = str(N)
 
 outfileName = 'oneElectron'
-call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'true'])
+call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'true', 'oneElecron', omega])
 
 outfileName = 'oneElectronUnvectorized'
-call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'false'])
+call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'false', 'oneElecron', omega])
 
 # Open cpp output
 oneElectronScalarsArmadillo = {}
