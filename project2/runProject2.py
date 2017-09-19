@@ -5,13 +5,16 @@ import numpy as np
 import argparse
 from subprocess import call
 import os
+import seaborn as sb
 
-#%% 2b Varying dimension for given rhoMax=10
+#sb.set(style="white")
+
+#%% 2b Varying dimension for different rhoMax. Parameters
 if not os.path.isdir('results'):
     os.mkdir('results')
 
 tolerance = str(1e-9)
-numberOfSimulations = str(6)
+numberOfSimulations = str(7)
 amplificationFactor = str(2)
 maxIterations = str(1e8)
 firstH = 0.4
@@ -20,17 +23,17 @@ firstH = 0.4
 rhoMaxVals = ['1', '2.5']#, '5', '7.5', '10'] # For filename
 rhoMaxVals2 = [1, 2.5]#, 5, 7.5, 10] # For calculations
 
-call(["./Allclean"])
+#call(["./Allclean"])
+
+#%% 2b Calling cpp 
 counter = 1
-
-
 for rhoMax in rhoMaxVals:
     N = rhoMaxVals2[counter-1]/firstH
     N = int(round(N))
     N = str(N)
     outfileName = 'oneElectron%1d' %counter
     print outfileName, N
-    call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance])
+    call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, 'false'])
     counter += 1
 
 # Open cpp output
@@ -51,31 +54,78 @@ plt.legend(legends, fontsize = 'large', loc = 'upper right')
 plt.title( 'Eigenvalues. Maximum relative errors', fontsize = 'xx-large')
 plt.xlabel('h', fontsize = 'xx-large')
 plt.ylabel('Max relative error', fontsize = 'xx-large')
+plt.grid()
 filename = ('results/oneElectronRelativeErrorEigenvalues.pdf')
 plt.savefig(filename)
 
 #%% Plot 2 project 2b   
 plt.figure()
-plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logCounter)
+plt.plot(oneElectronScalars[1].N, oneElectronScalars[1].Counter)
 plt.title( 'Iterations and dimensions', fontsize = 'xx-large')
-plt.xlabel('log N', fontsize = 'xx-large')
-plt.ylabel('log similarity transformations', fontsize = 'xx-large')
+plt.xlabel('N', fontsize = 'xx-large')
+plt.ylabel('Similarity transformations', fontsize = 'xx-large')
+plt.grid()
+
 filename = ('results/oneElectronIterationsDimensions.pdf')
 plt.savefig(filename)
 
 
-
-#%% 2b plot 3
-'''
 plt.figure()
-plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logTime, oneElectronScalars[1].logN,oneElectronScalars[1].logArmadilloTime)
-plt.title( 'Time used and dimensions Jacobi and armadillo', fontsize = 'xx-large')
-plt.legend(['Jacobi', 'Armadillo'], fontsize = 'xx-large')
+plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logCounter)
+plt.title( 'Iterations and dimensions', fontsize = 'xx-large')
+plt.xlabel('log N', fontsize = 'xx-large')
+plt.ylabel('log similarity transformations', fontsize = 'xx-large')
+plt.grid()
+
+filename = ('results/oneElectronLogIterationsDimensions.pdf')
+plt.savefig(filename)
+
+
+
+#%% 2b Comparison Armadillo. Running cpp
+
+rhoMax = 2.5
+N = rhoMax/firstH
+N = int(round(N))
+N = str(N)
+
+outfileName = 'oneElectron'
+call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'true'])
+
+outfileName = 'oneElectronUnvectorized'
+call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'false'])
+
+# Open cpp output
+oneElectronScalarsArmadillo = {}
+oneElectronScalarsArmadillo[2] = pd.read_table("results/oneElectronArmadillo_scalars.csv", 
+			            delimiter=',')
+
+oneElectronScalarsUnvectorized = {}
+oneElectronScalarsUnvectorized[2] = pd.read_table("results/oneElectronUnvectorized_scalars.csv", 
+			            delimiter=',')
+
+#%% 2b  Comparison Armadillo plot
+plt.figure()
+plt.plot(oneElectronScalarsUnvectorized[2].logN, oneElectronScalarsUnvectorized[2].logTimeUsed, oneElectronScalars[2].logN, oneElectronScalars[2].logTimeUsed, oneElectronScalarsArmadillo[2].logN, oneElectronScalarsArmadillo[2].logTimeUsed)
+#plt.title( 'Time used and dimensions\n Jacobi (Vectorized and unvectorized) and armadillo', fontsize = 'xx-large')
+plt.legend(['Jacobi unvectorized', 'Jacobi vectorized', 'Armadillo'], fontsize = 'x-large', loc = 0, frameon=False)
 plt.xlabel('log N', fontsize = 'xx-large')
 plt.ylabel('log time', fontsize = 'xx-large')
-filename = ('results/oneElectronLogTimeDimensions.pdf')
+plt.grid()
+filename = ('results/oneElectronArmadilloLogTimeDimensions.pdf')
 plt.savefig(filename)
-'''
+
+plt.figure()
+plt.plot(oneElectronScalars[2].N, oneElectronScalars[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalars[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
+plt.legend(['Jacobi vectorized', 'Jacobi unvectorized'], fontsize = 'xx-large', loc = 0)
+plt.title( 'Ratio Time Jacobi time Armadillo', fontsize = 'xx-large')
+plt.xlabel('N', fontsize = 'xx-large')
+plt.ylabel('Time', fontsize = 'xx-large')
+plt.grid()
+
+filename = ('results/oneElectronArmadilloTimeDimensions.pdf')
+plt.savefig(filename)
+
 
 #%%  
 def plot_logTimes(gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars, noLU):

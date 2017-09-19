@@ -148,7 +148,6 @@ void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, in
         *counter += 1;
     }
     createEigenvalueVector( A, eigenValues,  N);
-    cout << " " << N << " counter: " << *counter << " maxIterations: " << maxIterations << "fabs(aMaxNonDiagonal) " << fabs(aMaxNonDiagonal) << "tolerance " << tolerance << endl;
 }
 
 void rotate(mat &aMatrix, int k, int l, int N){
