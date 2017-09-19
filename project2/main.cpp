@@ -13,7 +13,7 @@
 using namespace std;
 using namespace arma;
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, int argc, char** argv );
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, int argc, char** argv );
 void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter);
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
 void rotate(mat &aMatrix, int k, int l, int N);
@@ -33,18 +33,27 @@ main(int argc, char* argv[]){
 
   double tolerance, computedError, h, timeUsed;
   int N, rhoMax, amplificationFactor, numberOfSimulations, maxIterations, counter;
-  string outfileName, outfileNameComputedNumerical, outfileNameScalars;
+  string outfileName, outfileNameComputedNumerical, outfileNameScalars, armadillo;
   mat A;
   colvec eigenValues;
 
   clock_t start, finish;
 
-  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, argc, argv );
+  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, argc, argv );
 
-  outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
-  outfileNameComputedNumerical = (outfileName) + string("_numerical");
-  ofile1.open(outfileNameScalars);
-  ofile1 << "rhoMax,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
+  if (armadillo == "false"){
+      outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
+      outfileNameComputedNumerical = (outfileName) + string("_numerical");
+      ofile1.open(outfileNameScalars);
+      ofile1 << "rhoMax,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
+  }
+  else{
+      outfileNameScalars = (outfileName) + string("Armadillo") + string("_scalars")+string(".csv");
+      outfileNameComputedNumerical = (outfileName) + string("_numerical");
+      ofile1.open(outfileNameScalars);
+      ofile1 << "rhoMax,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
+
+  }
 
   // Solving for different matrix dimensions
   for (int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++){
@@ -52,12 +61,20 @@ main(int argc, char* argv[]){
       eigenValues  = zeros<colvec>(N);
 
       start = clock();
-      jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
+      if (armadillo == "false")
+          jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
+      else
+          eig_sym(eigenValues, A);
+
       finish = clock();
       timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
 
       calculateError(eigenValues, &computedError);
-      output_scalars(computedError, h, timeUsed, N, counter, rhoMax);
+      if(armadillo == "false")
+          output_scalars(computedError, h, timeUsed, N, counter, rhoMax);
+      else{
+          output_scalars(computedError, h, timeUsed, N, 0, rhoMax);
+      }
 
       if (simulationNumber < numberOfSimulations -1)
           N *= amplificationFactor;
@@ -71,7 +88,7 @@ main(int argc, char* argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -86,6 +103,7 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     rhoMax = atoi(argv[5]);
     maxIterations = atoi(argv[6]);
     tolerance = atof(argv[7]);
+    armadillo = argv[8];
 }
 
 //ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
