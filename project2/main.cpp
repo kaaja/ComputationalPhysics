@@ -13,12 +13,12 @@
 using namespace std;
 using namespace arma;
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, int argc, char** argv );
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double omega, int argc, char** argv );
 void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter);
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
 void rotate(mat &aMatrix, int k, int l, int N);
 void createEigenvalueVector( mat A, colvec &eigenValues, int N );
-void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h);
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega);
 void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax);
 void output_vectors( double *, int, int, string);
 void calculateError(colvec eigenValues, double *computedError);
@@ -31,15 +31,15 @@ main(int argc, char* argv[]){
   if (3 == 3)
       int result = Catch::Session().run( argc, argv );
 
-  double tolerance, computedError, h, timeUsed;
+  double tolerance, computedError, h, timeUsed, omega;
   int N, rhoMax, amplificationFactor, numberOfSimulations, maxIterations, counter;
-  string outfileName, outfileNameComputedNumerical, outfileNameScalars, armadillo;
+  string outfileName, outfileNameComputedNumerical, outfileNameScalars, armadillo, interactionRepulsion;
   mat A;
   colvec eigenValues;
 
   clock_t start, finish;
 
-  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, argc, argv );
+  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, interactionRepulsion, omega, argc, argv );
 
   if (armadillo == "false"){
       outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
@@ -57,7 +57,7 @@ main(int argc, char* argv[]){
 
   // Solving for different matrix dimensions
   for (int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++){
-      createTridiagonalMatrix(A, N, rhoMax, 0, &h);
+      createTridiagonalMatrix(A, N, rhoMax, 0, &h, interactionRepulsion, omega);
       eigenValues  = zeros<colvec>(N);
 
       start = clock();
@@ -88,7 +88,7 @@ main(int argc, char* argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double omega, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -104,6 +104,8 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     maxIterations = atoi(argv[6]);
     tolerance = atof(argv[7]);
     armadillo = argv[8];
+    interactionRepulsion = argv[9];
+    omega = atof(argv[10]);
 }
 
 //ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
@@ -213,23 +215,42 @@ void createEigenvalueVector( mat A, colvec &eigenValues, int N ){
     eigenValues = sort(eigenValues);
 }
 
-void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h){
+void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega){
     double hTemp = (rhoMax - rhoMin)/N;
     //A.zeros(N,N);
     A = zeros<mat>(N,N);
     double offDiagonal = -1.0/(hTemp*hTemp);
     double diagonalFirstTerm = 2.0/(hTemp*hTemp);
+
     A(0, 1) =  offDiagonal;
-    A(0, 0) = 2.0/(hTemp*hTemp) + hTemp*hTemp; // Check this
     A(N-1, N-2) = offDiagonal;
 
+    if ( interactionRepulsion == "TwoElectronNoCoulomb" )
+        A(0, 0) = diagonalFirstTerm + pow(omega, 2)*hTemp*hTemp;
+    else if (interactionRepulsion == "TwoElectronCoulomb" )
+        A(0, 0) = diagonalFirstTerm + pow(omega, 2)*hTemp*hTemp + 1./hTemp;
+    else
+        A(0, 0) = diagonalFirstTerm + hTemp*hTemp;
+
     for (int row = 1; row < N-1; row++){
-      A(row, row) = diagonalFirstTerm + pow(row*hTemp,2);
+        if ( interactionRepulsion == "TwoElectronNoCoulomb" )
+            A(row, row) = diagonalFirstTerm + pow(omega, 2)*pow((row+1)*hTemp,2);
+        else if (interactionRepulsion == "TwoElectronCoulomb" )
+            A(row, row) = diagonalFirstTerm + pow(omega, 2)*pow((row+1)*hTemp,2) + 1./((row+1)*hTemp); // Check this! AM avoiding rho=0 on the first step.
+        else
+            A(row, row) = diagonalFirstTerm + pow((row+1)*hTemp,2);
       A(row, row - 1) = offDiagonal;
       A(row, row + 1) =  offDiagonal;
       }
-    A(N-1, N-1) = 2.0/(hTemp*hTemp) + pow((N-1),2);
+
+    if ( interactionRepulsion == "TwoElectronNoCoulomb" )
+         A(N-1, N-1) = diagonalFirstTerm + pow(omega, 2)*pow(rhoMax,2);
+    else if (interactionRepulsion == "TwoElectronCoulomb" )
+        A(N-1, N-1) = diagonalFirstTerm + pow(omega, 2)*pow(rhoMax,2) + 1./rhoMax;
+    else
+        A(N-1, N-1) = diagonalFirstTerm + pow(rhoMax,2);
     *h = hTemp;
+    A.print("A: ");
 }
 
 void calculateError(colvec eigenValues, double *computedError){
