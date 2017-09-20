@@ -38,13 +38,17 @@ for rhoMax in rhoMaxVals:
     call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, 'false', 'oneElectron123', omega])
     counter += 1
 
+ #%% Plot 1 project 2b   
+
 # Open cpp output
+#call(["./Allclean"])
+
 oneElectronScalars = {}
 for counter in xrange(len(rhoMaxVals2)):
     print counter
     oneElectronScalars[counter+1] = pd.read_table("results/oneElectron%d_scalars.csv" %(counter+1), 
 			            delimiter=',')
- #%% Plot 1 project 2b   
+
 plt.figure()
 legends = []
 counter = 1
