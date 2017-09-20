@@ -14,15 +14,15 @@ if not os.path.isdir('results'):
     os.mkdir('results')
 
 tolerance = str(1e-9)
-numberOfSimulations = str(6)
+numberOfSimulations = str(8)
 amplificationFactor = str(2)
 maxIterations = str(1e8)
 firstH = 0.4
 
 #N = str(25)
 
-rhoMaxVals = ['1', '2.5']#, '5', '7.5', '10'] # For filename
-rhoMaxVals2 = [1, 2.5]#, 5, 7.5, 10] # For calculations
+rhoMaxVals = ['1', '2.5', '5', '7.5', '10'] # For filename
+rhoMaxVals2 = [1, 2.5, 5, 7.5, 10] # For calculations
 
 #call(["./Allclean"])
 

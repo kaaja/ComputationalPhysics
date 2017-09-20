@@ -100,7 +100,7 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     number_of_simulations = atoi(argv[2]);
     amplificationFactor = atoi(argv[3]);
     N = atoi(argv[4]);
-    rhoMax = atoi(argv[5]);
+    rhoMax = atof(argv[5]);
     maxIterations = atoi(argv[6]);
     tolerance = atof(argv[7]);
     armadillo = argv[8];
