@@ -21,27 +21,49 @@ firstH = 0.4
 
 #N = str(25)
 
-rhoMaxVals = ['1', '2.5', '5', '7.5', '10'] # For filename
-rhoMaxVals2 = [1, 2.5, 5, 7.5, 10] # For calculations
+rhoMaxVals = ['1', '2.5', '5', '7.5']#, '10'] # For filename
+rhoMaxVals2 = [1, 2.5, 5, 7.5]#, 10] # For calculations
 
 #call(["./Allclean"])
 
 #%% 2b Calling cpp 
+def RunCpp2b(outfileName, numberOfSimulations,amplificationFactor, rhoMaxVals, maxIterations, tolerance, armadillo, electronType, omega, NLimit, vectorized):
+    counter = 1
+    for rhoMax in rhoMaxVals:
+        simulationReduction = 0
+        N = float(rhoMax)/firstH
+        N = int(round(N))
+        NVector = [N*(2.)**i for i in xrange(int(numberOfSimulations))]
+        for i in NVector:
+            if i > NLimit:
+                simulationReduction += 1
+        numberOfSimulations = int(numberOfSimulations)        
+        numberOfSimulations += - simulationReduction
+        numberOfSimulations = str(numberOfSimulations)
+        N = str(N)
+        fileName = outfileName + '%1d' %counter
+        print fileName, N
+        if NVector[counter - 1] < 800:
+            if vectorized:
+                call(["./AllrunVectorized", fileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, armadillo, electronType, omega])
+            else:
+                call(["./Allrun", fileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, armadillo, electronType, omega])
+            counter += 1
+        
+outfileName = 'oneElectron'
+armadillo = 'false'
+electronType = 'oneElectron'
 omega = str(1)
-counter = 1
-for rhoMax in rhoMaxVals:
-    N = rhoMaxVals2[counter-1]/firstH
-    N = int(round(N))
-    N = str(N)
-    outfileName = 'oneElectron%1d' %counter
-    print outfileName, N
-    call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, rhoMax, maxIterations, tolerance, 'false', 'oneElectron123', omega])
-    counter += 1
+rhoMaxVals = ['1', '2.5', '5.0', '7.5']
+numberOfSimulations = str(8)
+NLimit = 700
+vectorized = True
+RunCpp2b(outfileName, numberOfSimulations,amplificationFactor, rhoMaxVals, maxIterations, tolerance, armadillo, electronType, omega, NLimit)
 
  #%% Plot 1 project 2b   
 
 # Open cpp output
-#call(["./Allclean"])
+call(["./Allclean"])
 
 oneElectronScalars = {}
 for counter in xrange(len(rhoMaxVals2)):
@@ -51,18 +73,32 @@ for counter in xrange(len(rhoMaxVals2)):
 
 plt.figure()
 legends = []
-counter = 1
 for key in oneElectronScalars:
     plt.plot(oneElectronScalars[key].h, oneElectronScalars[key].relError)
     legends.append('rhoMax '+rhoMaxVals[key-1])
-    counter += 1
-plt.legend(legends, fontsize = 'large', loc = 'upper right')
+plt.legend(legends, fontsize = 'large', loc = 0,frameon=False)
 plt.title( 'Eigenvalues. Maximum relative errors', fontsize = 'xx-large')
 plt.xlabel('h', fontsize = 'xx-large')
 plt.ylabel('Max relative error', fontsize = 'xx-large')
 plt.grid()
+plt.xlim(0.40,0.0)
 filename = ('results/oneElectronRelativeErrorEigenvalues.pdf')
 plt.savefig(filename)
+
+plt.figure()
+legends = []
+for key in [3,4]:
+    plt.plot(oneElectronScalars[key].h, oneElectronScalars[key].relError)
+    legends.append('rhoMax '+rhoMaxVals[key-1])
+plt.legend(legends, fontsize = 'large', loc = 0,frameon=False)
+plt.title( 'Eigenvalues. Maximum relative errors', fontsize = 'xx-large')
+plt.xlabel('h', fontsize = 'xx-large')
+plt.ylabel('Max relative error', fontsize = 'xx-large')
+plt.grid()
+plt.xlim(0.40,0.0)
+filename = ('results/oneElectronRelativeErrorEigenvalues2.pdf')
+plt.savefig(filename)
+
 
 #%% Plot 2 project 2b   
 plt.figure()
@@ -79,8 +115,8 @@ plt.savefig(filename)
 plt.figure()
 plt.plot(oneElectronScalars[1].logN, oneElectronScalars[1].logCounter)
 plt.title( 'Iterations and dimensions', fontsize = 'xx-large')
-plt.xlabel('log N', fontsize = 'xx-large')
-plt.ylabel('log similarity transformations', fontsize = 'xx-large')
+plt.xlabel('log2 N', fontsize = 'xx-large')
+plt.ylabel('log2 similarity transformations', fontsize = 'xx-large')
 plt.grid()
 
 filename = ('results/oneElectronLogIterationsDimensions.pdf')
@@ -90,27 +126,31 @@ plt.savefig(filename)
 
 #%% 2b Comparison Armadillo. Running cpp
 
-rhoMax = 2.5
-N = rhoMax/firstH
-N = int(round(N))
-N = str(N)
-
 outfileName = 'oneElectron'
-call(["./AllrunVectorized", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'true', 'oneElecron', omega])
+armadillo = 'true'
+electronType = 'oneElectron'
+omega = str(1)
+rhoMaxVals = ['2.5']
+numberOfSimulations = str(8)
+NLimit = 700
+vectorized = True
+RunCpp2b(outfileName, numberOfSimulations,amplificationFactor, rhoMaxVals, maxIterations, tolerance, armadillo, electronType, omega, NLimit, vectorized)
 
+armadillo = 'false'
+vectorized = False
 outfileName = 'oneElectronUnvectorized'
-call(["./Allrun", outfileName, numberOfSimulations,amplificationFactor, N, str(rhoMax), maxIterations, tolerance, 'false', 'oneElecron', omega])
+RunCpp2b(outfileName, numberOfSimulations,amplificationFactor, rhoMaxVals, maxIterations, tolerance, armadillo, electronType, omega, NLimit, vectorized)
 
+#%% 2b  Comparison Armadillo plot
 # Open cpp output
 oneElectronScalarsArmadillo = {}
-oneElectronScalarsArmadillo[2] = pd.read_table("results/oneElectronArmadillo_scalars.csv", 
+oneElectronScalarsArmadillo[2] = pd.read_table("results/oneElectron1Armadillo_scalars.csv", 
 			            delimiter=',')
 
 oneElectronScalarsUnvectorized = {}
-oneElectronScalarsUnvectorized[2] = pd.read_table("results/oneElectronUnvectorized_scalars.csv", 
+oneElectronScalarsUnvectorized[2] = pd.read_table("results/oneElectronUnvectorized1_scalars.csv", 
 			            delimiter=',')
 
-#%% 2b  Comparison Armadillo plot
 plt.figure()
 plt.plot(oneElectronScalarsUnvectorized[2].logN, oneElectronScalarsUnvectorized[2].logTimeUsed, oneElectronScalars[2].logN, oneElectronScalars[2].logTimeUsed, oneElectronScalarsArmadillo[2].logN, oneElectronScalarsArmadillo[2].logTimeUsed)
 #plt.title( 'Time used and dimensions\n Jacobi (Vectorized and unvectorized) and armadillo', fontsize = 'xx-large')
@@ -122,7 +162,7 @@ filename = ('results/oneElectronArmadilloLogTimeDimensions.pdf')
 plt.savefig(filename)
 
 plt.figure()
-plt.plot(oneElectronScalars[2].N, oneElectronScalars[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalars[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
+plt.plot(oneElectronScalars[2].N, oneElectronScalars[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsArmadillo[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
 plt.legend(['Jacobi vectorized', 'Jacobi unvectorized'], fontsize = 'xx-large', loc = 0)
 plt.title( 'Ratio Time Jacobi time Armadillo', fontsize = 'xx-large')
 plt.xlabel('N', fontsize = 'xx-large')
@@ -133,35 +173,20 @@ filename = ('results/oneElectronArmadilloTimeDimensions.pdf')
 plt.savefig(filename)
 
 
-#%%  
-def plot_logTimes(gaussianTridiagonalScalars, gaussianTridiagonalSymmetricScalars, LUScalars, noLU):
-	plt.figure()
-	legends = ['Thomas', 'Symmetric']
-	plt.plot(gaussianTridiagonalScalars.log_h, gaussianTridiagonalScalars.logTimeUsed)
-	plt.hold('on')
-	plt.plot(gaussianTridiagonalSymmetricScalars.log_h, gaussianTridiagonalSymmetricScalars.logTimeUsed)
-	if not noLU:
-	    plt.plot(LUScalars.log_h, LUScalars.logTimeUsed)         
-	    legends.append('LU')                 
-	plt.legend(legends, fontsize = 'large', loc = 'upper right')
-	plt.title('CPU times', fontsize = 'xx-large')
-	plt.xlabel('log h', fontsize = 'xx-large')
-	plt.ylabel('log time', fontsize = 'xx-large')
-	plt.savefig('results/logTimes.pdf')
-
-#%%
-def plot_errors(algorithmScalarValues, algorithmNname, amplificationFactor):
-	relativeError = algorithmScalarValues.log_rel_error
-	plt.figure()
-	log_h = algorithmScalarValues.log_h
-	plt.plot(log_h, relativeError)
-	plt.title('Relative error '+algorithmNname, fontsize = 'xx-large')
-	plt.xlabel('log h', fontsize = 'xx-large')
-	plt.ylabel('Relative error', fontsize = 'xx-large')
-	if int(amplificationFactor) == 2:
-	    plt.ylim(-10,-1)        
-	filename = ('results/relativeError_'+ algorithmNname + amplificationFactor +'.pdf')
-	plt.savefig(filename)
+#%% project2 d no couloumb interaction
+rhoMaxVals = ['5.0']
 
 
-#%% 
+outfileName = 'twoElectronNoCoulombOmega'
+armadillo = 'false'
+electronType = 'TwoElectronNoCoulomb'
+
+numberOfSimulations = str(8)
+NLimit = 700
+vectorized = True
+
+counter = 1
+for omega in '0.01', '0.5', '1.0', '5.0':
+    fileName = outfileName + '%d' %counter 
+    RunCpp2b(fileName, numberOfSimulations,amplificationFactor, rhoMaxVals, maxIterations, tolerance, armadillo, electronType, omega, NLimit, vectorized)    
+    counter += 1

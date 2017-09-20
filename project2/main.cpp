@@ -13,13 +13,14 @@
 using namespace std;
 using namespace arma;
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double omega, int argc, char** argv );
-void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter);
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, int argc, char** argv );
+void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter, mat& v);
+mat get_eigenvecs(mat a, mat v, colvec eigenValues, int N);
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
-void rotate(mat &aMatrix, int k, int l, int N);
+void rotate(mat &aMatrix, int k, int l, int N, mat& v);
 void createEigenvalueVector( mat A, colvec &eigenValues, int N );
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega);
-void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax);
+void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues);
 void output_vectors( double *, int, int, string);
 void calculateError(colvec eigenValues, double *computedError);
 
@@ -31,10 +32,10 @@ main(int argc, char* argv[]){
   if (3 == 3)
       int result = Catch::Session().run( argc, argv );
 
-  double tolerance, computedError, h, timeUsed, omega;
-  int N, rhoMax, amplificationFactor, numberOfSimulations, maxIterations, counter;
+  double tolerance, computedError, h, timeUsed, omega, rhoMax;
+  int N, amplificationFactor, numberOfSimulations, maxIterations, counter;
   string outfileName, outfileNameComputedNumerical, outfileNameScalars, armadillo, interactionRepulsion;
-  mat A;
+  mat A, v, eigenvectorMatrixSorted3;
   colvec eigenValues;
 
   clock_t start, finish;
@@ -45,35 +46,33 @@ main(int argc, char* argv[]){
       outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
       outfileNameComputedNumerical = (outfileName) + string("_numerical");
       ofile1.open(outfileNameScalars);
-      ofile1 << "rhoMax,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
   }
   else{
       outfileNameScalars = (outfileName) + string("Armadillo") + string("_scalars")+string(".csv");
       outfileNameComputedNumerical = (outfileName) + string("_numerical");
-      ofile1.open(outfileNameScalars);
-      ofile1 << "rhoMax,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
-
+      ofile1.open(outfileNameScalars);  
   }
+  ofile1 << "rhoMax,omega,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3" << endl;
 
   // Solving for different matrix dimensions
   for (int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++){
       createTridiagonalMatrix(A, N, rhoMax, 0, &h, interactionRepulsion, omega);
+      v = eye<mat>(N,N);
       eigenValues  = zeros<colvec>(N);
 
       start = clock();
       if (armadillo == "false")
-          jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
+          jacobi(A, eigenValues, tolerance, maxIterations, N, &counter, v);
       else
           eig_sym(eigenValues, A);
-
       finish = clock();
       timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
 
       calculateError(eigenValues, &computedError);
       if(armadillo == "false")
-          output_scalars(computedError, h, timeUsed, N, counter, rhoMax);
+          output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues);
       else{
-          output_scalars(computedError, h, timeUsed, N, 0, rhoMax);
+          output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues);
       }
 
       if (simulationNumber < numberOfSimulations -1)
@@ -81,14 +80,17 @@ main(int argc, char* argv[]){
       eigenValues.print("EigenValues: ");
   }
 
+  outfileName = (outfileName) + string("_eigenVector.csv");
+  eigenvectorMatrixSorted3 = get_eigenvecs(A, v, eigenValues, N);
+  eigenvectorMatrixSorted3.save(outfileName, csv_ascii);
+
   ofile1.close();
   ofile2.close();
-
 
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, int& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double omega, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -109,20 +111,25 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
 }
 
 //ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
-void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax){
+void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
   ofile1 << setw(15) << setprecision(16) << rhoMax << ", ";
+  ofile1 << setw(15) << setprecision(16) << omega << ", ";
   ofile1 << setw(15) << setprecision(16) << h << ", ";
-  ofile1 << setw(15) << setprecision(16) << log10(h) << ", ";
+  ofile1 << setw(15) << setprecision(16) << log2(h) << ", ";
   ofile1 << setw(15) << setprecision(16) << computedError << ", ";
-  ofile1 << setw(15) << setprecision(16) << log10(computedError) << ", ";
+  ofile1 << setw(15) << setprecision(16) << log2(computedError) << ", ";
   ofile1 << setw(15) << setprecision(16) << timeUsed << ", ";
-  ofile1 << setw(15) << setprecision(16) << log10(timeUsed) << ", ";
+  ofile1 << setw(15) << setprecision(16) << log2(timeUsed) << ", ";
   ofile1 << setw(15) << setprecision(16) << N << ", ";
-  ofile1 << setw(15) << setprecision(16) << log10(N) << ", ";
+  ofile1 << setw(15) << setprecision(16) << log2(N) << ", ";
   ofile1 << setw(15) << setprecision(16) << counter << ", ";
-  ofile1 << setw(15) << setprecision(16) << log10(counter) << endl;
+  ofile1 << setw(15) << setprecision(16) << log2(counter) << ", ";
+  ofile1 << setw(15) << setprecision(16) << eigenValues(0)<< ", ";
+  ofile1 << setw(15) << setprecision(16) << eigenValues(1) << ", ";
+  ofile1 << setw(15) << setprecision(16) << eigenValues(2) << endl;
 }
+//"rhoMax,omega, h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3"
 
 void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
   string filename = outfile_name + to_string(simulation_number+1)+string(".csv");
@@ -138,7 +145,7 @@ void output_vectors( double *output_array, int simulation_number, int N, string 
   ofile2.close();
 }
 
-void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter){
+void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter, mat& v){
     int k,l;
     *counter = 0;
 
@@ -146,13 +153,28 @@ void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, in
 
     while ( fabs(aMaxNonDiagonal) > tolerance && *counter < maxIterations ){
         aMaxNonDiagonal  = findMaxNonDiagonalElement(A, &k, &l, N);
-        rotate(A, k, l, N);
+        rotate(A, k, l, N, v);
         *counter += 1;
     }
     createEigenvalueVector( A, eigenValues,  N);
 }
 
-void rotate(mat &aMatrix, int k, int l, int N){
+mat get_eigenvecs(mat a, mat v, colvec eigenValues, int N){
+    // Based on Morten's example
+    mat vecs(N,3);
+    for(int i=0;i<3;i++){
+        for(int j=0;j<N;j++){
+            if(a(j,j)==eigenValues(i)){
+                for(int k=0;k<N;k++){
+                      vecs(k,i)=v(k,j);
+                }
+             }
+         }
+    }
+    return vecs;
+}
+
+void rotate(mat &aMatrix, int k, int l, int N, mat& v){
     double c, s;
     if ( aMatrix(k,l) != 0.0 ) {
         double tau, t;
@@ -172,7 +194,7 @@ void rotate(mat &aMatrix, int k, int l, int N){
         s = 0.0;
     }
 
-    double aIk, aIl, aKk, aLl;
+    double aIk, aIl, aKk, aLl, vik, vil;
     for (int i = 0; i < N; i++){
         if ( i != k && i != l ) {
                 aIk = aMatrix(i, k);
@@ -182,6 +204,10 @@ void rotate(mat &aMatrix, int k, int l, int N){
                 aMatrix(i, l) = aIl*c + aIk*s;
                 aMatrix(l, i) = aMatrix(i, l);
         }
+        vik=v(i,k);
+        vil=v(i,l);
+        v(i,k)=c*vik-s*vil;
+        v(i,l)=c*vil+s*vik;
     }
     aKk = aMatrix(k,k);
     aLl = aMatrix(l, l);
@@ -298,6 +324,7 @@ TEST_CASE( "Testing Jacobi eigenvalues", "[jacobi]" ) {
   double tolerance = pow(10,-10); // Tolerance for non-diagonals in Jacobi
   int maxIterations = pow(10,4);
   double tol = pow(10,-1); // Tolerance for difference jacobi and Armadillo
+  mat v = eye<mat>(N,N);
 
   mat A(N,N);
   A(0,0) = 10.;
@@ -311,7 +338,7 @@ TEST_CASE( "Testing Jacobi eigenvalues", "[jacobi]" ) {
   A(2,2) = 30.;
   int counter;
   eig_sym(EigvalArmadillo, A);
-  jacobi(A, eigenValues, tolerance, maxIterations, N, &counter);
+  jacobi(A, eigenValues, tolerance, maxIterations, N, &counter, v);
   for (int i = 0; i < N; i++){
           REQUIRE( fabs((eigenValues(i) - EigvalArmadillo(i))/EigvalArmadillo(i)) < tol);
   }
