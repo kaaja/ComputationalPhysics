@@ -77,7 +77,6 @@ main(int argc, char* argv[]){
 
       if (simulationNumber < numberOfSimulations -1)
           N *= amplificationFactor;
-      eigenValues.print("EigenValues: ");
   }
 
   outfileName = (outfileName) + string("_eigenVector.csv");
@@ -276,7 +275,6 @@ void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, doubl
     else
         A(N-1, N-1) = diagonalFirstTerm + pow(rhoMax,2);
     *h = hTemp;
-    A.print("A: ");
 }
 
 void calculateError(colvec eigenValues, double *computedError){
