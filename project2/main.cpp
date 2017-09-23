@@ -13,14 +13,14 @@
 using namespace std;
 using namespace arma;
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, int argc, char** argv );
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv );
 void jacobi(mat &A, colvec &eigenValues, double tolerance, int maxIterations, int N, int *counter, mat& v);
 mat get_eigenvecs(mat a, mat v, colvec eigenValues, int N);
 double findMaxNonDiagonalElement(mat &A, int *k, int *l, int N);
 void rotate(mat &aMatrix, int k, int l, int N, mat& v);
 void createEigenvalueVector( mat A, colvec &eigenValues, int N );
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega);
-void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues);
+void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues, string convergenceSuccess);
 void output_vectors( double *, int, int, string);
 void calculateError(colvec eigenValues, double *computedError);
 
@@ -32,22 +32,28 @@ main(int argc, char* argv[]){
   if (3 == 3)
       int result = Catch::Session().run( argc, argv );
 
-  double tolerance, computedError, h, timeUsed, omega, rhoMax;
+  double tolerance, computedError, h, timeUsed, omega, rhoMax, convergenceLimit, lastEigenvalue;
   int N, amplificationFactor, numberOfSimulations, maxIterations, counter;
-  string outfileName, outfileNameScalars, armadillo, interactionRepulsion;
+  string outfileName, outfileNameScalars, armadillo, interactionRepulsion, convergenceSuccess;
   mat A, v, eigenvectorMatrixSorted3;
   colvec eigenValues;
 
   clock_t start, finish;
 
-  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, interactionRepulsion, omega, argc, argv );
+  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, interactionRepulsion, omega, convergenceLimit, argc, argv );
 
   outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
   ofile1.open(outfileNameScalars);
-  ofile1 << "rhoMax,omega,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3" << endl;
+  ofile1 << "rhoMax,omega,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3,convergenceSuccess" << endl;
 
   // Solving for different matrix dimensions
+  eigenValues  = zeros<colvec>(2);
+  lastEigenvalue = 5;
+  convergenceSuccess = "False";
   for (int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++){
+
+      //cout << "Rel eigError: " << abs((eigenValues(0) - lastEigenvalue)/lastEigenvalue) << endl;
+      lastEigenvalue = eigenValues(0);
       createTridiagonalMatrix(A, N, rhoMax, 0, &h, interactionRepulsion, omega);
       v = eye<mat>(N,N);
       eigenValues  = zeros<colvec>(N);
@@ -61,15 +67,28 @@ main(int argc, char* argv[]){
       timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
 
       calculateError(eigenValues, &computedError);
-      if(armadillo == "false")
-          output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues);
-      else{
-          output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues);
+
+      if (abs((eigenValues(0) - lastEigenvalue)/lastEigenvalue) < convergenceLimit){
+          convergenceSuccess = "True";
+          if(armadillo == "false")
+              output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);
+          else{
+              output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues, convergenceSuccess);
+          }
+          break;
       }
 
+      else {
+          if(armadillo == "false")
+              output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);
+          else{
+              output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues, convergenceSuccess);
+          }
+      }
       if (simulationNumber < numberOfSimulations -1)
           N *= amplificationFactor;
   }
+
 
   outfileName = (outfileName) + string("_eigenVector.csv");
   eigenvectorMatrixSorted3 = get_eigenvecs(A, v, eigenValues, N);
@@ -81,7 +100,7 @@ main(int argc, char* argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -99,10 +118,11 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     armadillo = argv[8];
     interactionRepulsion = argv[9];
     omega = atof(argv[10]);
+    convergenceLimit = atof(argv[11]);
 }
 
 //ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
-void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues){
+void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues, string convergenceSuccess){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
   ofile1 << setw(15) << setprecision(16) << rhoMax << ", ";
   ofile1 << setw(15) << setprecision(16) << omega << ", ";
@@ -118,7 +138,8 @@ void output_scalars( double computedError, double h, double timeUsed, int N, int
   ofile1 << setw(15) << setprecision(16) << log2(counter) << ", ";
   ofile1 << setw(15) << setprecision(16) << eigenValues(0)<< ", ";
   ofile1 << setw(15) << setprecision(16) << eigenValues(1) << ", ";
-  ofile1 << setw(15) << setprecision(16) << eigenValues(2) << endl;
+  ofile1 << setw(15) << setprecision(16) << eigenValues(2) << ", ";
+  ofile1 << convergenceSuccess << endl;
 }
 //"rhoMax,omega, h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3"
 
