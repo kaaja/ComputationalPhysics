@@ -34,7 +34,7 @@ main(int argc, char* argv[]){
 
   double tolerance, computedError, h, timeUsed, omega, rhoMax;
   int N, amplificationFactor, numberOfSimulations, maxIterations, counter;
-  string outfileName, outfileNameComputedNumerical, outfileNameScalars, armadillo, interactionRepulsion;
+  string outfileName, outfileNameScalars, armadillo, interactionRepulsion;
   mat A, v, eigenvectorMatrixSorted3;
   colvec eigenValues;
 
@@ -42,16 +42,8 @@ main(int argc, char* argv[]){
 
   initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, interactionRepulsion, omega, argc, argv );
 
-  if (armadillo == "false"){
-      outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
-      outfileNameComputedNumerical = (outfileName) + string("_numerical");
-      ofile1.open(outfileNameScalars);
-  }
-  else{
-      outfileNameScalars = (outfileName) + string("Armadillo") + string("_scalars")+string(".csv");
-      outfileNameComputedNumerical = (outfileName) + string("_numerical");
-      ofile1.open(outfileNameScalars);  
-  }
+  outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
+  ofile1.open(outfileNameScalars);
   ofile1 << "rhoMax,omega,h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3" << endl;
 
   // Solving for different matrix dimensions

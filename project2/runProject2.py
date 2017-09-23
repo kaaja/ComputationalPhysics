@@ -166,11 +166,10 @@ def ex2barmadillo():
     plt.savefig(filename)
     
 #%% 2d, run 
-def ex2d(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH):
-    armadillo = 'true'
+def ex2d(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, armadillo):
     electronTypes = ['TwoElectronCoulomb', 'TwoElectronNoCoulomb']
-    omegaVals = ['0.01', '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10', '15', '20', '25']
+    omegaVals = ['0.25']#, '0.01', '0.5', '1.0', '5.0']
+    rhoMaxVals = ['25'] #['5','10', '15', '20', 
     numberOfSimulations = str(8)
     NLimit = 900
     vectorized = True
@@ -178,15 +177,18 @@ def ex2d(tolerance, numberOfSimulations, amplificationFactor, maxIterations, fir
     for electronType in electronTypes:
         for omega in omegaVals:
             for rhoMax in rhoMaxVals:
-                outfileName = '%sOmega%sRhoMax%s' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
+                if armadillo == 'true':
+                    outfileName = '%sOmega%sRhoMax%sArmadillo' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
+                else:
+                    outfileName = '%sOmega%sRhoMax%s' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
                 print outfileName
                 RunCpp2d(outfileName, firstH, numberOfSimulations,amplificationFactor, rhoMax, maxIterations, tolerance, armadillo, electronType, omega, NLimit, vectorized)
 
 #%% 2d, Plots 
-def ex2dPlot():        
+def ex2dPlot(armadillo):        
     electronTypes = ['TwoElectronCoulomb', 'TwoElectronNoCoulomb']
-    omegaVals = ['0.01', '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10', '15', '20', '25']
+    omegaVals = ['0.25']#,'0.01' '0.5', '1.0', '5.0']
+    rhoMaxVals = ['25'] #['5','10', '15', '20', 
     
     twoElectronScalars = {}
     for electronType in electronTypes:
@@ -194,8 +196,11 @@ def ex2dPlot():
         for omega in omegaVals:
             twoElectronScalars[electronType][omega]= {}
             for rhoMax in rhoMaxVals:
-                outfileName = '%sOmega%sRhoMax%s' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
-                twoElectronScalars[electronType][omega][rhoMax] = pd.read_table("results/" + outfileName+ "Armadillo_scalars.csv", 
+                if armadillo == 'true':
+                    outfileName = '%sOmega%sRhoMax%sArmadillo' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
+                else:
+                    outfileName = '%sOmega%sRhoMax%s' %(electronType,  omega.replace(".", ""), rhoMax.replace(".", ""))
+                twoElectronScalars[electronType][omega][rhoMax] = pd.read_table("results/" + outfileName+ "_scalars.csv", 
         			            delimiter=',')            
 
     for electronType in electronTypes:
@@ -240,6 +245,7 @@ if __name__ == "__main__":
     elif args.task == '2bArmadillo':
         ex2barmadillo(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH)
     elif args.task == '2d':
-        ex2d(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH)
-        twoElectronScalars = ex2dPlot()
+        armadillo = 'true'
+        ex2d(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, armadillo)
+        twoElectronScalars = ex2dPlot(armadillo)
     
