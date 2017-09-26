@@ -134,18 +134,5 @@ double bisection(double (*func)(mat &A, double eigenvalueGuess, int N), double x
     }
     cout << "Error in the bisection:" << endl; // should never reach this point
     cout << "Too many iterations!" << endl;
-    }
+}
 
-/*
-def eigenvals3(d,c,N):
-
-    def f(x):             // f(x) = |[A] - x[I]|
-        p = sturmSeq(d,c,x)
-        return p[len(p)-1]
-
-    lam = zeros(N)
-    r = lamRange(d,c,N)   // Bracket eigenvalues
-    for i in range(N):    // Solve by Brent's method
-        lam[i] = ridder(f,r[i],r[i+1])
-    return lam
-*/
