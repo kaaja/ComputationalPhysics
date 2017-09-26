@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += \
     jacobi.cpp \
-    project2.cpp #\
+    project2.cpp \  #\
+    eigenvalueBisection.cpp
 #    tests-main.cpp \
 #    test-functions.cpp
 
@@ -15,4 +16,5 @@ LIBS += -larmadillo -llapack -lblas
 
 HEADERS += \
     jacobi.h \
-    catch.hpp
+    catch.hpp \
+    eigenvalueBisection.h

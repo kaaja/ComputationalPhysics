@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "jacobi.h"
+#include "eigenvalueBisection.h"
 
 
 TEST_CASE( "Testing maxDiagonal", "[findMaxNonDiagonalElement]" ) {
@@ -52,18 +53,285 @@ TEST_CASE( "Testing Jacobi eigenvalues", "[jacobi]" ) {
   }
 }
 
+TEST_CASE( "Testing sturm sequence", "[sturmSeq]" ){
+    // Testing example on p 360-361 in Kiusalaas (2014).
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec p;
+    double lam = 0.5;
 
 
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
 
-/*
-TEST_CASE( "Testing jacobi", "[jacobi]" ) {
-  mat A;
-  int N = pow(10,3)
-  createTridiagonalMatrix(A, N, 10, 0);
-  colvec eigenValues;
-  jacobi(A, eigenValues, pow(10,-7), pow(10,3), N );
-  vec Eigval(N);
-  eig_sym(Eigval, A);
-  REQUIRE( A(0,0)== 2);
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+
+    p = sturmSeq(A, lam, N);
+    REQUIRE( abs(p(0) - 1) < tol);
+    REQUIRE( abs(p(1) - 1.5) < tol);
+    REQUIRE( abs(p(2) - 1.25) < tol);
+    REQUIRE( abs(p(3) - 0.375) < tol);
+    REQUIRE( abs(p(4) + 0.6875) < tol);
 }
-*/
+
+
+TEST_CASE( "Testing numner of lambdas", "[numLambdas]" ){
+    // Testing example on p 361 in Kiusalaas (2014).
+    // The smallest eigenvalue is supposed to be between 0.25 and 2.25
+
+
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec p;
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    double lam = 0.2;
+    p = sturmSeq(A, lam, N);
+    REQUIRE( numLambdas(p, N) < tol);
+
+    lam = 0.3;
+    p = sturmSeq(A, lam, N);
+    REQUIRE( numLambdas(p, N) - 1 < tol);
+
+    lam = 10;
+    p = sturmSeq(A, lam, N);
+    REQUIRE( numLambdas(p, N) >= 1);
+}
+
+
+TEST_CASE( "Testing gerschgorin ", "[gerschgorin]" ){
+    // Testing example on p 361 in Kiusalaas (2014).
+    // The smallest eigenvalue is supposed to be between 0.25 and 2.25
+
+
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec eigenvaluesArmadillo;
+    eigenvaluesArmadillo = zeros<colvec>(N);
+    colvec gerschgorinValues;
+    gerschgorinValues = zeros<colvec>(2);
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    eig_sym(eigenvaluesArmadillo, A);
+    gerschgorinValues = gerschgorin(A, N);
+    REQUIRE(gerschgorinValues(0) - eigenvaluesArmadillo(0) <= tol);
+    REQUIRE(gerschgorinValues(1) - eigenvaluesArmadillo(3) >= tol);
+}
+
+
+TEST_CASE( "Testing lambda range ", "[lamRange]" ){
+    // Testing example on p 361 in Kiusalaas (2014).
+    // The smallest eigenvalue is supposed to be between 0.25 and 2.25
+
+
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec eigenvaluesArmadillo;
+    eigenvaluesArmadillo = zeros<colvec>(N);
+    colvec eigenvalueDomains;
+    eigenvalueDomains = zeros<colvec>(N+1);
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    eig_sym(eigenvaluesArmadillo, A);
+    eigenvalueDomains = lamRange(A, N);
+    for (int eigenvalueNumber = 0; eigenvalueNumber < N; eigenvalueNumber++){
+        REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) >= eigenvalueDomains(eigenvalueNumber));
+        REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) <= eigenvalueDomains(eigenvalueNumber+1));
+    }
+}
+
+TEST_CASE( "Testing f ", "[f]" ){
+    // Check that f gives last element of Sturm sequence
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec p;
+    double lam = 0.5;
+    double fResult;
+
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    p = sturmSeq(A, lam, N);
+    fResult = f(A, lam, N);
+
+    REQUIRE(fabs(fResult - p(4)) < tol);
+}
+
+TEST_CASE( "Testing bisection ", "bisection" ){
+    // Bisection method double bisection(double (*func)(double), double x1, double x2, double xacc, mat &A, int N, int max_iterations)
+    double x1 = 0.25; // lower limit minimum eigenvalue
+    double x2 = 0.5; //
+    double xacc = 0.000001;
+    int max_iterations = 1000000;
+    double bisectionSolution;
+    double tol = 0.00001;
+
+    int N = 4;
+    colvec  eigenvaluesArmadillo;
+    eigenvaluesArmadillo = zeros<colvec>(N);
+    mat A(N,N);
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    eig_sym(eigenvaluesArmadillo, A);
+    bisectionSolution = bisection(f, x1, x2, xacc, A, N, max_iterations);
+
+    REQUIRE(fabs(bisectionSolution- eigenvaluesArmadillo(0)) < tol);
+}
+
+TEST_CASE( "Testing eigenvalues3", "eigenvals3" ){
+    // eigenvals3(mat &A, int N, double bisectionAccuracy, int max_iterations)
+    double xacc = 0.000001;
+    int max_iterations = 1000000;
+    double tol = 0.00001;
+
+    int N = 4;
+    colvec  eigenvaluesArmadillo;
+    eigenvaluesArmadillo = zeros<colvec>(N);
+    colvec  eigenvaluesBisection;
+    eigenvaluesBisection= zeros<colvec>(N);
+
+    mat A(N,N);
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    eig_sym(eigenvaluesArmadillo, A);
+    eigenvaluesBisection= eigenvals3(A, N, xacc, max_iterations);
+    eigenvaluesBisection = sort(eigenvaluesBisection);
+
+    for (int i = 0; i < N; i++){
+      REQUIRE(fabs(eigenvaluesArmadillo(i)- eigenvaluesBisection(i)) < tol);
+    }
+}
