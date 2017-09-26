@@ -5,11 +5,14 @@ CONFIG -= qt
 
 SOURCES += \
     jacobi.cpp \
-    project2.cpp
+    project2.cpp #\
+#    tests-main.cpp \
+#    test-functions.cpp
 
 INCLUDEPATH += /usr/local/include
 LIBS += -L/usr/local/lib
 LIBS += -larmadillo -llapack -lblas
 
 HEADERS += \
-    jacobi.h
+    jacobi.h \
+    catch.hpp
