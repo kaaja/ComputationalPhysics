@@ -5,26 +5,24 @@
 #include <iomanip>
 
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv );
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv );
 void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues, string convergenceSuccess);
-void output_vectors( double *, int, int, string);
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega);
 void calculateError(colvec eigenValues, double *computedError);
 
 
 ofstream ofile1; // File for scalars
-ofstream ofile2; // File for vectors
 
 main(int argc, char* argv[]){
   double tolerance, computedError, h, timeUsed, omega, rhoMax, convergenceLimit, lastEigenvalue;
   int N, amplificationFactor, numberOfSimulations, maxIterations, counter;
-  string outfileName, outfileNameScalars, armadillo, interactionRepulsion, convergenceSuccess;
+  string outfileName, outfileNameScalars, solverType, interactionRepulsion, convergenceSuccess;
   mat A, v, eigenvectorMatrixSorted3;
   colvec eigenValues;
 
   clock_t start, finish;
 
-  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, armadillo, interactionRepulsion, omega, convergenceLimit, argc, argv );
+  initialize(outfileName, numberOfSimulations, amplificationFactor,N, rhoMax, maxIterations, tolerance, solverType, interactionRepulsion, omega, convergenceLimit, argc, argv );
 
   outfileNameScalars = (outfileName) + string("_scalars")+string(".csv");
   ofile1.open(outfileNameScalars);
@@ -43,10 +41,17 @@ main(int argc, char* argv[]){
       eigenValues  = zeros<colvec>(N);
 
       start = clock();
-      if (armadillo == "false")
+      if (solverType == "jacobi")
           jacobi(A, eigenValues, tolerance, maxIterations, N, &counter, v);
-      else
+      else if (solverType == "armadillo")
           eig_sym(eigenValues, A);
+      else if (solverType == "bisection")
+          eigenValues = eigenvals3(A, N, tolerance, maxIterations);
+      else {
+          cout << "choose solvertype " << endl;
+          break;
+      }
+
       finish = clock();
       timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
 
@@ -54,7 +59,7 @@ main(int argc, char* argv[]){
 
       if (abs((eigenValues(0) - lastEigenvalue)/lastEigenvalue) < convergenceLimit){
           convergenceSuccess = "True";
-          if(armadillo == "false")
+          if(solverType == "Jacobi")
               output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);
           else{
               output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues, convergenceSuccess);
@@ -63,7 +68,7 @@ main(int argc, char* argv[]){
       }
 
       else {
-          if(armadillo == "false")
+          if(solverType == "jacobi")
               output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);
           else{
               output_scalars(computedError, h, timeUsed, N, 0, rhoMax, omega, eigenValues, convergenceSuccess);
@@ -79,12 +84,11 @@ main(int argc, char* argv[]){
   eigenvectorMatrixSorted3.save(outfileName, csv_ascii);
 
   ofile1.close();
-  ofile2.close();
 
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& armadillo, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -99,7 +103,7 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
     rhoMax = atof(argv[5]);
     maxIterations = atoi(argv[6]);
     tolerance = atof(argv[7]);
-    armadillo = argv[8];
+    solverType = argv[8];
     interactionRepulsion = argv[9];
     omega = atof(argv[10]);
     convergenceLimit = atof(argv[11]);
@@ -126,20 +130,6 @@ void output_scalars( double computedError, double h, double timeUsed, int N, int
   ofile1 << convergenceSuccess << endl;
 }
 //"rhoMax,omega, h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3"
-
-void output_vectors( double *output_array, int simulation_number, int N, string outfile_name){
-  string filename = outfile_name + to_string(simulation_number+1)+string(".csv");
-  ofile2.open(filename);
-  /*
-  ofile2 << "simulation_number_" << simulation_number+1 << endl;
-  ofile2 << setiosflags(ios::showpoint | ios::uppercase);
-  for (int i = 0; i<N; i++){
-    ofile2 << setw(15) << setprecision(16) << output_array[i] << endl;;
-  }
-  ofile2 << setw(15) << setprecision(16) << endl;
-  */
-  ofile2.close();
-}
 
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega){
     double hTemp = (rhoMax - rhoMin)/N;
