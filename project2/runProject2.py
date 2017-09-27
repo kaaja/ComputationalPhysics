@@ -15,20 +15,19 @@ from collections import OrderedDict
     
 #%% 2, run 
 def ex2():
-    solverType = 'bisection'
-    tolerance = str(1e-9)
-    numberOfSimulations = str(8)
+    solverType = 'armadillo'
+    tolerance = str(1e-6) # Kja: testing with low. CHange back if problems
+    numberOfSimulations = str(16)
     amplificationFactor = str(2)
     maxIterations = str(1e8)
     firstH = 0.4
     electronTypes = ['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
-    omegaVals = ['0.25', '1.0']#'0.25']#, '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10']#, '15', '20', '40','50'] 
-    numberOfSimulations = str(15)
+    omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']#'0.25']#, '0.5', '1.0', '5.0']
+    rhoMaxVals = ['5','10', '20', '40', '50']
     NLimit = 2000
     vectorized = True
     convergenceLimit = '.0001'
-    convergenceEigenvalue = .000001
+    convergenceEigenvalue = .0001 # For use in python, deciding wheter new rhoMax Needed
     
     electronScalars = OrderedDict()
     for electronType in electronTypes:
@@ -53,6 +52,7 @@ def ex2():
                             break
                     counter += 1
     ex2dPlot(solverType, firstH, electronScalars)
+    ex2bplot(solverType, firstH, electronScalars['oneElectron'])
     
     return electronScalars
 
@@ -92,6 +92,7 @@ def ex2bplot(solverType, firstH, electronScalars):
     plt.xlim(0.40,0.0)
     filename = ('results/oneElectronRelativeErrorEigenvalues.pdf')
     plt.savefig(filename)
+    plt.close()
     
     
 #    plt.figure()
@@ -183,6 +184,7 @@ def ex2bplot(solverType, firstH, electronScalars):
     plt.grid()
     filename = ('results/oneElectronArmadilloTimeDimensions.pdf')
     plt.savefig(filename)
+    plt.close()
     
 #ex2bplot('true', '0.4', electronScalars['oneElectron'])
 
@@ -229,9 +231,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
             ax.grid(True)
             ax.set_xlim(float(firstH),0.0)
             #fig.show()
-            outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+            outfileName = '%sOmega%sRhoMaxComparison' %(electronType,  omega.replace(".", ""))
             filename = ('results/' + outfileName + '.pdf')
             fig.savefig(filename) 
+            plt.close()
             
             # Plots different omega's same figure
             ax2.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
@@ -264,9 +267,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
         ax2.grid(True)
         ax2.set_xlim(float(firstH),0.0)
         #fig.show()
-        outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+        outfileName = '%sOmegaComparison' %(electronType)
         filename = ('results/' + outfileName + '.pdf')
         fig2.savefig(filename)
+        plt.close()
         
     ax3.legend(legends3[1:3], fontsize = 'large', loc = 0,frameon=False)
     ax3.set_xlabel('h', fontsize = 'xx-large')
@@ -274,9 +278,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
     ax3.grid(True)
     ax3.set_xlim(float(firstH),0.0)
     #fig.show()
-    outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+    outfileName = 'electronComparisonOmega001' 
     filename = ('results/' + outfileName + '.pdf')
     fig3.savefig(filename)
+    plt.close()
 
     ax4.legend(legends3[1:3], fontsize = 'large', loc = 0,frameon=False)
     ax4.set_xlabel('h', fontsize = 'xx-large')
@@ -284,9 +289,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
     ax4.grid(True)
     ax4.set_xlim(float(firstH),0.0)
     #fig.show()
-    outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+    outfileName = 'electronComparisonOmega025' 
     filename = ('results/' + outfileName + '.pdf')
     fig3.savefig(filename)
+    plt.close()
 
     ax5.legend(legends3[1:3], fontsize = 'large', loc = 0,frameon=False)
     ax5.set_xlabel('h', fontsize = 'xx-large')
@@ -294,9 +300,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
     ax5.grid(True)
     ax5.set_xlim(float(firstH),0.0)
     #fig.show()
-    outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+    outfileName = 'electronComparisonOmega05'
     filename = ('results/' + outfileName + '.pdf')
     fig3.savefig(filename)
+    plt.close()
     
     ax6.legend(legends3, fontsize = 'large', loc = 0,frameon=False)
     ax6.set_xlabel('h', fontsize = 'xx-large')
@@ -304,9 +311,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
     ax6.grid(True)
     ax6.set_xlim(float(firstH),0.0)
     #fig.show()
-    outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+    outfileName = 'electronComparisonOmega50'
     filename = ('results/' + outfileName + '.pdf')
     fig3.savefig(filename)
+    plt.close()
     
     ax7.legend(legends3[1:3], fontsize = 'large', loc = 0,frameon=False)
     ax7.set_xlabel('h', fontsize = 'xx-large')
@@ -314,9 +322,10 @@ def ex2dPlot(solverType, firstH, electronScalars):
     ax7.grid(True)
     ax7.set_xlim(float(firstH),0.0)
     #fig.show()
-    outfileName = '%sOmega%s' %(electronType,  omega.replace(".", ""))
+    outfileName = 'electronComparisonOmega10'
     filename = ('results/' + outfileName + '.pdf')
     fig3.savefig(filename)
+    plt.close()
 
 
     #ex2dPlot('true', '0.4', electronScalars)

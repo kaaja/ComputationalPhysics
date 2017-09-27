@@ -46,7 +46,9 @@ main(int argc, char* argv[]){
       else if (solverType == "armadillo")
           eig_sym(eigenValues, A);
       else if (solverType == "bisection")
-          eigenValues = eigenvals3(A, N, tolerance, maxIterations);
+          eigenValues = eigenvals3(A, N, tolerance, maxIterations, 0);
+      else if (solverType == "bisectionRevised")
+          eigenValues = eigenvals3(A, N, tolerance, maxIterations, 1);
       else {
           cout << "choose solvertype " << endl;
           break;

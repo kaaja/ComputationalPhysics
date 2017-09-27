@@ -179,6 +179,7 @@ TEST_CASE( "Testing gerschgorin ", "[gerschgorin]" ){
 TEST_CASE( "Testing lambda range ", "[lamRange]" ){
     // Testing example on p 361 in Kiusalaas (2014).
     // The smallest eigenvalue is supposed to be between 0.25 and 2.25
+    // Testing both revised and original version
 
 
     int N = 4;
@@ -210,10 +211,12 @@ TEST_CASE( "Testing lambda range ", "[lamRange]" ){
     A(3,3) = 2.0;
 
     eig_sym(eigenvaluesArmadillo, A);
-    eigenvalueDomains = lamRange(A, N);
-    for (int eigenvalueNumber = 0; eigenvalueNumber < N; eigenvalueNumber++){
-        REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) >= eigenvalueDomains(eigenvalueNumber));
-        REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) <= eigenvalueDomains(eigenvalueNumber+1));
+    for (int i = 0; i < 2; i++){
+        eigenvalueDomains = lamRange(A, N, i);
+        for (int eigenvalueNumber = 0; eigenvalueNumber < N; eigenvalueNumber++){
+            REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) >= eigenvalueDomains(eigenvalueNumber));
+            REQUIRE(eigenvaluesArmadillo(eigenvalueNumber) <= eigenvalueDomains(eigenvalueNumber+1));
+        }
     }
 }
 
@@ -328,10 +331,54 @@ TEST_CASE( "Testing eigenvalues3", "eigenvals3" ){
     A(3,3) = 2.0;
 
     eig_sym(eigenvaluesArmadillo, A);
-    eigenvaluesBisection= eigenvals3(A, N, xacc, max_iterations);
-    eigenvaluesBisection = sort(eigenvaluesBisection);
 
-    for (int i = 0; i < N; i++){
-      REQUIRE(fabs(eigenvaluesArmadillo(i)- eigenvaluesBisection(i)) < tol);
+    for ( int revision = 0; revision < 2; revision++){
+        eigenvaluesBisection= eigenvals3(A, N, xacc, max_iterations, revision);
+        eigenvaluesBisection = sort(eigenvaluesBisection);
+        for (int i = 0; i < N; i++){
+            REQUIRE(fabs(eigenvaluesArmadillo(i)- eigenvaluesBisection(i)) < tol);
+        }
     }
+}
+
+TEST_CASE( "NumLambdas revised", "[numLambdasRevised]" ){
+    // Using same test case as for numLambdas
+
+
+    int N = 4;
+    double tol = 0.00001;
+    mat A(N,N);
+    colvec p;
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    double lam = 0.2;
+    p = sturmSeqRevised(A, lam, N);
+    REQUIRE( numLambdasRevised(p, N) < tol);
+
+    lam = 0.3;
+    p = sturmSeqRevised(A, lam, N);
+    REQUIRE( numLambdasRevised(p, N) - 1 < tol);
+
+    lam = 10;
+    p = sturmSeqRevised(A, lam, N);
+    REQUIRE( numLambdasRevised(p, N) >= 1);
 }

@@ -4,12 +4,29 @@
 #include "eigenvalueBisection.h"
 
 colvec sturmSeq(mat &A, double &lam, int N){
+    // Revised version Sturm bisection by Barth, Martin, Williamson
     colvec p = ones<colvec>(N+1);
     p(1) = A(0,0) - lam;
     for (int i = 2; i < N+1; i++ ){
         if (A(i-1, i-2) == 0.0)
             A(i-1,i-2) = 1.0e-12;
         p(i) = (A(i-1,i-1)-lam)*p(i-1) - (A(i-1,i-2)*A(i-1,i-2))*p(i-2);
+    }
+    return p;
+}
+
+colvec sturmSeqRevised(mat &A, double &lam, int N){
+    // Revised version Sturm bisection by Barth, Martin, Williamson
+    colvec p = ones<colvec>(N+1);
+    p(1) = A(0,0) - lam;
+    for (int i = 2; i < N+1; i++ ){
+        if (A(i-1, i-2) == 0.0)
+            A(i-1,i-2) = 1.0e-12;
+        if ( fabs(p(i-1)) == 0.0 )
+              //p(i-1) = 1.0e-12;
+              p(i) = (A(i-1,i-1)-lam) - fabs(A(i-1,i-2))/DBL_EPSILON;
+        else
+              p(i) = (A(i-1,i-1)-lam) - (A(i-1,i-2)*A(i-1,i-2))/p(i-1);
     }
     return p;
 }
@@ -31,6 +48,16 @@ int numLambdas(colvec &p, int N){
     }
     return numLam;
 }
+
+int numLambdasRevised(colvec &p, int N){
+    int numLam = 0;
+    for (int i = 1; i < N+1; i++){
+        if (p(i) < 0.0)
+            numLam += 1;
+    }
+    return numLam;
+}
+
 
 colvec gerschgorin(mat &A, int N){
     double lamMin, lamMax, lam;
@@ -59,7 +86,7 @@ colvec gerschgorin(mat &A, int N){
     return lambdaExtremes;
 }
 
-colvec lamRange(mat &A,int N){
+colvec lamRange(mat &A,int N, int oneForRevised){
     colvec lambdaExtrmes, r, p;
     double lamMin,lamMax, lam, h;
     int numLam;
@@ -76,8 +103,14 @@ colvec lamRange(mat &A,int N){
         h = (lamMax - lamMin)/2.0;
         for (int i = 0; i < 1000; i++){
             // Find number of eigenvalues less than lam
-            p = sturmSeq(A, lam, N);
-            numLam = numLambdas(p,N);
+            if (oneForRevised != 1){
+                p = sturmSeq(A, lam, N);
+                numLam = numLambdas(p,N);
+            }
+            else{
+                p = sturmSeqRevised(A, lam, N);
+                numLam = numLambdasRevised(p,N);
+            }
             // Bisect again & find the half containing lam
             h = h/2.0;
             if (numLam < k)
@@ -102,11 +135,11 @@ double f(mat &A, double eigenvalueGuess, int N){
     return p(N);
 }
 
-colvec eigenvals3(mat &A, int N, double bisectionAccuracy, int max_iterations){
+colvec eigenvals3(mat &A, int N, double bisectionAccuracy, int max_iterations, int oneForRevised){
     colvec lam, r;
     lam = zeros<colvec>(N);
     r = zeros<colvec>(N+1);
-    r = lamRange(A,N);
+    r = lamRange(A,N,oneForRevised);
     for (int i = 0; i < N; i++){
         lam(i) = bisection(f, r(i), r(i+1), bisectionAccuracy, A, N, max_iterations );
     }
@@ -130,6 +163,7 @@ double bisection(double (*func)(mat &A, double eigenvalueGuess, int N), double x
         if (fmid <= 0.0)
             rtb=xmid;
         if(fabs(dx) < xacc || fmid == 0.0)
+        //if( fabs(dx) < 2.*DBL_EPSILON*(fabs(xmid) + fabs(rtb)) + xacc || fmid == 0.0)
             return rtb;
     }
     cout << "Error in the bisection:" << endl; // should never reach this point
