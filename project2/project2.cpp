@@ -5,7 +5,7 @@
 #include <iomanip>
 
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv );
+void initialize(string& outfile_name, int& number_of_simulations,double& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv );
 void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues, string convergenceSuccess);
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega);
 void calculateError(colvec eigenValues, double *computedError);
@@ -14,8 +14,8 @@ void calculateError(colvec eigenValues, double *computedError);
 ofstream ofile1; // File for scalars
 
 main(int argc, char* argv[]){
-  double tolerance, computedError, h, timeUsed, omega, rhoMax, convergenceLimit, lastEigenvalue;
-  int N, amplificationFactor, numberOfSimulations, maxIterations, counter;
+  double tolerance, computedError, h, timeUsed, omega, rhoMax, convergenceLimit, lastEigenvalue, amplificationFactor;
+  int N, numberOfSimulations, maxIterations, counter;
   string outfileName, outfileNameScalars, solverType, interactionRepulsion, convergenceSuccess;
   mat A, v, eigenvectorMatrixSorted3;
   colvec eigenValues;
@@ -90,7 +90,7 @@ main(int argc, char* argv[]){
   return 0;
 }
 
-void initialize(string& outfile_name, int& number_of_simulations,int& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv )
+void initialize(string& outfile_name, int& number_of_simulations,double& amplificationFactor, int& N, double& rhoMax,int& maxIterations, double& tolerance, string& solverType, string& interactionRepulsion, double& omega, double& convergenceLimit, int argc, char** argv )
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -100,7 +100,7 @@ void initialize(string& outfile_name, int& number_of_simulations,int& amplificat
       outfile_name=argv[1];
     }
     number_of_simulations = atoi(argv[2]);
-    amplificationFactor = atoi(argv[3]);
+    amplificationFactor = atof(argv[3]);
     N = atoi(argv[4]);
     rhoMax = atof(argv[5]);
     maxIterations = atoi(argv[6]);

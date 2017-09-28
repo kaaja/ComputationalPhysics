@@ -15,14 +15,14 @@ from collections import OrderedDict
     
 #%% 2, run 
 def ex2():
-    solverType = 'armadillo'
+    solverType = 'bisection'
     tolerance = str(1e-6) # Kja: testing with low. CHange back if problems
     numberOfSimulations = str(16)
-    amplificationFactor = str(2)
+    amplificationFactor = str(2.0)
     maxIterations = str(1e8)
     firstH = 0.4
     electronTypes = ['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
-    omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']#'0.25']#, '0.5', '1.0', '5.0']
+    omegaVals = ['1.0']#['0.01', '0.25', '0.5', '1.0', '5.0']#'0.25']#, '0.5', '1.0', '5.0']
     rhoMaxVals = ['5','10', '20', '40', '50']
     NLimit = 2000
     vectorized = True
@@ -177,7 +177,7 @@ def ex2bplot(solverType, firstH, electronScalars):
     
     plt.figure()
     plt.plot(oneElectronBisectionScalarsVectorized[2].N, oneElectronBisectionScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsVectorized[2].N, oneElectronScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsArmadillo[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
-    plt.legend(['Bisection vectorized', 'Jacobi vectorized', 'Jacobi unvectorized'], fontsize = 'xx-large', loc = 0)
+    plt.legend(['Bisection vectorized', 'Jacobi vectorized', 'Jacobi unvectorized'], fontsize = 'xx-large', loc = 0,  frameon=False)
     plt.title( 'Time relative to armadillo time', fontsize = 'xx-large')
     plt.xlabel('N', fontsize = 'xx-large')
     plt.ylabel('Time', fontsize = 'xx-large')

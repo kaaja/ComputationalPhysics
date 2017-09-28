@@ -9,7 +9,7 @@ colvec sturmSeq(mat &A, double &lam, int N){
     p(1) = A(0,0) - lam;
     for (int i = 2; i < N+1; i++ ){
         if (A(i-1, i-2) == 0.0)
-            A(i-1,i-2) = 1.0e-12;
+            A(i-1,i-2) = DBL_EPSILON; //1.0e-16;
         p(i) = (A(i-1,i-1)-lam)*p(i-1) - (A(i-1,i-2)*A(i-1,i-2))*p(i-2);
     }
     return p;
@@ -21,7 +21,7 @@ colvec sturmSeqRevised(mat &A, double &lam, int N){
     p(1) = A(0,0) - lam;
     for (int i = 2; i < N+1; i++ ){
         if (A(i-1, i-2) == 0.0)
-            A(i-1,i-2) = 1.0e-12;
+            A(i-1,i-2) = DBL_EPSILON;//1.0e-16;
         if ( fabs(p(i-1)) == 0.0 )
               //p(i-1) = 1.0e-12;
               p(i) = (A(i-1,i-1)-lam) - fabs(A(i-1,i-2))/DBL_EPSILON;
@@ -101,29 +101,31 @@ colvec lamRange(mat &A,int N, int oneForRevised){
         // First bisection of interval(lamMin,lamMax)
         lam = (lamMax + lamMin)/2.0;
         h = (lamMax - lamMin)/2.0;
-        for (int i = 0; i < 1000; i++){
-            // Find number of eigenvalues less than lam
-            if (oneForRevised != 1){
-                p = sturmSeq(A, lam, N);
-                numLam = numLambdas(p,N);
+        if( fabs(h) > 2.*DBL_EPSILON*(fabs(lamMax) + fabs(lam)) + 1.0e-6 ){ // Remember to get in tolerance
+            for (int i = 0; i < 1000; i++){
+                // Find number of eigenvalues less than lam
+                if (oneForRevised != 1){
+                    p = sturmSeq(A, lam, N);
+                    numLam = numLambdas(p,N);
+                }
+                else{
+                    p = sturmSeqRevised(A, lam, N);
+                    numLam = numLambdasRevised(p,N);
+                }
+                // Bisect again & find the half containing lam
+                h = h/2.0;
+                if (numLam < k)
+                    lam = lam + h;
+                else if (numLam > k)
+                    lam = lam - h;
+                else
+                    break;
             }
-            else{
-                p = sturmSeqRevised(A, lam, N);
-                numLam = numLambdasRevised(p,N);
-            }
-            // Bisect again & find the half containing lam
-            h = h/2.0;
-            if (numLam < k)
-                lam = lam + h;
-            else if (numLam > k)
-                lam = lam - h;
-            else
-                break;
+            // If eigenvalue located, change the upper limit
+            // of search and record it in [r]
+            lamMax = lam;
+            r(k) = lam;
         }
-        // If eigenvalue located, change the upper limit
-        // of search and record it in [r]
-        lamMax = lam;
-        r(k) = lam;
     }
     return r;
 }
@@ -162,8 +164,8 @@ double bisection(double (*func)(mat &A, double eigenvalueGuess, int N), double x
         fmid = (*func)(A, xmid = rtb + (dx *= 0.5), N);
         if (fmid <= 0.0)
             rtb=xmid;
-        if(fabs(dx) < xacc || fmid == 0.0)
-        //if( fabs(dx) < 2.*DBL_EPSILON*(fabs(xmid) + fabs(rtb)) + xacc || fmid == 0.0)
+        //if(fabs(dx) < xacc || fmid == 0.0)
+        if( fabs(dx) < 2.*DBL_EPSILON*(fabs(xmid) + fabs(rtb)) + xacc || fmid == 0.0)
             return rtb;
     }
     cout << "Error in the bisection:" << endl; // should never reach this point
