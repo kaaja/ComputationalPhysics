@@ -1,0 +1,249 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\setlength\parindent{0pt}
+
+\usepackage{listings}
+%\usepackage{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+
+\usepackage{verbatim}
+\let\oldv\verbatim
+\let\oldendv\endverbatim
+
+%\userpackage{minted}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{light-gray}{gray}{0.95}
+
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=6mm,
+  belowskip=6mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  backgroundcolor=\color{light-gray},
+  language=Matlab
+}
+
+%\usepackage{natbib} replaced by line below to make refernces work
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[nottoc,numbib]{tocbibind} %to get references in table of contants
+\usepackage{graphicx}
+
+\usepackage{bm}
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+
+\usepackage{mdframed}
+\usepackage{lipsum} % for creating dummy text
+\mdfdefinestyle{MyFrame}{%
+	linecolor=black,	
+	backgroundcolor=gray!20!white,
+	skipbelow = 8mm,
+	skipabove = 8mm}
+
+\usepackage{scrextend}
+
+\title{Fys4150\\Project 2\\ }
+\author{Peter Killingstad and Karl Jacobsen\\
+\\
+\url{https://github.com/kaaja/fys4150}}
+
+
+\begin{document}
+	
+\maketitle
+
+\section*{Abstract}
+
+
+\section{Introduction}
+
+
+\section{Theory}
+
+
+
+
+\section{Results}
+
+\subsection{Algorithm efficiency}
+
+\begin{minipage}{.49\textwidth} %\noindent
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronArmadilloTimeDimensions.pdf}
+		\caption{Algorithm times divided by Armadillo time}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronComparisonLogTimeDimensions.pdf}
+		\caption{log Algorithm times}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+
+\begin{minipage}{.49\textwidth} %\noindent
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmega50RhoMaxComparison.pdf}
+		\caption{Comparison rhoMax. Minimum eigenvalue. Coulomb}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmega10RhoMaxComparison.pdf}
+		\caption{Comparison rhoMax. Minimum eigenvalue. Coulomb}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmega05RhoMaxComparison.pdf}
+		\caption{Comparison rhoMax. Minimum eigenvalue. Coulomb}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmega001RhoMaxComparison.pdf}
+		\caption{Comparison rhoMax. Minimum eigenvalue. Coulomb}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+
+\subsection{Sturm bisection}
+
+\begin{minipage}{.49\textwidth} %\noindent
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronOmega10RhoMaxComparisonRevised.pdf}
+		\caption{Minimum eigenvalue. One electron Sturm Bisection.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronRelativeErrorEigenvaluesRevised.pdf}
+		\caption{Maximum relative error of three smallest eigenvalues. One electron. Sturm Bisection}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+
+
+\subsection{Comparison with theory}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronRelativeErrorEigenvalues.pdf}
+	\caption{Maximum relative error of the three smallest eigenvalues, one electron.}
+	\label{1}
+\end{figure}
+
+\begin{minipage}{.49\textwidth} %\noindent
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/oneElectronOmega10RhoMaxComparison.pdf}
+		\caption{Minimum eigenvalue. 1 electron.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronNoCoulombOmega10RhoMaxComparison.pdf}
+		\caption{Minimum eigenvalue. 2 electrons no Coulomb.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmega025RhoMaxComparison.pdf}
+	\caption{Relative error smallest eigenvalue.}
+	\label{1}
+\end{figure}
+
+\begin{minipage}{.49\textwidth} %\noindent
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronNoCoulombOmegaComparison.pdf}
+		\caption{Minimum eigenvalue. 2 electron. No Coulomb.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/TwoElectronCoulombOmegaComparison.pdf}
+		\caption{Minimum eigenvalue. 2 electrons  Coulomb.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+
+\section{Conclusions}
+
+
+\section{Feedback}
+\subsection{Project 1}
+This project has been extremely educational. We learned about about c++, especially pointers and dynamic memory allocoation. Also which for us was a well forgotten subject, we learned about dangerous of numerical round-off errors. \\
+
+We feel the size of the project is large, much larger than typical assignments in other courses. However, the quality and quantity of the teaching without a doubt made the workload managable. The detailed lectures, combined with the fast and good respones on Piazze helped a lot!\\
+
+We think the project could have gone even smoother, if we on the 2nd lab-session had learned basic branching in Github. We used a considerable amount of time finding out of this.\\
+
+All in all, two thumbs up!
+
+\subsection{Project 2}
+
+\pagebreak
+\begin{thebibliography}{9}
+	\bibitem{MHJ} 
+	Hjorth-Jensen, M.(2015)
+	\textit{Computational physics. Lectures fall 2015}. 
+	\url{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/Lectures}
+	
+	\bibitem{watkins} 
+	Watkins, D.S.(2002)
+	\textit{Fundamentals of matrix computations. 2nd edition.}
+	
+	\bibitem{kiusalaas} 
+	Kiusalaas, J.(2013)
+	\textit{Numerical Methods in Engineering with Python 3. 3rd edition.}
+
+\end{thebibliography}
+
+
+\end{document}
