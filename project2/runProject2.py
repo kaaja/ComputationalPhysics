@@ -10,8 +10,6 @@ from collections import OrderedDict
 #sb.set(style="white")
 
     
-
-    
 #%% 2, run 
 def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue):
     """
