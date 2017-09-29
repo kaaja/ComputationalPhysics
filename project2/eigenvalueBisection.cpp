@@ -4,7 +4,14 @@
 #include "eigenvalueBisection.h"
 
 colvec sturmSeq(mat &A, double &lam, int N){
-    // Revised version Sturm bisection by Barth, Martin, Williamson
+    /*
+    p = sturmSeq(A, lam, N).
+    Returns the Sturm sequence {p[0],p[1],...,p[n]}
+    associated with the characteristic polynomial
+    |[A] - lam[I]| = 0, where [A] = [c\d\c] is a n x n
+    tridiagonal matrix.
+    */
+
     colvec p = ones<colvec>(N+1);
     p(1) = A(0,0) - lam;
     for (int i = 2; i < N+1; i++ ){
@@ -32,6 +39,12 @@ colvec sturmSeqRevised(mat &A, double &lam, int N){
 }
 
 int numLambdas(colvec &p, int N){
+    /*
+    numLam = numLambdas(p, N).
+    Returns the number of eigenvalues of a tridiagonal
+    matrix [A] = [c\d\c] that are smaller than 'lam'.
+    Uses the Sturm sequence {p} obtained from 'sturmSeq'
+     */
     int sign;
     int signOld = 1;
     int numLam = 0.0;
@@ -60,6 +73,11 @@ int numLambdasRevised(colvec &p, int N){
 
 
 colvec gerschgorin(mat &A, int N){
+    /*
+     lamMin,lamMax = gerschgorin(A, N).
+    Applies Gerschgorin's theorem to find the global bounds on
+    the eigenvalues of a tridiagomal matrix [A] = [c\d\c].*/
+
     double lamMin, lamMax, lam;
     colvec lambdaExtremes;
     lambdaExtremes = zeros<colvec>(2);
@@ -87,6 +105,11 @@ colvec gerschgorin(mat &A, int N){
 }
 
 colvec lamRange(mat &A,int N, int oneForRevised){
+    /*r = lamRange(A, N, oneForRevised).
+    Returns the sequence {r[0],r[1],...,r[N]} that
+    separates the N lowest eigenvalues of the tridiagonal
+    matrix [A] = [c\d\c]; that is, r[i] < lam[i] < r[i+1].*/
+
     colvec lambdaExtrmes, r, p;
     double lamMin,lamMax, lam, h;
     int numLam;
@@ -131,6 +154,8 @@ colvec lamRange(mat &A,int N, int oneForRevised){
 }
 
 double f(mat &A, double eigenvalueGuess, int N){
+    /* characteristic polynomial obtained from sturmSeq*/
+
     colvec p;
     p = zeros<colvec>(N+1);
     p = sturmSeq(A, eigenvalueGuess, N);
@@ -138,6 +163,10 @@ double f(mat &A, double eigenvalueGuess, int N){
 }
 
 colvec eigenvals3(mat &A, int N, double bisectionAccuracy, int max_iterations, int oneForRevised){
+    /* lam = eigenvals3(A, N, bisectionAccuracy, max_iterations, oneForRevised).
+    Returns the N smallest eigenvalues of a
+    tridiagonal matrix [A] = [c\d\c].*/
+
     colvec lam, r;
     lam = zeros<colvec>(N);
     r = zeros<colvec>(N+1);
@@ -148,7 +177,7 @@ colvec eigenvals3(mat &A, int N, double bisectionAccuracy, int max_iterations, i
     return lam;
 }
 double bisection(double (*func)(mat &A, double eigenvalueGuess, int N), double x1, double x2, double xacc, mat &A, int N, int max_iterations){
-    // From Morten HJ lecture notes
+    // From Morten Hjorth-Jensen's lecture notes
     int j;
     double dx, f, fmid, xmid, rtb;
     f = (*func)(A, x1, N);
