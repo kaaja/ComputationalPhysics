@@ -10,8 +10,6 @@ from collections import OrderedDict
 #sb.set(style="white")
 
     
-
-    
 #%% 2, run 
 def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue):
     """
@@ -163,43 +161,23 @@ def ex2bplot(firstH, electronScalars, tolerance, amplificationFactor, maxIterati
     plt.savefig(filename)
     plt.close()
     
-#ex2bplot('true', '0.4', electronScalars['oneElectron'])
 
 #%% 2d, Plots 
 def ex2dPlot(solverType, firstH, electronScalars):        
     """
-    Function makes 3 kinds of plots:
+    Function makes 2 kinds of plots:
     1) Plots minimum eigenvalues vs mesh size for a specific frequency, and comparing with increasing 
     rhoMax values.
     
     2) Plots minimum eigenvalue vs mesh size and comparing for different frequency for a suitable 
     rhoMax value.
     
-    3) Plots minimum eigenvalue vs mesh size and comparing one elctron, two electron with no interaction and
-    two electron with interaction for given frequency and suitable rhoMax value.
     """
     
-    fig3, ax3 = plt.subplots() # For different electron type in same plot
-    ax3.hold('on')
-    
-    fig4, ax4 = plt.subplots() # For different electron type in same plot
-    ax4.hold('on')
-    
-    fig5, ax5 = plt.subplots() # For different electron type in same plot
-    ax5.hold('on')
-    
-    fig6, ax6 = plt.subplots() # For different electron type in same plot
-    ax6.hold('on')
-    
-    fig7, ax7 = plt.subplots() # For different electron type in same plot
-    ax7.hold('on')
-    
-    legends3 = []
     
     for electronType in electronScalars:
         fig2, ax2 = plt.subplots()
         legends2 = []
-        legends3.append(electronType)
         for omega in electronScalars[electronType]:
             fig, ax = plt.subplots()
             legends = []
@@ -229,24 +207,6 @@ def ex2dPlot(solverType, firstH, electronScalars):
             ax2.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
             ax2.hold('on')
             legends2.append(r"$\omega$ = %s" %omega)
-            
-            if electronType != 'oneElectron':
-                if omega == '0.01': 
-                    ax3.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
-                    ax3.set_title(r"$\omega$ = %s" %omega)
-                if omega == '0.25': 
-                    ax4.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
-                    ax4.set_title(r"$\omega$ = %s" %omega)
-                if omega == '0.5': 
-                    ax5.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
-                    ax5.set_title(r"$\omega$ = %s" %omega)
-                if omega == '5.0': 
-                    ax7.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
-                    ax7.set_title(r"$\omega$ = %s" %omega)
-            else:
-                if omega == '1.0': 
-                    ax6.plot(electronScalars[electronType][omega][rhoMax].h, electronScalars[electronType][omega][rhoMax].lambda1)
-                    ax6.set_title(r"$\omega$ = %s" %omega)
 
             
         ax2.legend(legends2,loc = 0)
@@ -259,59 +219,6 @@ def ex2dPlot(solverType, firstH, electronScalars):
         filename = ('results/' + outfileName + '.pdf')
         fig2.savefig(filename)
         plt.close()
-        
-    ax3.legend(legends3[1:3], loc = 0)
-    ax3.set_xlabel('h')
-    ax3.set_ylabel(labels)
-    ax3.set_xlim(float(firstH),0.0)
-    #fig.show()
-    outfileName = 'electronComparisonOmega001' 
-    filename = ('results/' + outfileName + '.pdf')
-    fig3.savefig(filename)
-    plt.close()
-
-    ax4.legend(legends3[1:3], loc = 0)
-    ax4.set_xlabel('h')
-    ax4.set_ylabel(labels)
-    ax4.set_xlim(float(firstH),0.0)
-    #fig.show()
-    outfileName = 'electronComparisonOmega025' 
-    filename = ('results/' + outfileName + '.pdf')
-    fig3.savefig(filename)
-    plt.close()
-
-    ax5.legend(legends3[1:3],  loc = 0)
-    ax5.set_xlabel('h')
-    ax5.set_ylabel(labels)
-    ax5.grid(True)
-    ax5.set_xlim(float(firstH),0.0)
-    #fig.show()
-    outfileName = 'electronComparisonOmega05'
-    filename = ('results/' + outfileName + '.pdf')
-    fig3.savefig(filename)
-    plt.close()
-    
-    ax6.legend(legends3, loc = 0)
-    ax6.set_xlabel('h')
-    ax6.set_ylabel(labels)
-    ax6.grid(True)
-    ax6.set_xlim(float(firstH),0.0)
-    #fig.show()
-    outfileName = 'electronComparisonOmega50'
-    filename = ('results/' + outfileName + '.pdf')
-    fig3.savefig(filename)
-    plt.close()
-    
-    ax7.legend(legends3[1:3], loc = 0)
-    ax7.set_xlabel('h')
-    ax7.set_ylabel(labels)
-    ax7.grid(True)
-    ax7.set_xlim(float(firstH),0.0)
-    #fig.show()
-    outfileName = 'electronComparisonOmega10'
-    filename = ('results/' + outfileName + '.pdf')
-    fig3.savefig(filename)
-    plt.close()
 
 #%% Command line options 
 
@@ -345,12 +252,8 @@ if __name__ == "__main__":
 
 	if not os.path.isdir('results'):
 		os.mkdir('results')
-
-	if  args.task == '2b':
-	   ex2b(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH)
-	elif args.task == '2bArmadillo':
-		ex2barmadillo(tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH)
-	elif args.task == '2':
+		
+	if args.task == '2':
 		electronScalars = ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue)
 
 
