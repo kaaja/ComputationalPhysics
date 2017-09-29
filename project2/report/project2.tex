@@ -86,8 +86,51 @@
 
 \section{Theory}
 
+\subsection{Scaling}
+What is scaling , how is it done, what is its effect? Finally the unscaled and scaled equations of the project.
 
+\subsection{Vectorization}
+Couple of sentences about what vectorization inveolves, and how it is done in c++ (compiler commands).
 
+\subsection{Orthogonal tranformation properties}
+In at least one of the algorithms that will be used in this report, orthogonal transformations will be applied. A central property of orthogonal transformations is that they preserve the dot product and orthogonality. This will now be shown.\\
+
+We have an orthogonal tranformation
+
+\begin{equation}
+A = Q^T U Q,
+\end{equation}
+
+\begin{equation}
+Q^T Q = I.
+\end{equation}
+
+The orthogonal tranformation of our orthogonal unit vectors is
+\[
+\mathbf{w}_i=\mathbf{U}\mathbf{v}_i,
+\]
+
+Now lets calculate the dot product of the orthogonally transformed unit vectors.
+
+\begin{subequations} 
+	\begin{align}
+	\mathbf{w}_j^T \mathbf{w}_j &= (\mathbf{U v}_j)^T \mathbf{U v}_i\\
+	&= \mathbf{v}_j^T \mathbf{U}^T \mathbf{U} \mathbf{v}_i \\
+	&= (\mathbf{v}_j)^T \mathbf{v}_i\\
+	&= \delta_{ij},
+	\end{align}
+\end{subequations}
+
+so the dot-product of the transformed orthogonal unit vectors is unchanged by the transformation.
+
+\subsection{Jacoi's algorithm}
+
+\subsection{The Sturm Bisection method}
+This is a method for computing the eigenvalues of a symmetric tridiagonal matrices. The eigenvalues are given by the solutions to the characteristic polynomial, which is the determinant of $A - \lambda I$. This is normally inefficient to compute, but in the case of a symmetric trdiagonal matrix, this is not necessarely the case.\\
+
+The characteristic polynomial can be written as a Sturm sequence, which sloppily put is a recursive equation of the two previous polynomials. By 'previuous' polynomials we mean the polynomials for the determinant of the submatrices of one and two orders below.\\
+
+Sturms theorem says that the number of sign changes in the polynomial, when calculating all Sturm sequences, which means for all matrix sizes, for a given guess of the eigenvalue, equals the number of eigenvalues less than the guessd eigenvalue.\\
 
 \section{Results}
 
