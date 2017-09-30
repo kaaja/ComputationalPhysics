@@ -1,7 +1,8 @@
 #include "catch.hpp"
 #include "jacobi.h"
 #include "eigenvalueBisection.h"
-
+#include "lanczos.h"
+#include "lanczos2.h"
 
 TEST_CASE( "Testing maxDiagonal", "[findMaxNonDiagonalElement]" ) {
   // Checks that function finds max abs non-diagonal element in known symmetric matrix
@@ -381,4 +382,132 @@ TEST_CASE( "NumLambdas revised", "[numLambdasRevised]" ){
     lam = 10;
     p = sturmSeqRevised(A, lam, N);
     REQUIRE( numLambdasRevised(p, N) >= 1);
+}
+
+TEST_CASE( "Lanczos2 brute force. Armadillo on lanczos tridiagonal matrix", "[lanczos2]" ){
+    /* Assume symmetric (non-tridiagonal) matrix.
+    Use brute force to compute Aq*/
+
+    int N = 200;
+    mat A, Q, T, QtransQ;
+    A.randu(N,N);
+    A = A*A.t();
+    int iterations = 5;
+
+
+    colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
+    eigenvaluesArmadillo.zeros(N);
+    eigenvaluesLanczos.zeros(iterations);
+
+    string tridiag = "false";
+    string eigenvalueSolver = "armadillo";
+
+    lanczos2(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+
+    QtransQ = trans(Q)*Q;
+    T = trans(Q)*A*Q;
+    cout << "Non-tridiagonal, brute force " << endl;
+    QtransQ.print("trans(Q)*Q: ");
+    T.print("T = trans(Q)*A*Q: ");
+    eig_sym(eigenvaluesArmadillo, A);
+
+    double tol = 1.e-6;
+    REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1) -1) < tol);
+}
+
+
+TEST_CASE( "Lanczos2 tridiagonal not brute force Aq. Armadillo on lanczos tridiagonal matrix", "[lanczos2]" ){
+    /* Assume symmetric tridiagonal matrix.
+    Calculate Aq more efficient than brute force*/
+
+    string tridiag = "true";
+    string eigenvalueSolver;
+    int N = 4;
+    int iterations = 3;
+    colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
+    mat QtransQ, Q, T;
+
+    mat A(N,N);
+    eigenvaluesArmadillo.zeros(N);
+    eigenvaluesLanczos.zeros(iterations);
+
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    double tol = 1.e-2; // 1 per cent
+    eig_sym(eigenvaluesArmadillo, A);
+
+    eigenvalueSolver = "armadillo";
+    lanczos2(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+    QtransQ = trans(Q)*Q;
+    T = trans(Q)*A*Q;
+    cout << "Tridiagonal not brute force  " << endl;
+    QtransQ.print("trans(Q)*Q: ");
+    REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1)-1) < tol);
+}
+
+TEST_CASE( "Lanczos2 tridiagonal not brute force Aq. Jacobi on lanczos tridiagonal matrix", "[lanczos2]" ){
+    /* Assume symmetric tridiagonal matrix.
+    Calculate Aq more efficient than brute force*/
+
+    string tridiag = "true";
+    string eigenvalueSolver;
+    int N = 4;
+    int iterations = 3;
+    colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
+    mat QtransQ, Q, T;
+
+    mat A(N,N);
+    eigenvaluesArmadillo.zeros(N);
+    eigenvaluesLanczos.zeros(iterations);
+
+
+    A(0,0) = 2.;
+    A(0,1) = -1.;
+    A(0,2) = 0.;
+    A(0,3) = 0.;
+
+    A(1,0) = -1.;
+    A(1,1) = 2.;
+    A(1,2) = -1.;
+    A(1,3) = 0.;
+
+    A(2,0) = 0.;
+    A(2,1) = -1.;
+    A(2,2) = 2.;
+    A(2,3) = -1.0;
+
+    A(3,0) = 0.;
+    A(3,1) = 0.;
+    A(3,2) = -1.;
+    A(3,3) = 2.0;
+
+    double tol = 1.e-2; // 1 per cent
+    eig_sym(eigenvaluesArmadillo, A);
+
+    eigenvalueSolver = "jacobi";
+    lanczos2(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+    QtransQ = trans(Q)*Q;
+    T = trans(Q)*A*Q;
+    cout << "Tridiagonal not brute force  " << endl;
+    QtransQ.print("trans(Q)*Q: ");
+    REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1)-1) < tol);
 }

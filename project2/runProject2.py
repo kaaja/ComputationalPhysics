@@ -233,7 +233,6 @@ if __name__ == "__main__":
 		print("\n    conda install seaborn\n\nor")
 		print("\n    pip install seaborn\n")
 		
-	solverType = 'armadillo'
 	tolerance = str(1e-6) # Kja: testing with low. CHange back if problems
 	numberOfSimulations = str(16)
 	amplificationFactor = str(2.0)
@@ -248,13 +247,14 @@ if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser(description="starts a c++ program solving eigenvalue problems, reads and  plots.")
 	parser.add_argument("task", type=str, default='2b', help="choose task to solve. 2b, 2b Armadillo or 2d")
+	parser.add_argument("algorithm", type=str, default='armadillo', help="choose algorithm to solve eigenvalue problem. jacobi, armadillo or bisection")
 	args = parser.parse_args()
 
 	if not os.path.isdir('results'):
 		os.mkdir('results')
 		
 	if args.task == '2':
-		electronScalars = ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue)
+		electronScalars = ex2(args.algorithm, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue)
 
 
     

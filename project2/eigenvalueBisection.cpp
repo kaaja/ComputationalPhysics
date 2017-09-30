@@ -1,5 +1,9 @@
-/* This is a rewrite of the python programs in Kiusalaas (2014) "Numerical methods in engineering with python" for finding eigenvalues
- of symmetric tridiagonal matrices  */
+/*
+    Rewrite of the python programs in Kiusalaas (2014)
+    "Numerical methods in engineering with python"
+    for finding eigenvalues of symmetric tridiagonal
+    matrices
+*/
 
 #include "eigenvalueBisection.h"
 

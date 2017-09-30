@@ -1,5 +1,6 @@
 #include "jacobi.h"
 #include "eigenvalueBisection.h"
+#include "lanczos2.h"
 #include "time.h"
 #include <fstream>
 #include <iomanip>
@@ -49,6 +50,14 @@ main(int argc, char* argv[]){
           eigenValues = eigenvals3(A, N, tolerance, maxIterations, 0);
       else if (solverType == "bisectionRevised")
           eigenValues = eigenvals3(A, N, tolerance, maxIterations, 1);
+      else if (solverType == "lanczosArmadillo"){
+          colvec alpha, beta;
+          mat Q;
+          int iterations = 3;
+          string tridiag = "true";
+          string eigenvalueSolver = "Armadillo";
+          lanczos2(eigenValues, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+      }
       else {
           cout << "choose solvertype " << endl;
           break;
