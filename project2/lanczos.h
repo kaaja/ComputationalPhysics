@@ -8,5 +8,5 @@
 using namespace std;
 using namespace arma;
 
-void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, int N, int iterationNumber, string tridiag, string eigenvalueSolver);
+void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, int N, int iterationNumber, string tridiag, string eigenvalueSolverm, int *stopIteration);
 #endif // LANCZOS2_H
