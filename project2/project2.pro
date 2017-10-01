@@ -7,8 +7,7 @@ SOURCES += \
     jacobi.cpp \
     project2.cpp \  #\
     eigenvalueBisection.cpp \
-    lanczos.cpp \
-    lanczos2.cpp
+    lanczos.cpp
 #    tests-main.cpp \
 #    test-functions.cpp
 
@@ -20,5 +19,4 @@ HEADERS += \
     jacobi.h \
     catch.hpp \
     eigenvalueBisection.h \
-    lanczos.h \
-    lanczos2.h
+    lanczos.h

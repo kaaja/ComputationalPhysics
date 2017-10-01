@@ -19,8 +19,8 @@ def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIter
     returns a dict datatype.
     """
     
-    electronTypes = ['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
-    omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']#'0.25']#, '0.5', '1.0', '5.0']
+    electronTypes = ['oneElectron']#['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
+    omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']
     rhoMaxVals = ['5','10', '20', '40', '50']
 
     
@@ -247,7 +247,7 @@ if __name__ == "__main__":
 	
 	parser = argparse.ArgumentParser(description="starts a c++ program solving eigenvalue problems, reads and  plots.")
 	parser.add_argument("task", type=str, default='2b', help="choose task to solve. 2b, 2b Armadillo or 2d")
-	parser.add_argument("algorithm", type=str, default='armadillo', help="choose algorithm to solve eigenvalue problem. jacobi, armadillo or bisection")
+	parser.add_argument("algorithm", type=str, default='armadillo', help="choose algorithm to solve eigenvalue problem. jacobi, armadillo, bisection or lanczosArmadillo")
 	args = parser.parse_args()
 
 	if not os.path.isdir('results'):

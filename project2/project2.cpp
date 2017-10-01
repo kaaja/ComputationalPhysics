@@ -1,6 +1,6 @@
 #include "jacobi.h"
 #include "eigenvalueBisection.h"
-#include "lanczos2.h"
+#include "lanczos.h"
 #include "time.h"
 #include <fstream>
 #include <iomanip>
@@ -53,10 +53,14 @@ main(int argc, char* argv[]){
       else if (solverType == "lanczosArmadillo"){
           colvec alpha, beta;
           mat Q;
-          int iterations = 3;
+          int iterations = N; // If N, T might become as large as A
           string tridiag = "true";
           string eigenvalueSolver = "Armadillo";
-          lanczos2(eigenValues, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+          colvec eigenValuesLanczos; // This cannot have predetermined length since lanczos calculates a full vector that depends on iteration length
+          lanczos(eigenValuesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+          for (int i = 0; i < 3; i++){
+            eigenValues(i) = eigenValuesLanczos(i);
+          }
       }
       else {
           cout << "choose solvertype " << endl;
