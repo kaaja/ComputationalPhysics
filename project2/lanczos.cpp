@@ -1,7 +1,7 @@
 #include "lanczos.h"
 #include "jacobi.h"
 
-void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, int N, int iterationNumber, string tridiag, string eigenvalueSolver){
+void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, int N, int iterationNumber, string tridiag, string eigenvalueSolver, int *stopIteration){
     int k;
     colvec r, rMinusOne, q, qOld,  Aq;
     double betaMinusOne;
@@ -51,6 +51,8 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, i
         Q.col(k) = q;
         k += 1;
     }
+
+    *stopIteration = k;
 
     // Eigenvalues
     T = trans(Q)*A*Q; // Inefficient if have eigenvalue solver for tridiagonal matrices that takes diagonal and off-diagonals as input

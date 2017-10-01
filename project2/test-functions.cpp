@@ -392,6 +392,7 @@ TEST_CASE( "lanczos brute force. Armadillo on lanczos tridiagonal matrix", "[lan
     A.randu(N,N);
     A = A*A.t();
     int iterations = 5;
+    int stopIteration;
 
 
     colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
@@ -401,7 +402,7 @@ TEST_CASE( "lanczos brute force. Armadillo on lanczos tridiagonal matrix", "[lan
     string tridiag = "false";
     string eigenvalueSolver = "armadillo";
 
-    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, stopIteration);
 
     QtransQ = trans(Q)*Q;
     T = trans(Q)*A*Q;
@@ -423,6 +424,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiag
     string eigenvalueSolver;
     int N = 4;
     int iterations = 3;
+    int stopIteration;
     colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
     mat QtransQ, Q, T;
 
@@ -455,7 +457,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiag
     eig_sym(eigenvaluesArmadillo, A);
 
     eigenvalueSolver = "armadillo";
-    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, stopIteration);
     QtransQ = trans(Q)*Q;
     T = trans(Q)*A*Q;
     cout << "Tridiagonal not brute force  " << endl;
@@ -472,6 +474,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Jacobi on lanczos tridiagona
     string eigenvalueSolver;
     int N = 4;
     int iterations = 3;
+    int stopIteration;
     colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
     mat QtransQ, Q, T;
 
@@ -504,7 +507,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Jacobi on lanczos tridiagona
     eig_sym(eigenvaluesArmadillo, A);
 
     eigenvalueSolver = "jacobi";
-    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, stopIteration);
     QtransQ = trans(Q)*Q;
     T = trans(Q)*A*Q;
     cout << "Tridiagonal not brute force  " << endl;
