@@ -55,14 +55,16 @@ main(int argc, char* argv[]){
           mat Q;
           int iterations = N; // If N, T might become as large as A
           string tridiag = "true";
-          string eigenvalueSolver = "Armadillo";
+          string eigenvalueSolver = "armadillo";
           colvec eigenValuesLanczos; // This cannot have predetermined length since lanczos calculates a full vector that depends on iteration length
           lanczos(eigenValuesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver);
+          //eigenValuesLanczos.print("EigenvectorLanczos: ");
           for (int i = 0; i < 3; i++){
             eigenValues(i) = eigenValuesLanczos(i);
           }
+          //eigenValues.print("Eigenvalues: ");
       }
-      else {
+       else {
           cout << "choose solvertype " << endl;
           break;
       }

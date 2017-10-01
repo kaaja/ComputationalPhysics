@@ -428,7 +428,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiag
 
     mat A(N,N);
     eigenvaluesArmadillo.zeros(N);
-    eigenvaluesLanczos.zeros(iterations);
+    //eigenvaluesLanczos.zeros(iterations);
 
 
     A(0,0) = 2.;
@@ -460,6 +460,7 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiag
     T = trans(Q)*A*Q;
     cout << "Tridiagonal not brute force  " << endl;
     QtransQ.print("trans(Q)*Q: ");
+    eigenvaluesLanczos.print("EigLanczos: ");
     REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1)-1) < tol);
 }
 
