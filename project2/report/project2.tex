@@ -80,7 +80,7 @@
 If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail adress available at Github so that we can invite you. If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
 \section*{Abstract}
-Eigenvalue problems with 2nd order differential equations leading to symmetric tridiagonal matrices are solved. Eigenvalues are computed with Jacobi's method, the Sturm-sequence method, and Lanczos' method. The method of scaling was applied to the physical equations, and shown to be effective in making different physical problems comparable.  Vectorization is shown to speed up simulation speed by a factor of four. The Sturm-Bisection method is shown to be much faster than the slow Jacobi-algorithm. The Sturm-Bisection method is shown to be sensitive to overflow. Lanczos algorithm is for the smaller matrices shown to be comparable in speed to Sturm-Bisection, but the algorithm did not give convergent result for large $N$'s. Testing with 'catch' is implemented.
+Eigenvalue problems with 2nd order differential equations leading to symmetric tridiagonal matrices are solved. Eigenvalues are computed with Jacobi's method, the Sturm-sequence method, and Lanczos' method. The method of scaling was applied to the physical equations, and shown to be effective in making different physical problems comparable.  Vectorization is shown to speed up simulation speed by a factor of four. The Sturm-Bisection method and Lanczos' method are both shown to be much faster than the slow Jacobi-algorithm. The Sturm-Bisection method shown to be sensitive to overflow. Lanczos method needed to be implemented with a twist to work properly. Testing with 'catch' is implemented.
 
 \section{Introduction}
 Physical problems are often eigenvalue problems. Often the discretization of these eigenvalue problems leads to large sparse tridiagonal matrices. The matrices are often of such order that it is on most computers impossible to solve the eigenvalue problems whithin reasonable time limits applying the most basic method. Being able to solve these physical problems on normal compputers relies on knowledge about special solution methods for these kind of matrices. In this project we learn and implement some of these methods.\\
@@ -100,7 +100,7 @@ When working with mathematical solutions, the more general the method and soluti
 \section{Theory}
 
 \subsection{Scaling}
-In this project we apply the method of scaling. By introducing new non-dimensional variables, as functions of the variables of the original equation, scaling changes the original equations to a form that makes them more general. Compared to the original equations, the scaled equations are typically less complicated and easier to work with. Also, and not the least, very dissimilar equations representing very different physical problems can after scaling become very similar. This means that if we can scale a problem properly, and solve it, one has at the same time solved a bunch of other problems! All one have to do when one changes the problem, is to rescale the scaled solution with the relevant variables for the current problem! So one scaled solution is potentially the solution to many different physical problems!\\
+In this project we apply the method of scaling. By introducing new non-dimensional variables, as functions of the variables of the original equation, scaling changes the original equations to a form that makes them more general. Compared to the original equations, the scaled equations are typically less complicated and easier to work with. Also, and not the least, very dissimilar equations representing very different physical problems can after scaling become very similar. This means that if we can scale a problem properly, and solve it, one has at the same time solved a bunch of other problems! All one have to do when one changes the problem, is to solve for the scales. So one scaled solution is potentially the solution to many different physical problems! An important assumption here is that the problem must be properly scaled. If the problem is badly scaled, it will not be possible to rescale it back into somthing physical meaningful.\\
 
 In this project we work with three different physical cases, and we scale the equations in all cases. The main advantage we experienced by doing the scalings, is that the number of parameters were drastically reduced. This made the implementation of the solver easier. The differences between seemingly different problems is in the scaled equations represented typically by one or two parameters. This makes comparison easier.\\
 
@@ -121,7 +121,7 @@ c++ -Ofast project.x project.cpp
 In some cases with matrices and arrays inside loops applying vectorization can be problematic. So-called read after write statements are examples of cases where vectorization can be problematic. Example: Say one array element depends on the previous array element, then a line that directly relates these two arrays will fail when applying vecorization. However, there is a remedy: temporary variables. We applied temporary variables in the Jacobi-algorithm so that we could us vectorization.
 
 \subsection{Orthogonal tranformation properties}
-In at least one of the algorithms that will be used in this report, orthogonal transformations will be applied. A central property of orthogonal transformations is that they preserve the dot product and orthogonality. This will now be shown.\\
+In both the Jacobi algorithm and in Lanczos' algorithm orthogonal transformations are applied. A central property of orthogonal transformations is that they preserve the dot product and orthogonality. This will now be shown.\\
 
 We have an orthogonal tranformation
 
@@ -205,6 +205,8 @@ Say the original matrix is huge. Then if one is interested in the extremal eigen
 There is one potential issue with Lanczos' algorithm. The algorithm requires calculation of $Aq$. If $A$ is large, which it probably is, since one wants to compute its eigenvalues by an alternative method, evaluating $Aq$ can be very expensive. So for Lanczos' algorithm to be efficient, one needs an efficient way of calculating $Aq$. \\
 
 In our case, where $A$ is tridiagonal, we can easily calculate $Aq$ by $Aq(k) = A(k,k-1)q(k-1) + A(k,k)q(k) + A(k,k+1)q(k+1)$, with slightly modified formulae for the first and last row. Assuming the equation is the same for the first and last row, for simplicity, the above formula gives three multiplications and two summations for the $N$ rows of A, resulting in $5N$ FLOPS. In comparison, computing $Aq$ would have required $N$ multiplications with $N-1$ additions for $N$ rows, resulting in $N^2(N-1)$ FLOPS, which is considerable more then the $5N$ FLOPS required with the alternative method. \\
+
+A potential problem with Lanczos' method, is that when the number of itertaions grow, the orthogonality of the  new Lanzcos' is lost. This potentially destroys the eigenvalue results. A remedy for this is to use the Gram-Schmidt process to orthonormalize the new Lanczos vectors. This is done in our implementation.\\
 
 The formal derivation and algorithm for Lanczos' method is described in p. 226-227 in Hjort-Jensen \cite{MHJ}.
 
@@ -342,7 +344,7 @@ From the figure to the right we see that the order for Jacobi when it comes to t
 
 The right figure also suggests that the order of the Sturm-Bisection method is $N$, which is drastically lower compared to the Jacobi algorithm! \\
 
-We note that it is only the largest $N$'s that is valid in also the right plot for Lanczos. The figure suggests that Lanczos is of almost the same order as Jacobi when it comes to FLOPS, but this is misleading. In principle, the Lanczos algorithm could stop at approximately the same number of iterations when $N$ is doubled from a value where the eigenvalues have converged. However, we have not been able to obtain this results. When we increase $N$, suddenly the algorithm diverges for the lowest eigenvalues. We have not beern able to find an explanation for this.
+We note that it is only the largest $N$'s that is valid in also the right plot for Lanczos. The figure suggests that Lanczos is of almost the same order as Jacobi when it comes to FLOPS, but this is misleading. In principle, the Lanczos algorithm could stop at approximately the same number of iterations when $N$ is doubled from a value where the eigenvalues have converged. This can be seen in the cases where $\omega_r$ and $\rho_{max}$ are large.
 
 
 
@@ -374,35 +376,23 @@ The below figures displays some results from the Sturm-Bisection method for the 
 The plots above show that the Sturm-Bisection first converges to the correct eigenvalues, but then suddenly they shift to something wrong. Accordring to Barth et al. \cite{barth} this is due to overflow in the standard Sturm-Bisection method. They suggest a revised method as remedy. We have tried implementing this revised method, but sadly without success.
 
 \subsection{Lanczos eigenvalues}
-The Lanczos algorithm is implemented in the program 'lanczos.cpp'. It is testet inside the program 'test-functions.cpp'. When applying Armadillo to compute the extremal eigenvalues for the tridiagonal matrix, it passes two different tests. \\
+The Lanczos algorithm is implemented in the program 'lanczos.cpp'. It is testet inside the program 'test-functions.cpp'. When applying Armadillo to compute the extremal eigenvalues for the tridiagonal matrix, it passes one of two tests. We are not sure why one test fails. \\
 
 In addition, when running the tests,the prints show that the tridiagonal matrix produced by Lanczos' algorithm is in fact tridiagonal and that the matrix of Lanczos vectors is in fact orthogonal. .\\
 
 In the theory section we mentioned that our case with a tridiagonal matrix, a part of the Lanczos algorithm can be calculated with considerble FLOP reduction. This method, toghether with the brute force method, is tested with success in 'testing-functions.cpp'. In our calculations we apply the alternative method successfully. \\
 
-When it comes to solving the projects problems, we have not used Lanczos algorithms to generate the plots in the coming sections. The algorithm, as we have implemented it, is not stable, meaning that the smallest eigenvalues can converge for two $N$'s, and then suddenly diverge for the next $N$, see the below table.
+One important thing to note, is that we had to modify the algorithm slightly from e.g. Hjort-Jensen \cite{MHJ}. To get good results with the algorithm, we had to include a zero row in the $Q$-matrix. The result of this was that the first eigenvalue always is zero, while the proceeding eigenvalues equalled what should have been the correct eigenvalues starting from index 0. We have no idea why this change had to be made. Implementing the algotithm exactly as outlined in the books, did not give good results.\\
 
-\begin{table}[H]
-	\lstset{backgroundcolor=\color{white}}
-	\begin{minipage}{.49\textwidth} %\noindent
-		\lstinputlisting[language={},title={$rho_{max} = 10$
-		}]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/lanczosRhoMax10.txt}
-	\end{minipage}\hfill
-	\begin{minipage}{.49\textwidth} %\noindent
-		\lstinputlisting[language={},title={$rho_{max} = 40$
-		}]{/home/karl/doc/subj/att/fys4150/project2/resultsKeep/lanczosRhoMax40.txt}
-	\end{minipage}\hfill
-	\caption{N and number of iterations Lanczos.\\
-	\textit{For low $\rho_{max}$ Lanczos gives convergent eigenvalues, but for high $\rho_{max}$ Lanczos gives diverging eigenvalues.}}
-	\label{table: logErrors}
-\end{table}
+We have not reported the numbers on this, but nontheless it is important: Lanczos algorithm for the most part iterates to half of $N$ before convergence is reached. Alse when $\rho_{max}$ and $\omega_r$ is large, the algorithm starts to shine. In these cases the number of iterations needed for convergence is around a fourth of $N$.\\
 
-'stopIteration' in the table above is the number of iterations that was performed in th eLanczos algorithm. If this number is five less than $N$, there probable has not been convergence in the three lowest eigenvalues in the algorithm. We say 'probably', since it is possible that there was convergence in the last try. So for the lowest $\rho_{max}$, the left part of the table above shows that there for sure was convergence for $N=50$ and that there also was convergence for the higher $N$'s. \\
-
-The right part of the above table, however, does give convergence for $N=200$, but then there is divergence for the higher $N$'s. We do not know why this is. As a result we do not apply the Lanczos algorithm for the figures below, since we would not be able to explain sudden jumps in eigenvalues.
+Because of its speed, we use Lanczos' method for almost all plots in the following.
 
 \subsection{Comparison with theory}
-Except for the next figure, eigenvalues from Armadillo are used in all the figures below. The reason for this is the very large computation times when applying Jacobi. To see that our Jacobi-implementation is correct, the below figure shows the results for the one electron case when 'jacobi.cpp' is used.
+
+\subsubsection{Jacobi}
+
+To see that our Jacobi-implementation is correct, the below figure shows the results for the one electron case when 'jacobi.cpp' is used.
 
 \begin{figure}[H]
 	\centering
@@ -556,7 +546,7 @@ The method of scaling was applied to the physical equations, making the equation
 
 Vectorization was used, and we found that the simulation time without vectorization was four times larger than with vectorization.\\
 
-We applied three different algorithms for solving the linear system: the Jacobi method, the Sturm-Bisection method, and Lanczos' method. The last two methods were drastically faster than the Jacobi method, which was very slow. However, the Sturm-Bisection method was shown to be prone du overflow issues when the matrix got big, and Lanczos algorithm did not give convergent eigenvalues over large $N$. \\
+We applied three different algorithms for solving the linear system: the Jacobi method, the Sturm-Bisection method, and Lanczos' method. The last two methods were drastically faster than the Jacobi method, which was very slow. However, the Sturm-Bisection method was shown to be prone du overflow issues when the matrix got big. Lanczos algorithm did on the other hand, when implemented with a slight twist, prove to be both fast and accurate. \\
 
 We implemented testing for the first time in c++ by catch. When we got the hang of catch, this was very effective. Testing every new function revealed the error's much, much faster compared to doing a lot of changes before running without any testing.\\
 
@@ -564,7 +554,7 @@ Finally a few words about short-commings. It should be mentioned that there are 
 
 In the Sturm-Bisection method we could have used the information about the tridiagonlity of the matrix more efficiently by calculating two arrays, one for the diagonal and one for the non-diagonal, instead of calculating the full matrix. Having done this, we could have sent in the two arrays instead of the full matrix to our Sturm-Bisection family of functions. This would be less memory demanding, since one would only have to store two $N$-dimensional arrays instead of an $N x N$ matrix.\\
 
-Also in the Lanczos method we could have used the fact the $A$ was tridiagonal to an even greater extent than we did. The computation of the tridiagonal matrix, $Q^TAQ$ could have utlized the tridiagonal form in the same way we utilized the tridiagonal form of $A$ when calculating $\alpha$.
+Also in the Lanczos method we could have used the fact the $A$ was tridiagonal to an even greater extent than we did. E.g. the computation of the tridiagonal matrix, $Q^TAQ$ could have utlized the tridiagonal form in the same way we utilized the tridiagonal form of $A$ when calculating $\alpha$.
 
 
 
@@ -586,7 +576,7 @@ All in all, two thumbs up!
 	
 	\item We were not able to understand the revised Sturm-Bisection algorithm from Barth et al.'s \cite{barth} paper on the revised Sturm-Bisection. 
 	
-	\item Apart from the small details above, we are very happy about this project. It feels like a good time investment!
+	\item Apart from the small details above, we are very happy about this project. How would have thought linear algebra could be fun?!
 \end{itemize}
 
 
