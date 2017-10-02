@@ -1,0 +1,4 @@
+N 100 stopIteration 100
+N 200 stopIteration 85
+N 400 stopIteration 400
+N 800 stopIteration 800

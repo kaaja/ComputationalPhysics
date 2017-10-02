@@ -1,0 +1,5 @@
+N 25 stopIteration 25
+N 50 stopIteration 30
+N 100 stopIteration 50
+N 200 stopIteration 85
+
