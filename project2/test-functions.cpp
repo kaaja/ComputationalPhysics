@@ -385,7 +385,14 @@ TEST_CASE( "NumLambdas revised", "[numLambdasRevised]" ){
 
 TEST_CASE( "lanczos brute force. Armadillo on lanczos tridiagonal matrix", "[lanczos]" ){
     /* Assume symmetric (non-tridiagonal) matrix.
-    Use brute force to compute Aq*/
+    Use brute force to compute Aq
+    Show that Q is orthogonal
+    Show that T is trdiagonal
+    Test largest eigenvalue against Armadillo
+    Test that stopping criterion also gives correct eigenvalue
+
+
+    */
 
     int N = 200;
     mat A, Q, T, QtransQ;
@@ -394,26 +401,40 @@ TEST_CASE( "lanczos brute force. Armadillo on lanczos tridiagonal matrix", "[lan
     int iterations = 5;
     int stopIteration;
 
-
-    colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
+    colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta, eigenvaluesStopCriterion;
     eigenvaluesArmadillo.zeros(N);
-    eigenvaluesLanczos.zeros(iterations);
+    //eigenvaluesLanczos.zeros(iterations);
 
     string tridiag = "false";
     string eigenvalueSolver = "armadillo";
 
-    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, stopIteration);
+    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, &stopIteration);
 
     QtransQ = trans(Q)*Q;
     T = trans(Q)*A*Q;
-    cout << "Non-tridiagonal, brute force " << endl;
-    QtransQ.print("trans(Q)*Q: ");
-    T.print("T = trans(Q)*A*Q: ");
+    cout << "Non-tridiagonal, brute force. Prespecified iteration limit 5 " << endl;
+    QtransQ.print("Prespecified iteration limit 5 trans(Q)*Q: ");
+    T.print("Prespecified iteration limit 5 T = trans(Q)*A*Q: ");
     eig_sym(eigenvaluesArmadillo, A);
+    eigenvaluesLanczos.print("Prespecified iteration limit 5 EigLanczos brute force: ");
 
     double tol = 1.e-6;
     REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1) -1) < tol);
+
+
+    // Test stop iteration requirement
+    cout << " Applying stopping critera" << endl;
+    iterations = N;
+    lanczos(eigenvaluesStopCriterion, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, &stopIteration);
+    //eigenvaluesLanczos.print("Eigenvalues stop set at 5 ");
+    eigenvaluesStopCriterion.print("Eigenvalues with stop criterion activesed");
+    cout << "Stopping criteria active. Number of iterations: " << stopIteration << endl;
+    int lastElementIndex = eigenvaluesStopCriterion.n_elem;
+    REQUIRE( abs(eigenvaluesStopCriterion(lastElementIndex-1)-eigenvaluesArmadillo(N-1)) < tol);
+    REQUIRE( lastElementIndex  == stopIteration);
+
 }
+
 
 
 TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiagonal matrix", "[lanczos]" ){
@@ -422,54 +443,68 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Armadillo on lanczos tridiag
 
     string tridiag = "true";
     string eigenvalueSolver;
-    int N = 4;
-    int iterations = 3;
+    int N = 5;
+    int iterations = 5;
     int stopIteration;
     colvec eigenvaluesArmadillo, eigenvaluesLanczos,alpha, beta;
     mat QtransQ, Q, T;
 
     mat A(N,N);
     eigenvaluesArmadillo.zeros(N);
-    //eigenvaluesLanczos.zeros(iterations);
-
+    eigenvaluesLanczos.zeros(iterations);
 
     A(0,0) = 2.;
     A(0,1) = -1.;
     A(0,2) = 0.;
     A(0,3) = 0.;
+    A(0,4) = 0.;
 
     A(1,0) = -1.;
     A(1,1) = 2.;
     A(1,2) = -1.;
     A(1,3) = 0.;
+    A(1,4) = 0.;
 
     A(2,0) = 0.;
     A(2,1) = -1.;
     A(2,2) = 2.;
     A(2,3) = -1.0;
+    A(2,4) = 0.;
 
     A(3,0) = 0.;
     A(3,1) = 0.;
     A(3,2) = -1.;
     A(3,3) = 2.0;
+    A(3,4) = -1.;
+
+    A(4,0) = 0.;
+    A(4,1) = 0.;
+    A(4,2) = 0.;
+    A(4,3) = -1.;
+    A(4,4) = 2.0;
+
 
     double tol = 1.e-2; // 1 per cent
     eig_sym(eigenvaluesArmadillo, A);
 
     eigenvalueSolver = "armadillo";
-    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, stopIteration);
+    lanczos(eigenvaluesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, &stopIteration);
     QtransQ = trans(Q)*Q;
     T = trans(Q)*A*Q;
     cout << "Tridiagonal not brute force  " << endl;
     QtransQ.print("trans(Q)*Q: ");
-    eigenvaluesLanczos.print("EigLanczos: ");
+    eigenvaluesLanczos.print("EigLanczos not brute force: ");
     REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1)-1) < tol);
+
 }
 
+
 TEST_CASE( "lanczos tridiagonal not brute force Aq. Jacobi on lanczos tridiagonal matrix", "[lanczos]" ){
+
     /* Assume symmetric tridiagonal matrix.
     Calculate Aq more efficient than brute force*/
 
+     /*
     string tridiag = "true";
     string eigenvalueSolver;
     int N = 4;
@@ -513,4 +548,37 @@ TEST_CASE( "lanczos tridiagonal not brute force Aq. Jacobi on lanczos tridiagona
     cout << "Tridiagonal not brute force  " << endl;
     QtransQ.print("trans(Q)*Q: ");
     REQUIRE( abs(eigenvaluesLanczos(iterations-1)/eigenvaluesArmadillo(N-1)-1) < tol);
+    */
+}
+
+TEST_CASE( "Armadillo's head and size method" ){
+    // Getting to know Armadillo
+    colvec vector1, vector2, vectorDiff, vectorDiffExact;
+    int N = 6;
+    double tolerance = 1.e-7;
+    vector1.zeros(N);
+    vector2.zeros(N);
+    vectorDiffExact.zeros(3);
+    for (int i=0; i <N; i++){
+        vector1(i) = double(i);
+        vector2(i) = double(2*i);
+        if (i < 3)
+            vectorDiffExact(i) = vector2(i) - vector1(i);
+    }
+
+    vectorDiff = vector2.head(3) - vector1.head(3);
+    cout << "Armadillo testing " << endl;
+    vectorDiff.print("Vector diff with head: ");
+    vectorDiffExact.print("Vector diff manual: ");
+
+    for (int i = 0; i < 3; i++){
+        REQUIRE( abs(vectorDiff(i)-vectorDiffExact(i)) < tolerance);
+    }
+    REQUIRE( size(vectorDiff) == size(vectorDiffExact));
+
+    mat A = randn<mat>(5,5);
+    mat B = A.cols(0,3);
+    A.print("Armadillo test A = ");
+    B.print("Armadillo test B = 1st 4 col's of A ");
+
 }

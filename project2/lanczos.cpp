@@ -1,12 +1,14 @@
 #include "lanczos.h"
 #include "jacobi.h"
 
-void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, int N, int iterationNumber, string tridiag, string eigenvalueSolver, int *stopIteration){
-    int k;
-    colvec r, rMinusOne, q, qOld,  Aq;
-    double betaMinusOne;
-    mat T;
+void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &QforEigenvalue, int N, int iterationNumber, string tridiag, string eigenvalueSolver, int *stopIteration){
+    int k, lanczosIterationCounter, numberOfEigenvaluesConvergenceTest;
+    colvec r, rMinusOne, q, qOld,  Aq, eigenvaluesOld, eigenvaluesDifference;
+    double betaMinusOne, normMinimumEigenvalues, LanczosIterationTolerance;
+    mat T, Q;
+    string eigenvaluesConverged;
 
+    LanczosIterationTolerance = 1.e-3;
     Aq = zeros<colvec>(N);
     beta.zeros(iterationNumber);
     alpha.zeros(iterationNumber+1);
@@ -14,6 +16,7 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, i
     r = zeros<colvec>(N);
     betaMinusOne = 1.0;
     Q = zeros<mat>(N,iterationNumber);
+    numberOfEigenvaluesConvergenceTest = 3;
 
     // Initial step
     rMinusOne.randu(N);
@@ -33,7 +36,9 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, i
 
     // Proceeding steps
     k = 1;
-    while (beta(k-1) != 0.0 && k < iterationNumber){
+    lanczosIterationCounter = 1;
+    eigenvaluesOld.zeros(5); // Fix if get in variable for how often calculate eigenvalues
+    while (beta(k-1) != 0.0 && k < iterationNumber && eigenvaluesConverged != "true"){
         r = A*q -alpha(k)*q - beta(k-1)*qOld;
         qOld = q;
         beta(k) = norm(r,2);
@@ -49,22 +54,28 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Q, i
             alpha(k+1) = as_scalar(trans(q)*Aq);
         }
         Q.col(k) = q;
+
         k += 1;
-    }
 
-    *stopIteration = k;
+        lanczosIterationCounter += 1;
+        if (lanczosIterationCounter == 5){
+            lanczosIterationCounter = 0;
+            *stopIteration = k;
+            QforEigenvalue = Q.cols(0,k-1);
+            T = trans(QforEigenvalue)*A*QforEigenvalue; // Could be done more efficient since A tridiagonal
+            eigenvalues.zeros(k);
+            eig_sym(eigenvalues, T);
 
-    // Eigenvalues
-    T = trans(Q)*A*Q; // Inefficient if have eigenvalue solver for tridiagonal matrices that takes diagonal and off-diagonals as input
-    if (eigenvalueSolver == "jacobi"){
-        double tolerance = 1.e-6; // Take in as function arguement if time.
-        int maxIterations = 1e8;
-        int counter = 0;
-        mat v;
-        v = eye<mat>(k,k); // Equal to actual length (takes into account if while loop terminates)
-        eigenvalues  = zeros<colvec>(k);
-        jacobi(T, eigenvalues, tolerance, maxIterations, N, &counter, v);
+            eigenvaluesDifference.zeros(numberOfEigenvaluesConvergenceTest);
+            for (int j=0; j < numberOfEigenvaluesConvergenceTest; j++){
+                eigenvaluesDifference(j) = eigenvalues(j)/eigenvaluesOld(j)-1.;
+            }
+            //eigenvaluesDifference = eigenvalues.head(3)-eigenvaluesOld.head(3);
+            normMinimumEigenvalues = norm(eigenvaluesDifference, "inf");
+            if ( fabs(normMinimumEigenvalues) < LanczosIterationTolerance )
+                eigenvaluesConverged = "true";
+            //eigenvalues.head(3).print("Eigenvalues during run: ");
+            eigenvaluesOld = eigenvalues;
+        }
     }
-    else if (eigenvalueSolver == "armadillo")
-        eig_sym(eigenvalues, T);
 }
