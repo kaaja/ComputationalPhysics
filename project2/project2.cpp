@@ -34,8 +34,6 @@ main(int argc, char* argv[]){
   lastEigenvalue = 5;
   convergenceSuccess = "False";
   for (int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++){
-
-      //cout << "Rel eigError: " << abs((eigenValues(0) - lastEigenvalue)/lastEigenvalue) << endl;
       lastEigenvalue = eigenValues(0);
       createTridiagonalMatrix(A, N, rhoMax, 0, &h, interactionRepulsion, omega);
       v = eye<mat>(N,N);
@@ -59,11 +57,9 @@ main(int argc, char* argv[]){
           string eigenvalueSolver = "armadillo";
           colvec eigenValuesLanczos; // This cannot have predetermined length since lanczos calculates a full vector that depends on iteration length
           lanczos(eigenValuesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, &stopIteration);
-          //eigenValuesLanczos.print("EigenvectorLanczos: ");
           for (int i = 0; i < 3; i++){
             eigenValues(i) = eigenValuesLanczos(i+1);
           }
-          //eigenValues.print("Eigenvalues: ");
           cout << "rhoMax " << rhoMax << " N " << N << " stopIteration " << stopIteration << endl;
       }
        else {
@@ -78,7 +74,6 @@ main(int argc, char* argv[]){
 
 
       if (abs(eigenValues(0)/lastEigenvalue - 1) < convergenceLimit){
-          //cout<< "eigenvalue difference main: "<< abs(eigenValues(0)/lastEigenvalue - 1) << endl;
           convergenceSuccess = "True";
           if(solverType == "Jacobi")
               output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);
@@ -130,7 +125,6 @@ void initialize(string& outfile_name, int& number_of_simulations,double& amplifi
     convergenceLimit = atof(argv[11]);
 }
 
-//ofile1 << "logH,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter" << endl;
 void output_scalars( double computedError, double h, double timeUsed, int N, int counter, double rhoMax, double omega, colvec eigenValues, string convergenceSuccess){
   ofile1 << setiosflags(ios::showpoint | ios::uppercase);
   ofile1 << setw(15) << setprecision(16) << rhoMax << ", ";
@@ -150,11 +144,9 @@ void output_scalars( double computedError, double h, double timeUsed, int N, int
   ofile1 << setw(15) << setprecision(16) << eigenValues(2) << ", ";
   ofile1 << convergenceSuccess << endl;
 }
-//"rhoMax,omega, h,logH,relError,logRelError,timeUsed,logTimeUsed,N,logN,counter,logCounter,lambda1,lambda2,lambda3"
 
 void createTridiagonalMatrix( mat &A, int N, double rhoMax, double rhoMin, double *h, string& interactionRepulsion, double omega){
     double hTemp = (rhoMax - rhoMin)/N;
-    //A.zeros(N,N);
     A = zeros<mat>(N,N);
     double offDiagonal = -1.0/(hTemp*hTemp);
     double diagonalFirstTerm = 2.0/(hTemp*hTemp);

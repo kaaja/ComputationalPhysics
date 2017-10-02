@@ -7,8 +7,6 @@ from subprocess import call
 import os
 from collections import OrderedDict
 
-#sb.set(style="white")
-
     
 #%% 2, run 
 def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIterations, firstH, NLimit, vectorized, convergenceLimit, convergenceEigenvalue):
@@ -19,9 +17,9 @@ def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIter
     returns a dict datatype.
     """
     
-    electronTypes = ['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb'] #['oneElectron']#
+    electronTypes = ['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
     omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10', '20', '40', '50'] # change back
+    rhoMaxVals = ['5','10', '20', '40', '50'] 
 
     
     electronScalars = OrderedDict()
@@ -206,7 +204,6 @@ def ex2dPlot(solverType, firstH, electronScalars):
             ax.set_ylabel(labels)
             ax.grid(True)
             ax.set_xlim(float(firstH),0.0)
-            #fig.show()
             outfileName = '%sOmega%sRhoMaxComparison' %(electronType,  omega.replace(".", ""))
             filename = ('results/' + outfileName + '.pdf')
             fig.savefig(filename) 
@@ -223,7 +220,6 @@ def ex2dPlot(solverType, firstH, electronScalars):
         ax2.set_xlabel('h')
         ax2.set_ylabel(labels)
         ax2.set_xlim(float(firstH),0.0)
-        #fig.show()
         outfileName = '%sOmegaComparison' %(electronType)
         filename = ('results/' + outfileName + '.pdf')
         fig2.savefig(filename)
@@ -255,7 +251,7 @@ if __name__ == "__main__":
 	
 	
 	parser = argparse.ArgumentParser(description="starts a c++ program solving eigenvalue problems, reads and  plots.")
-	parser.add_argument("task", type=str, default='2b', help="choose task to solve. 2b, 2b Armadillo or 2d")
+	parser.add_argument("task", type=str, default='2b', help="press 2 to start the eigenvalue solver")
 	parser.add_argument("algorithm", type=str, default='armadillo', help="choose algorithm to solve eigenvalue problem. jacobi, armadillo, bisection or lanczosArmadillo")
 	args = parser.parse_args()
 

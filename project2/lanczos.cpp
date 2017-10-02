@@ -19,10 +19,7 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
     numberOfEigenvaluesConvergenceTest = 3;
 
     // Initial step
-    //rMinusOne.randu(N);
-    //beta(0) = norm(rMinusOne,2);
-    //q = rMinusOne/beta(0);
-
+    
     Q.col(0) = qOld;
     q.randu(N);
     q = q/norm(q,2);
@@ -44,7 +41,7 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
         }
         alpha(k) = as_scalar(trans(q)*Aq);
     }
-    //Q.col(0) = q/norm(q,2);
+
     r = A*q -alpha(k)*q - beta(k-1)*qOld;
     qOld = q;
     beta(k) = norm(r,2);
@@ -80,8 +77,7 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
         lanczosIterationCounter += 1;
         if (lanczosIterationCounter == 5){
             lanczosIterationCounter = 0;
-            *stopIteration = k;
-            //QforEigenvalue = Q.cols(0,k-1);
+            *stopIteration = k;;
 
             T = trans(QforEigenvalue)*A*QforEigenvalue; // Could be done more efficient since A tridiagonal
             eigenvalues.zeros(k);
@@ -91,21 +87,16 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
             for (int j=0; j < numberOfEigenvaluesConvergenceTest; j++){
                 eigenvaluesDifference(j) = fabs(eigenvalues(j)/eigenvaluesOld(j)-1.);
             }
-            //eigenvaluesDifference = eigenvalues.head(3)-eigenvaluesOld.head(3);
             normMinimumEigenvalues = norm(eigenvaluesDifference, "inf");
             if ( normMinimumEigenvalues < LanczosIterationTolerance )
                 eigenvaluesConverged = "true";
-            //eigenvalues.head(3).print("Eigenvalues during run: ");
             eigenvaluesOld = eigenvalues;
         }
     }
 
-    //eigenvaluesDifference.print("Eigenvalue difference lanczos: ");
-
 }
 
 void gramSmith(mat &QforEigenvalue, int N, int columnNumber){
-    //QforEigenvalue.cols(k)  =
     mat QOrtho = zeros<mat>(N,columnNumber);
     colvec sumVector;
     sumVector.zeros(N);
