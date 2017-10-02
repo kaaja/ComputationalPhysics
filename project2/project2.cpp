@@ -76,7 +76,9 @@ main(int argc, char* argv[]){
 
       calculateError(eigenValues, &computedError);
 
+
       if (abs(eigenValues(0)/lastEigenvalue - 1) < convergenceLimit){
+          //cout<< "eigenvalue difference main: "<< abs(eigenValues(0)/lastEigenvalue - 1) << endl;
           convergenceSuccess = "True";
           if(solverType == "Jacobi")
               output_scalars(computedError, h, timeUsed, N, counter, rhoMax, omega, eigenValues, convergenceSuccess);

@@ -19,9 +19,9 @@ def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIter
     returns a dict datatype.
     """
     
-    electronTypes = ['oneElectron']#['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
+    electronTypes = ['oneElectron']#['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb'] #
     omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10', '20', '40', '50'] # change back
+    rhoMaxVals = ['40']#['5','10', '20', '40', '50'] # change back
 
     
     electronScalars = OrderedDict()
