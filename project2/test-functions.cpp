@@ -582,3 +582,38 @@ TEST_CASE( "Armadillo's head and size method" ){
     B.print("Armadillo test B = 1st 4 col's of A ");
 
 }
+
+TEST_CASE( "Gram-Schmidt", "[lanczos]" ){
+    /* Test Gram-Schmidth
+    void gramSmith(mat &QforEigenvalue, int N, int columnNumber)
+    Test matrix taken from wikipedia     https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
+*/
+    int N = 2;
+    int columnNumber = 2;
+    mat A = randu<mat>(2,2);
+     double tolerance = 1.e-12;
+
+    A(0,0) = 3.;
+    A(0,1) = 2.;
+
+    A(1,0) = 1.;
+    A(1,1) = 2.;
+
+    mat B;
+    B.zeros(N,N);
+    B(0,0) = 3./sqrt(10);
+    B(0,1) = -1./sqrt(10);
+    B(1,0) = 1./sqrt(10);
+    B(1,1) = 3./sqrt(10);
+
+    gramSmith(A, N, columnNumber);
+
+    A.print("A Gram-Schmidt: ");
+    B.print("B (Exact)) Gram-Schmidt: ");
+
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){
+            REQUIRE( abs(A(i,j)/B(i,j) - 1.) < tolerance);
+        }
+    }
+}

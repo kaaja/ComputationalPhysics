@@ -8,7 +8,7 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
     mat T, Q;
     string eigenvaluesConverged;
 
-    LanczosIterationTolerance = 1.e-3;
+    LanczosIterationTolerance = 1.e-03;
     Aq = zeros<colvec>(N);
     beta.zeros(iterationNumber);
     alpha.zeros(iterationNumber+1);
@@ -43,6 +43,9 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
         qOld = q;
         beta(k) = norm(r,2);
         q = r/beta(k);
+        QforEigenvalue = Q.cols(0,k); //For orthogonalization
+        projection(QforEigenvalue, q, N, k); // Orthonormalization of q
+        Q.col(k) = q;
         if (tridiag != "true")
             alpha(k+1) = as_scalar(trans(q)*A*q);
         else{
@@ -53,7 +56,6 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
             }
             alpha(k+1) = as_scalar(trans(q)*Aq);
         }
-        Q.col(k) = q;
 
         k += 1;
 
@@ -61,21 +63,50 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
         if (lanczosIterationCounter == 5){
             lanczosIterationCounter = 0;
             *stopIteration = k;
-            QforEigenvalue = Q.cols(0,k-1);
+            //QforEigenvalue = Q.cols(0,k-1);
             T = trans(QforEigenvalue)*A*QforEigenvalue; // Could be done more efficient since A tridiagonal
             eigenvalues.zeros(k);
             eig_sym(eigenvalues, T);
 
             eigenvaluesDifference.zeros(numberOfEigenvaluesConvergenceTest);
             for (int j=0; j < numberOfEigenvaluesConvergenceTest; j++){
-                eigenvaluesDifference(j) = eigenvalues(j)/eigenvaluesOld(j)-1.;
+                eigenvaluesDifference(j) = fabs(eigenvalues(j)/eigenvaluesOld(j)-1.);
             }
             //eigenvaluesDifference = eigenvalues.head(3)-eigenvaluesOld.head(3);
             normMinimumEigenvalues = norm(eigenvaluesDifference, "inf");
-            if ( fabs(normMinimumEigenvalues) < LanczosIterationTolerance )
+            if ( normMinimumEigenvalues < LanczosIterationTolerance )
                 eigenvaluesConverged = "true";
             //eigenvalues.head(3).print("Eigenvalues during run: ");
             eigenvaluesOld = eigenvalues;
         }
     }
+    //eigenvaluesDifference.print("Eigenvalue difference lanczos: ");
+}
+
+void gramSmith(mat &QforEigenvalue, int N, int columnNumber){
+    //QforEigenvalue.cols(k)  =
+    mat QOrtho = zeros<mat>(N,columnNumber);
+    colvec sumVector;
+    sumVector.zeros(N);
+
+
+    for (int vectorNumber = 0; vectorNumber < columnNumber; vectorNumber++){
+        for (int k = 0; k < vectorNumber ; k++){
+            sumVector = as_scalar(trans(QOrtho.col(k))*QforEigenvalue.col(vectorNumber))/norm(QOrtho.col(k))*QOrtho.col(k);
+        }
+        QOrtho.col(vectorNumber) = QforEigenvalue.col(vectorNumber) - sumVector;
+        QOrtho.col(vectorNumber) = QOrtho.col(vectorNumber)/norm(QOrtho.col(vectorNumber), 2);
+    }
+    QforEigenvalue = QOrtho;
+}
+
+void projection(mat &QforEigenvalue, colvec q, int N, int columnNumber){
+    colvec sumVector;
+    sumVector.zeros(N);
+
+    for (int k = 0; k < columnNumber ; k++){
+        sumVector = as_scalar(trans(QforEigenvalue.col(k))*q)/norm(QforEigenvalue.col(k))*QforEigenvalue.col(k);
+    }
+    q = q - sumVector;
+    q = q/norm(q, 2);
 }
