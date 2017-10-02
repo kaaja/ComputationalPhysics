@@ -10,60 +10,79 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
 
     LanczosIterationTolerance = 1.e-03;
     Aq = zeros<colvec>(N);
-    beta.zeros(iterationNumber);
+    beta.zeros(iterationNumber+1);
     alpha.zeros(iterationNumber+1);
     qOld.zeros(N);
     r = zeros<colvec>(N);
     betaMinusOne = 1.0;
-    Q = zeros<mat>(N,iterationNumber);
+    Q = zeros<mat>(N,iterationNumber+1);
     numberOfEigenvaluesConvergenceTest = 3;
 
     // Initial step
-    rMinusOne.randu(N);
-    beta(0) = norm(rMinusOne,2);
-    q = rMinusOne/beta(0);
+    //rMinusOne.randu(N);
+    //beta(0) = norm(rMinusOne,2);
+    //q = rMinusOne/beta(0);
+
+    Q.col(0) = qOld;
+    q.randu(N);
+    q = q/norm(q,2);
+    r = q;
+    Q.col(1) = q;
+
+    beta(0)  = 1.;
+    k = 0;
+
+    q = r/beta(0);
+    k = k+1;
     if (tridiag != "true")
-        alpha(1) = as_scalar(trans(q)*A*q);
+        alpha(k) = as_scalar(trans(q)*A*q);
     else{
         Aq(0) = A(0,0)*q(0) + A(0,1)*q(1);
         Aq(N-1) = A(N-1,N-2)*q(N-2) + A(N-1,N-1)*q(N-1);
         for (int row = 1; row < N-1; row++){
             Aq(row) = A(row,row-1)*q(row-1) + A(row,row)*q(row) + A(row, row+1)*q(row+1);
         }
-        alpha(1) = as_scalar(trans(q)*Aq);
+        alpha(k) = as_scalar(trans(q)*Aq);
     }
-    Q.col(0) = q;
+    //Q.col(0) = q/norm(q,2);
+    r = A*q -alpha(k)*q - beta(k-1)*qOld;
+    qOld = q;
+    beta(k) = norm(r,2);
 
     // Proceeding steps
-    k = 1;
     lanczosIterationCounter = 1;
     eigenvaluesOld.zeros(5); // Fix if get in variable for how often calculate eigenvalues
+
     while (beta(k-1) != 0.0 && k < iterationNumber && eigenvaluesConverged != "true"){
-        r = A*q -alpha(k)*q - beta(k-1)*qOld;
-        qOld = q;
-        beta(k) = norm(r,2);
         q = r/beta(k);
         QforEigenvalue = Q.cols(0,k); //For orthogonalization
         projection(QforEigenvalue, q, N, k); // Orthonormalization of q
-        Q.col(k) = q;
+        Q.col(k+1) = q;
+        QforEigenvalue = Q.cols(0,k+1);
+        k+=1;
+
         if (tridiag != "true")
-            alpha(k+1) = as_scalar(trans(q)*A*q);
+            alpha(k) = as_scalar(trans(q)*A*q);
         else{
             Aq(0) = A(0,0)*q(0) + A(0,1)*q(1);
             Aq(N-1) = A(N-1,N-2)*q(N-2) + A(N-1,N-1)*q(N-1);
             for (int row = 1; row < N-1; row++){
                 Aq(row) = A(row,row-1)*q(row-1) + A(row,row)*q(row) + A(row, row+1)*q(row+1);
             }
-            alpha(k+1) = as_scalar(trans(q)*Aq);
+            alpha(k) = as_scalar(trans(q)*Aq);
         }
 
-        k += 1;
+        r = A*q -alpha(k)*q - beta(k-1)*qOld;
+        qOld = q;
+
+        beta(k) = norm(r,2);
 
         lanczosIterationCounter += 1;
         if (lanczosIterationCounter == 5){
             lanczosIterationCounter = 0;
             *stopIteration = k;
             //QforEigenvalue = Q.cols(0,k-1);
+
             T = trans(QforEigenvalue)*A*QforEigenvalue; // Could be done more efficient since A tridiagonal
             eigenvalues.zeros(k);
             eig_sym(eigenvalues, T);
@@ -80,7 +99,9 @@ void lanczos(colvec &eigenvalues, mat &A, colvec &alpha, colvec &beta, mat &Qfor
             eigenvaluesOld = eigenvalues;
         }
     }
+
     //eigenvaluesDifference.print("Eigenvalue difference lanczos: ");
+
 }
 
 void gramSmith(mat &QforEigenvalue, int N, int columnNumber){

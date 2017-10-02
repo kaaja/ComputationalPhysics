@@ -61,7 +61,7 @@ main(int argc, char* argv[]){
           lanczos(eigenValuesLanczos, A, alpha, beta, Q, N, iterations, tridiag, eigenvalueSolver, &stopIteration);
           //eigenValuesLanczos.print("EigenvectorLanczos: ");
           for (int i = 0; i < 3; i++){
-            eigenValues(i) = eigenValuesLanczos(i);
+            eigenValues(i) = eigenValuesLanczos(i+1);
           }
           //eigenValues.print("Eigenvalues: ");
           cout << "rhoMax " << rhoMax << " N " << N << " stopIteration " << stopIteration << endl;
