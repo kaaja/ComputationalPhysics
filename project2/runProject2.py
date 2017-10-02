@@ -21,7 +21,7 @@ def ex2(solverType, tolerance, numberOfSimulations, amplificationFactor, maxIter
     
     electronTypes = ['oneElectron']#['oneElectron', 'TwoElectronCoulomb', 'TwoElectronNoCoulomb']
     omegaVals = ['0.01', '0.25', '0.5', '1.0', '5.0']
-    rhoMaxVals = ['5','10', '20', '40', '50']
+    rhoMaxVals = ['5','10', '20', '40', '50'] # change back
 
     
     electronScalars = OrderedDict()
@@ -124,6 +124,12 @@ def ex2bplot(firstH, electronScalars, tolerance, amplificationFactor, maxIterati
     vectorized = True
     RunCpp(outfileName, firstH, numberOfSimulations,amplificationFactor, rhoMax, maxIterations, tolerance, solverType, electronType, omega, convergenceLimit, NLimit, vectorized)
     
+    outfileName = 'oneElectronLanczosVectorizedTimeComparison'
+    solverType = 'lanczosArmadillo'
+    vectorized = True
+    RunCpp(outfileName, firstH, numberOfSimulations,amplificationFactor, rhoMax, maxIterations, tolerance, solverType, electronType, omega, convergenceLimit, NLimit, vectorized)
+    
+    
     oneElectronScalarsUnvectorized = {}
     oneElectronScalarsUnvectorized[2] = pd.read_table("results/oneElectronUnvectorizedTimeComparison_scalars.csv", 
     			            delimiter=',')
@@ -140,20 +146,23 @@ def ex2bplot(firstH, electronScalars, tolerance, amplificationFactor, maxIterati
     oneElectronBisectionScalarsVectorized[2] = pd.read_table("results/oneElectronBisectionVectorizedTimeComparison_scalars.csv", 
     			            delimiter=',')
     
+    oneElectronLanczosScalarsVectorized = {}
+    oneElectronLanczosScalarsVectorized[2] = pd.read_table("results/oneElectronLanczosVectorizedTimeComparison_scalars.csv", 
+    			            delimiter=',')
     
     
     plt.figure()
-    plt.plot(oneElectronBisectionScalarsVectorized[2].logN, oneElectronBisectionScalarsVectorized[2].logTimeUsed, oneElectronScalarsUnvectorized[2].logN, oneElectronScalarsUnvectorized[2].logTimeUsed, oneElectronScalarsVectorized[2].logN, oneElectronScalarsVectorized[2].logTimeUsed, oneElectronScalarsArmadillo[2].logN, oneElectronScalarsArmadillo[2].logTimeUsed)
+    plt.plot(oneElectronLanczosScalarsVectorized[2].logN, oneElectronLanczosScalarsVectorized[2].logTimeUsed, oneElectronBisectionScalarsVectorized[2].logN, oneElectronBisectionScalarsVectorized[2].logTimeUsed, oneElectronScalarsUnvectorized[2].logN, oneElectronScalarsUnvectorized[2].logTimeUsed, oneElectronScalarsVectorized[2].logN, oneElectronScalarsVectorized[2].logTimeUsed, oneElectronScalarsArmadillo[2].logN, oneElectronScalarsArmadillo[2].logTimeUsed)
     #plt.title( 'Time used and dimensions\n Jacobi (Vectorized and unvectorized) and armadillo', fontsize = 'xx-large')
-    plt.legend(['Bisection vectorized', 'Jacobi unvectorized', 'Jacobi vectorized', 'Armadillo'], loc = 0)
+    plt.legend(['Lanczos vectorized','Bisection vectorized', 'Jacobi unvectorized', 'Jacobi vectorized', 'Armadillo'], loc = 0)
     plt.xlabel('log N')
     plt.ylabel('log time')
     filename = ('results/oneElectronComparisonLogTimeDimensions.pdf')
     plt.savefig(filename)
     
     plt.figure()
-    plt.plot(oneElectronBisectionScalarsVectorized[2].N, oneElectronBisectionScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsVectorized[2].N, oneElectronScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsArmadillo[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
-    plt.legend(['Bisection vectorized', 'Jacobi vectorized', 'Jacobi unvectorized'], loc = 0)
+    plt.plot(oneElectronLanczosScalarsVectorized[2].N, oneElectronLanczosScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronBisectionScalarsVectorized[2].N, oneElectronBisectionScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsVectorized[2].N, oneElectronScalarsVectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed, oneElectronScalarsArmadillo[2].N, oneElectronScalarsUnvectorized[2].timeUsed/oneElectronScalarsArmadillo[2].timeUsed)
+    plt.legend(['Lanczos vectorized', 'Bisection vectorized', 'Jacobi vectorized', 'Jacobi unvectorized'], loc = 0)
     plt.title( 'Time relative to armadillo time')
     plt.xlabel('N')
     plt.ylabel('Time')
@@ -240,7 +249,7 @@ if __name__ == "__main__":
 	firstH = 0.4
 	NLimit = 2000
 	vectorized = True
-	convergenceLimit = '.001'
+	convergenceLimit = '.0011' # for N
 	convergenceEigenvalue = .001 # For use in python, deciding wheter new rhoMax Needed
 	
 	
