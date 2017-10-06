@@ -1,11 +1,18 @@
 #include "solver.h"
+#include <fstream>
+#include <iomanip>
 
-Solver:: Solver() { N = finalTime = 0;}
-Solver:: Solver(int N_, double finalTime_)
+ofstream ofile;
+
+Solver:: Solver() { N = finalTime = 0; filename = "";}
+Solver:: Solver(int N_, double finalTime_, string filename_)
 {
     N = N_, finalTime = finalTime_;
     step = finalTime/double(N);
     time = 0.0;
+    filename = filename_;
+    ofile.open(filename);
+    ofile << ",time,x,y,vx/pi,vy/pi" << endl;
 
 }
 
@@ -23,6 +30,7 @@ void Solver:: forwardEuler()
     r = sqrt(x*x + y*y);
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
+    writeTofile(time, x, y, vx/pi, vy/pi);
 
     while (time < finalTime){
         x += step*vx;
@@ -31,8 +39,18 @@ void Solver:: forwardEuler()
         vy -= step*FourPi2*y/(r*r*r);
         r = sqrt(x*x + y*y);
         time += step;
-        cout << "t " << time << " x " << x << " y " << y << " vx " << vx << " vy " << vy  << endl;
+        writeTofile(time, x, y, vx/pi, vy/pi);
     }
+    ofile.close();
 }
 
+void Solver:: writeTofile(double time_, double x_, double y_, double vx_, double vy_ )
+{
+    ofile << setiosflags(ios::showpoint | ios::uppercase);
+    ofile << setw(15) << setprecision(8) << time_ << ", ";
+    ofile << setw(15) << setprecision(8) << x_ << ", ";
+    ofile << setw(15) << setprecision(8) << y_ << ", ";
+    ofile << setw(15) << setprecision(8) << vx_ << ", ";
+    ofile << setw(15) << setprecision(8) << vy_ << endl;
+}
 
