@@ -19,7 +19,7 @@ public:
     void addPlanet(Planet planet_);
 
     void forwardEuler();
-    void writeTofile(double time_, double x_, double y_, double vx_, double vy_ );
+    void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy, double kineticEnergy);
 };
 
 #endif // SOLVER_H

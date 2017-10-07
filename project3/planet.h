@@ -33,6 +33,8 @@ public:
     double getInitialYPosition() const;
     double getInitialXVelocity() const;
     double getInitialYVelocity() const;
+    double getKineticEnergy(double vx_, double vy_);
+    double getPotentialEnergy(double r_);
 };
 
 #endif // PLANET_H

@@ -20,7 +20,7 @@ except ImportError:
 if not os.path.isdir('results'):
 	os.mkdir('results')
 
-#%% 2, run 
+#%% Run 
 
 def runCpp(outfileName, finalTime, N, solverType):
     """
@@ -37,30 +37,90 @@ def sunEarth():
     """
 
     """
-    outfileName = 'sunEarth.csv'
-    N = 1000
-    finalTime = 1.0
-    solverType = 'forwardEuler'
-    runCpp(outfileName, finalTime, N, solverType)
-    #sunEarth= OrderedDict()
-    sunEarth = pd.read_table("results/" + outfileName, 
-        			            delimiter=',')
+    sunEarth= OrderedDict()
     
-    plotSunEarth(sunEarth)
+    outfileName = 'sunEarth'
+    solverType = 'forwardEuler'
+    
+    finalTimes = [10**i for i in xrange(0,4)]
+    #Ns = [10**i for i in xrange(3,8)]   
+    dts = [10.**(-i) for i in xrange(1, 4)]
+    
+    
+    # Plots. Positions vs time
+    fig, ax = plt.subplots(2, sharex=True)
+    fig.hold('on')
+    ax[0].set_title(outfileName + ' ' + solverType)
+    ax[1].set_xlabel('t [Au]')
+    ax[0].set_ylabel('x [Au]')
+    ax[1].set_ylabel('y [Au]')
+    plt.ylim(-1.1, 1.1)    
+    legends = []
+    
+    fig2, ax2 = plt.subplots()
+    fig2.hold('on')
+    ax2.set_title(outfileName + ' ' + solverType + 'Energy')
+    ax2.set_xlabel('t [Au]')
+    ax2.set_ylabel('E ')
+    
+    for finalTime in finalTimes:
+        sunEarth['FinalTime %f' %finalTime] = {}
+        for dt in dts:
+            N = finalTime/dt
+            print 'N = %d, final time = %.2g' %(N, finalTime)  
+            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(N).replace(".", "")
+            runCpp(outfileName2, finalTime, N, solverType)
+            sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + ".csv", 
+            			            delimiter=',')
+            plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
+            if finalTime == finalTimes[1]:
+                #ax2.loglog(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)
+                ax2.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, (sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[0] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[0]))
+
+            if finalTime == finalTimes[1]:
+                ax[0].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].x)
+                ax[1].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].y)
+                #fig.savefig('results/' + outfileName + 'times.png') 
+                #plt.show()
+                #plt.close()
+                legends.append('dt %.2g' %dt)
+    ax[0].legend(legends)
+    ax[1].legend(legends)
+    fig.savefig('results/' + outfileName + 'Times.png') 
+    
+    ax2.legend(legends)
+    fig2.savefig('results/'+ outfileName + 'Energy.png') 
+    
     return sunEarth
 
-def plotSunEarth(sunEarth):
+def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime):
+    dt = finalTime/N
     fig, ax = plt.subplots()
     ax.plot(sunEarth.x, sunEarth.y)
-    ax.set_title("Sun Earth. Forward Euler")
+    ax.set_title(outfileName + ' ' + solverType + '\n N %d, dt %.2g' %(N, dt))
     ax.set_xlabel('x [Au]')
     ax.set_ylabel('y [Au]')
     ax.set_xlim(-2., 2.)
     ax.set_ylim(-2., 2.)
-    #outfileName = '%sOmega%sRhoMaxComparison' %(electronType,  omega.replace(".", ""))
-    filename = ('sunEarth.png')
-    fig.savefig(filename) 
-    plt.show()
+    fig.savefig('results/' + outfileName + '.png') 
+    #plt.show()
+    plt.close()
+    
+
+def plotSunEarthTimes(sunEarth, outfileName, solverType, N, finalTime):
+    dt = finalTime/N
+    fig, ax = plt.subplots(2, sharex=True)
+    fig.hold('on')
+    ax[0].plot(sunEarth.time, sunEarth.x)
+    ax[1].plot(sunEarth.time, sunEarth.y)
+    fig.title(outfileName + ' ' + solverType + '\n N %d, dt %.2g' %(N, dt))
+    ax[0].set_xlabel('t [Au]')
+    ax[0].set_ylabel('x [Au]')
+    ax[1].set_ylabel('y [Au]')
+    #ax.set_xlim(-2., 2.)
+    fig.ylim(-1.1, 1.1)
+    #fig.savefig('results/' + outfileName + 'times.png') 
+    #plt.show()
     #plt.close()
 
 

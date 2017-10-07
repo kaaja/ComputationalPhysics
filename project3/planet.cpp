@@ -21,3 +21,12 @@ double Planet:: getInitialXPosition() const {return xPosition;}
 double Planet:: getInitialYPosition() const {return yPosition;}
 double Planet:: getInitialXVelocity() const {return xVelocity;}
 double Planet:: getInitialYVelocity() const {return yVelocity;}
+double Planet:: getKineticEnergy(double vx_, double vy_)
+{
+    double velocity2 = vx_*vx_ + vy_*vy_;
+    return 0.5*mass*velocity2;
+}
+double Planet:: getPotentialEnergy(double r_)
+{
+    return 6.67*pow(10,-11)*mass/r_;
+}

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     initialize( outfileName, finalTime, N, solverType, argc, argv);
 
     double pi = acos(-1.0);
-    Planet earth(1., 1., 0., 0. ,2*pi);
+    Planet earth(0.000003, 1., 0., 0. ,2*pi);
     Solver solution(N, finalTime, outfileName);
     solution.addPlanet(earth);
     //cout << earth.getInitialXPosition() << forwardEuler.
