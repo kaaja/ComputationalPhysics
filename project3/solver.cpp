@@ -12,7 +12,7 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
     time = 0.0;
     filename = filename_;
     ofile.open(filename);
-    ofile << ",time,x,y,vx/pi,vy/pi" << endl;
+    ofile << "time,x,y,vx/pi,vy/pi" << endl;
 
 }
 
