@@ -92,27 +92,134 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \section{Results}
 
 \subsection{Sun-Earth Forward Euler}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimes.png}
-	\caption{Sun-Earth system. Effect of $\Delta t$ over a 10 year period. \\ \textit{The Forward Euler method seems to converge for the two smallest $\Delta t$}}
-	\label{1}
-\end{figure}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10000N10000000.png}
-	\caption{Sun-Earth system. Forward Euler. 10 000 years. \\ \textit{For $\Delta t = 0.01$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
-	\label{1}
-\end{figure}
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimes.png}
+		\caption{Sun-Earth system. Effect of $\Delta t$ over a 10 year period. \\ \textit{The Forward Euler method seems to converge for the two smallest $\Delta t$}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimesVelocityVerlet.png}
+		\caption{Sun-Earth system. Effect of $\Delta t$ over a 10 year period. \\ \textit{The Velocity verlet method seems to converge faster than Forward Euler}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergy.png}
-	\caption{Sun-Earth system. Total Energy. Forward Euler. 10 years. \\ \textit{Energy is not preserver with the Forward Euler method}}
-	\label{1}
-\end{figure}
 
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10N1000.png}
+		\caption{Sun-Earth system. Forward Euler. 10 years \\ \textit{Non-circulat orbits when time step is large.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10000N10000000.png}
+		\caption{Sun-Earth system. Forward Euler. 10 000 years. \\ \textit{For $\Delta t = 0.01$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10N1000VelocityVerlet.png}
+		\caption{Sun-Earth system. Velocity Verlet. 10 years. \\ \textit{Large time step gives bad solutions also for Velocity Verlet.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10000N10000000VelocityVerlet.png}
+		\caption{Sun-Earth system. Velocity Verlet. 10 000 years. \\ \textit{For velocity Verlet, the orbits seems to stay more circular compared to Forward Euler.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergy.png}
+		\caption{Sun-Earth system. Total Energy divided by total energy first time step. Forward Euler. 10 years. \\ \textit{Energy is not preserved with the Forward Euler method}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergyVelocityVerlet.png}
+		\caption{Sun-Earth system. Total Energy divided by total energy first time step. Velocity Verlet. 10 years. \\ \textit{Energy is preserved in Velocity Verlet provided fine enough time step. }}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentum.png}
+		\caption{Sun-Earth system. Angular momentum divided by angular momentum first time step. Forward Euler. 10 years. \\ \textit{Angular momentum seems to be conserverd for the finest time step.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentumVelocityVerlet.png}
+		\caption{Sun-Earth system. Angular momentum divided by angular momentum first time step. Velocity Verlet. 10 years. \\ \textit{Angular momentum is conserverd given suffiently fine time steps. Conservation achieved faster than with Forward Euler.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNorm.png}
+		\caption{Sun-Earth system. Sup-norm total energy. Forward Euler. \\ \textit{Forward Euler's sup-norm goes like $\mathcal{O}(\Delta t)$}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormVelocityVerlet.png}
+		\caption{Sun-Earth system. Sup-norm total energy. Velocity Verlet \\ \textit{The sup-norm in energy for Velocity Verlet goes one higher order than Forward Euler}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentum.png}
+		\caption{Sun-Earth system. Sup-norm Angular Momentum. Forward Euler \\ \textit{Forward Euler's sup-norm for angular momentum goes like $\mathcal{O}(\Delta t^2)$}.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumVelocityVerlet.png}
+		\caption{Sun-Earth system. Sup-norm Angular momentum. Velocity Verlet \\ \textit{Velocity Verlet's sup-norm error less than $10^{-12}$ like $\mathcal{O}(\Delta t^4)$.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
 \section{Conclusions}
 

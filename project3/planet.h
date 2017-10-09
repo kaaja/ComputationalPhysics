@@ -19,6 +19,8 @@ private:
     double yPosition = 0.0;
     double xVelocity = 0.0;
     double yVelocity = 0.0;
+    double xForce, yForce;
+
 public:
     Planet();
     Planet(double mass_, double xPosition_, double yPosition_, double xVelocity_, double yVelocity_);
@@ -33,8 +35,11 @@ public:
     double getInitialYPosition() const;
     double getInitialXVelocity() const;
     double getInitialYVelocity() const;
-    double getKineticEnergy(double vx_, double vy_);
-    double getPotentialEnergy(double r_);
+    double getKineticEnergy(double mass_, double vx_, double vy_);
+    double getPotentialEnergy(double r_, double mass_);
+    double getAngularMomentum(double r_, double mass_, double vx_, double vy_);
+    void getForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_);
+    void getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_);
 };
 
 #endif // PLANET_H

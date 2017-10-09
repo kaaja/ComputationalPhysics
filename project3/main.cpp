@@ -18,7 +18,10 @@ int main(int argc, char* argv[])
     Solver solution(N, finalTime, outfileName);
     solution.addPlanet(earth);
     //cout << earth.getInitialXPosition() << forwardEuler.
-    solution.forwardEuler();
+    if (solverType == "forwardEuler")
+        solution.forwardEuler();
+    else
+        solution.velocityVerlet();
     return 0;
 }
 

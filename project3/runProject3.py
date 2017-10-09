@@ -37,14 +37,16 @@ def sunEarth():
     """
 
     """
-    sunEarth= OrderedDict()
+    sunEarth      = OrderedDict()
+    supNormValues = []#OrderedDict()
+    supNormAngularMomentum = []
     
     outfileName = 'sunEarth'
     solverType = 'forwardEuler'
     
     finalTimes = [10**i for i in xrange(0,4)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 4)]
+    dts = [10.**(-i) for i in xrange(1, 5)]
     
     
     # Plots. Positions vs time
@@ -57,11 +59,39 @@ def sunEarth():
     plt.ylim(-1.1, 1.1)    
     legends = []
     
+    # Energy plots
     fig2, ax2 = plt.subplots()
     fig2.hold('on')
     ax2.set_title(outfileName + ' ' + solverType + 'Energy')
     ax2.set_xlabel('t [Au]')
     ax2.set_ylabel('E ')
+    ax2.set_ylim(0.7, 1.05)    
+    
+
+    
+    # Angular momentum plots
+    fig3, ax3 = plt.subplots()
+    fig3.hold('on')
+    ax3.set_title(outfileName + ' ' + solverType + 'Angular momentum')
+    ax3.set_xlabel('t [Au]')
+    ax3.set_ylabel('Angular momentum ')
+    ax3.set_ylim(0.99, 1.05)    
+    
+    # supNorm ENergy plots
+    fig4, ax4 = plt.subplots()
+    fig4.hold('on')
+    ax4.set_title(outfileName + ' ' + solverType + 'sup Norm')
+    ax4.set_xlabel("$\Delta t$")
+    ax4.set_ylabel('sup norm Energy')
+    #ax2.set_ylim(0.)
+
+    # supNorm Angular Momentum
+    fig5, ax5 = plt.subplots()
+    fig5.hold('on')
+    ax5.set_title(outfileName + ' ' + solverType + ' sup-norm Angular momentum')
+    ax5.set_xlabel("$\Delta t$")
+    ax5.set_ylabel('sup-norm angular momentum')
+    #ax2.set_ylim(0.)
     
     for finalTime in finalTimes:
         sunEarth['FinalTime %f' %finalTime] = {}
@@ -76,22 +106,44 @@ def sunEarth():
             if finalTime == finalTimes[1]:
                 #ax2.loglog(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)
                 ax2.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, (sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[0] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[0]))
-
-            if finalTime == finalTimes[1]:
+                ax3.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, (sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum )/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[0]))
                 ax[0].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].x)
                 ax[1].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].y)
                 #fig.savefig('results/' + outfileName + 'times.png') 
                 #plt.show()
                 #plt.close()
                 legends.append('dt %.2g' %dt)
+            
+            if finalTime == finalTimes[-1]:
+                totalEnergy = (sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)
+                totalEnergy = totalEnergy.values 
+                angularMomentum = (sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum).values
+                supNormValues.append(supNorm(totalEnergy))
+                supNormAngularMomentum.append(supNorm(angularMomentum))
+    
     ax[0].legend(legends)
     ax[1].legend(legends)
     fig.savefig('results/' + outfileName + 'Times.png') 
     
     ax2.legend(legends)
-    fig2.savefig('results/'+ outfileName + 'Energy.png') 
+    fig2.savefig('results/'+ outfileName + 'Energy.png')
     
-    return sunEarth
+    ax3.legend(legends)
+    fig3.savefig('results/'+ outfileName + 'AngularMomentum.png')
+    
+    ax4.loglog(dts, supNormValues)
+    fig4.savefig('results/'+ outfileName + 'supNorm.png')
+    
+    ax5.loglog(dts, supNormAngularMomentum)
+    fig5.savefig('results/'+ outfileName + 'supNormAngularMomentum.png')
+    
+    return sunEarth, supNormValues, supNormAngularMomentum
+
+def supNorm(totalEnergy):
+    totalEnergy = totalEnergy[1:]/totalEnergy[0]-1
+    supNorm = np.max(abs(totalEnergy))
+    return supNorm
+
 
 def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime):
     dt = finalTime/N
@@ -125,4 +177,4 @@ def plotSunEarthTimes(sunEarth, outfileName, solverType, N, finalTime):
 
 
 #%% 2, run     
-sunEarth()
+sunearth, supNormValues, supNormAngularMomentum = sunEarth()
