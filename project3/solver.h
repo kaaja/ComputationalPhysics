@@ -2,14 +2,18 @@
 #define SOLVER_H
 #include "planet.h"
 #include <string>
+#include "time.h"
+#include <fstream>
+#include <iomanip>
 
 class Solver
 {
 private:
     Planet planet;
     int N;
-    double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld;
+    double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld, timeUsed;
     string filename;
+    clock_t start, finish;
 
 public:
     Solver();
@@ -20,7 +24,7 @@ public:
 
     void forwardEuler();
     void velocityVerlet();
-    void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_);
+    void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_, double timeUsed_, double r_);
 
 
 };

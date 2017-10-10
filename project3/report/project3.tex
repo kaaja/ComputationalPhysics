@@ -96,7 +96,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimes.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimesForwardEuler.png}
 		\caption{Sun-Earth system. Effect of $\Delta t$ over a 10 year period. \\ \textit{The Forward Euler method seems to converge for the two smallest $\Delta t$}}
 		\label{1}
 	\end{figure}
@@ -115,7 +115,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10N1000.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10N1000ForwardEuler.png}
 		\caption{Sun-Earth system. Forward Euler. 10 years \\ \textit{Non-circulat orbits when time step is large.}}
 		\label{1}
 	\end{figure}
@@ -123,7 +123,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10000N10000000.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime10000N10000000ForwardEuler.png}
 		\caption{Sun-Earth system. Forward Euler. 10 000 years. \\ \textit{For $\Delta t = 0.01$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
 		\label{1}
 	\end{figure}
@@ -151,7 +151,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergy.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergyForwardEuler.png}
 		\caption{Sun-Earth system. Total Energy divided by total energy first time step. Forward Euler. 10 years. \\ \textit{Energy is not preserved with the Forward Euler method}}
 		\label{1}
 	\end{figure}
@@ -170,7 +170,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentum.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentumForwardEuler.png}
 		\caption{Sun-Earth system. Angular momentum divided by angular momentum first time step. Forward Euler. 10 years. \\ \textit{Angular momentum seems to be conserverd for the finest time step.}}
 		\label{1}
 	\end{figure}
@@ -188,7 +188,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNorm.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormForwardEuler.png}
 		\caption{Sun-Earth system. Sup-norm total energy. Forward Euler. \\ \textit{Forward Euler's sup-norm goes like $\mathcal{O}(\Delta t)$}}
 		\label{1}
 	\end{figure}
@@ -206,7 +206,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentum.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumForwardEuler.png}
 		\caption{Sun-Earth system. Sup-norm Angular Momentum. Forward Euler \\ \textit{Forward Euler's sup-norm for angular momentum goes like $\mathcal{O}(\Delta t^2)$}.}
 		\label{1}
 	\end{figure}
@@ -216,6 +216,24 @@ If the above Github-link does not work, it is eighter because you have not yet a
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumVelocityVerlet.png}
 		\caption{Sun-Earth system. Sup-norm Angular momentum. Velocity Verlet \\ \textit{Velocity Verlet's sup-norm error less than $10^{-12}$ like $\mathcal{O}(\Delta t^4)$.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthLogTimeUsedForwardEuler.png}
+		\caption{Sun-Earth system. Log time. Forward Euler \\ \textit{Forward Euler's $\mathcal{O}(N)$}.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthLogTimeUsedVelocityVerlet.png}
+		\caption{Sun-Earth system. Log time. Velocity Verlet \\ \textit{Velocity Verlet's log time is of the same order as Forward Euler.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill

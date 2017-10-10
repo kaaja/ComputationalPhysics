@@ -1,6 +1,5 @@
 #include "solver.h"
-#include <fstream>
-#include <iomanip>
+
 
 ofstream ofile;
 
@@ -12,7 +11,7 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
     time = 0.0;
     filename = filename_+string(".csv");
     ofile.open(filename);
-    ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum" << endl;
+    ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r" << endl;
 
 }
 
@@ -34,8 +33,9 @@ void Solver:: forwardEuler()
     potentialEnergy = planet.getPotentialEnergy(r, mass);
     kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
     angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum);
+    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
 
+    start = clock();
     while (time < finalTime){
         x += step*vx;
         y += step*vy;
@@ -46,8 +46,13 @@ void Solver:: forwardEuler()
         kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
         angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
         time += step;
-        writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum);
+        writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
     }
+    finish = clock();
+    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
+    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
+    writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
+
     ofile.close();
 }
 
@@ -69,8 +74,9 @@ void Solver:: velocityVerlet()
     potentialEnergy = planet.getPotentialEnergy(r, mass);
     kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
     angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum);
+    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
 
+    start = clock();
     while (time < finalTime){
         accelerationXOld = accelerationX;
         accelerationYOld = accelerationY;
@@ -85,21 +91,29 @@ void Solver:: velocityVerlet()
         kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
         angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
         time += step;
-        writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum);
+        writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
     }
+    finish = clock();
+    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
+    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
+    writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
+
     ofile.close();
 }
 
-void Solver:: writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_ , double AngularMomentum_)
+void Solver:: writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_ , double AngularMomentum_, double timeUsed_, double r_)
 {
     ofile << setiosflags(ios::showpoint | ios::uppercase);
-    ofile << setw(15) << setprecision(8) << time_ << ", ";
-    ofile << setw(15) << setprecision(8) << x_ << ", ";
-    ofile << setw(15) << setprecision(8) << y_ << ", ";
-    ofile << setw(15) << setprecision(8) << vx_ << ", ";
-    ofile << setw(15) << setprecision(8) << vy_ << ", ";
-    ofile << setw(15) << setprecision(8) << potentialEnergy_ << ", ";
-    ofile << setw(15) << setprecision(8) << kineticEnergy_ << ", ";
-    ofile << setw(15) << setprecision(8) << AngularMomentum_ << endl;
+    ofile << setw(15) << setprecision(16) << time_ << ", ";
+    ofile << setw(15) << setprecision(16) << x_ << ", ";
+    ofile << setw(15) << setprecision(16) << y_ << ", ";
+    ofile << setw(15) << setprecision(16) << vx_ << ", ";
+    ofile << setw(15) << setprecision(16) << vy_ << ", ";
+    ofile << setw(15) << setprecision(16) << potentialEnergy_ << ", ";
+    ofile << setw(15) << setprecision(16) << kineticEnergy_ << ", ";
+    ofile << setw(15) << setprecision(16) << AngularMomentum_ << ", ";
+    ofile << setw(15) << setprecision(16) << timeUsed_ << ", ";
+    ofile << setw(15) << setprecision(16) << log10(timeUsed_) << ", ";
+    ofile << setw(15) << setprecision(16) << r_ << endl;
 }
 
