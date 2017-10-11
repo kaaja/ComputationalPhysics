@@ -40,6 +40,7 @@ public:
     double getAngularMomentum(double r_, double mass_, double vx_, double vy_);
     void getForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_);
     void getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_);
+    void getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_);
 };
 
 #endif // PLANET_H

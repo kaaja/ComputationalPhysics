@@ -101,6 +101,50 @@ void Solver:: velocityVerlet()
     ofile.close();
 }
 
+void Solver:: alternativeForceVelocityVerlet(double beta_)
+{
+
+    pi = acos(-1.0);
+    FourPi2 = 4.*pi*pi;
+
+    x = planet.getInitialXPosition();
+    y = planet.getInitialYPosition();
+    vx = planet.getInitialXVelocity();
+    vy = planet.getInitialYVelocity();
+    mass = planet.getMass();
+    r = sqrt(x*x + y*y);
+    planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
+    planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+
+    potentialEnergy = planet.getPotentialEnergy(r, mass);
+    kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
+    angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
+    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
+
+    start = clock();
+    while (time < finalTime){
+        accelerationXOld = accelerationX;
+        accelerationYOld = accelerationY;
+        x +=  step*vx + step*step/2.0* accelerationXOld;
+        y +=  step*vy + step*step/2.0* accelerationYOld;
+        r = sqrt(x*x + y*y);
+        planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
+        planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+        vx +=  step/2.0*(accelerationXOld + accelerationX);
+        vy +=  step/2.0*(accelerationYOld + accelerationY);
+        potentialEnergy = planet.getPotentialEnergy(r, mass);
+        kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
+        angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
+        time += step;
+        writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
+    }
+    finish = clock();
+    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
+    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
+    writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
+
+    ofile.close();
+}
 void Solver:: writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_ , double AngularMomentum_, double timeUsed_, double r_)
 {
     ofile << setiosflags(ios::showpoint | ios::uppercase);

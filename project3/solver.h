@@ -24,6 +24,7 @@ public:
 
     void forwardEuler();
     void velocityVerlet();
+    void alternativeForceVelocityVerlet(double beta_);
     void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_, double timeUsed_, double r_);
 
 

@@ -22,7 +22,7 @@ if not os.path.isdir('results'):
 
 #%% Run 
 
-def runCpp(outfileName, finalTime, N, solverType, initialVy):
+def runCpp(outfileName, finalTime, N, solverType, initialVy, beta):
     """
     Compiles and runs cpp program from the command line and
     makes sure the mesh size is not too big.
@@ -30,7 +30,8 @@ def runCpp(outfileName, finalTime, N, solverType, initialVy):
     N = str(N)
     finalTime = str(finalTime)
     initialVy = str(initialVy)
-    call(["./AllrunVectorized", outfileName, finalTime, N, solverType, initialVy])
+    beta = str(beta)
+    call(["./AllrunVectorized", outfileName, finalTime, N, solverType, initialVy, beta])
     
 #%% 2, run 
 
@@ -43,7 +44,7 @@ def sunEarth():
     supNormValues = []#OrderedDict()
     supNormAngularMomentum = []
     timesUsed = []
-    
+    beta = 3.0
     outfileName = 'sunEarth'
     solverType = 'VelocityVerlet'
     
@@ -111,7 +112,7 @@ def sunEarth():
             N = finalTime/dt
             print 'N = %d, final time = %.2g' %(N, finalTime)  
             outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(N).replace(".", "")
-            runCpp(outfileName2, finalTime, N, solverType, initialVy)
+            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta)
             sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + ".csv", 
             			            delimiter=',')
             plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
@@ -203,7 +204,7 @@ def sunEarthTerminalVelocity():
     
     outfileName = 'sunEarthTerminalVelocity'
     solverType = 'VelocityVerlet'
-    
+    beta = 2.0
     finalTime = 10.**5
     #Ns = [10**i for i in xrange(3,8)]
     dt = 0.01
@@ -227,7 +228,7 @@ def sunEarthTerminalVelocity():
     for initialVelocityY in initialVelocities:
         outfileName2 = outfileName + 'initialVelocityY%spi' %str(initialVelocityY/np.pi).replace(".", "")
         print outfileName2 
-        runCpp(outfileName2, finalTime, N, solverType, initialVelocityY)
+        runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta)
         sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
             			            delimiter=',')
         plotSunEarth(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
@@ -242,6 +243,54 @@ def sunEarthTerminalVelocity():
     
     return sunEarth
 
+def sunEarthAlternativeGravitationalForce():
+    """
+
+    """
+    sunEarth      = OrderedDict()
+    
+    outfileName = 'sunEarth'
+    solverType = 'AlternativeForce'
+    betaValues = [3.0,  3.5, 4.0]
+    finalTime = 10.**4
+    #Ns = [10**i for i in xrange(3,8)]
+    dt = 0.01
+    N = finalTime/dt
+    numberOfSimulations = 4
+    epsilon = np.pi/2
+    start = np.pi/2 # start value Vy, when Vy = start*2pi/128
+    initialVelocities = [start+(epsilon)*i for i in xrange(numberOfSimulations)]
+    
+    # Plots. Positions vs time
+    
+    for beta in betaValues:
+        sunEarth['beta %f' %beta] = {}
+        fig, ax = plt.subplots()
+        fig.hold('on')
+        ax.set_title(solverType + ' radial distance' + ' $\Delta t$ %.2g' %dt + "$\beta $" + str(beta))
+        ax.set_xlabel("time")
+        ax.set_ylabel('radial distance')
+        legends = []
+        
+        for initialVelocityY in initialVelocities:
+            outfileName2 = outfileName + 'initialVelocityY%spibeta%s' %(str(initialVelocityY/np.pi).replace(".", ""), str(beta).replace(".", ""))
+            print outfileName2 
+            runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta)
+            sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
+                			            delimiter=',')
+            #plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
+            ax.plot(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
+            legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
+        
+        ax.legend(legends, bbox_to_anchor=(1.1, 0.7), ncol=1)
+        #ax.set_xlim(-2., 2.)
+        #ax.set_ylim(0.9, 1.1)
+        fig.savefig('results/'+ outfileName + 'radialDistance' + solverType + 'beta' + str(beta).replace(".", "")+'.png')
+        plt.close()
+    
+    return sunEarth
+
 #%% 2, run     
-sunearth, supNormValues, supNormAngularMomentum = sunEarth()
+#sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
+sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()

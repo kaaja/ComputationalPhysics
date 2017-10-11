@@ -48,3 +48,10 @@ void Planet:: getAcceleration(double mass_, double *accelerationX, double *accel
     *accelerationX = forceX_/mass_;
     *accelerationY = forceY_/mass_;
 }
+void Planet:: getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_)
+{
+    double pi = acos(-1.0);
+    double FourPi2 = 4.*pi*pi;
+    *forceX_ = -FourPi2*x_ *mass/(pow(r_,beta_));
+    *forceY_ = -FourPi2*y_*mass/(pow(r_,beta_));
+}
