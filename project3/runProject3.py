@@ -45,7 +45,7 @@ def sunEarth():
     timesUsed = []
     
     outfileName = 'sunEarth'
-    solverType = 'ForwardEuler'
+    solverType = 'VelocityVerlet'
     
     finalTimes = [10**i for i in xrange(0,4)]
     #Ns = [10**i for i in xrange(3,8)]   
@@ -167,7 +167,7 @@ def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime):
     dt = finalTime/N
     fig, ax = plt.subplots()
     ax.plot(sunEarth.x[:-1], sunEarth.y[:-1])
-    ax.set_title(outfileName + ' ' + solverType + '\n N %d, dt %.2g' %(N, dt))
+    ax.set_title(solverType + '\n T %d, $\Delta$ t %.2g' %(finalTime, dt))
     ax.set_xlabel('x [Au]')
     ax.set_ylabel('y [Au]')
     #ax.set_xlim(-2., 2.)
@@ -219,7 +219,7 @@ def sunEarthTerminalVelocity():
     # Times
     fig, ax = plt.subplots()
     fig.hold('on')
-    ax.set_title(outfileName + ' ' + solverType + ' radial distance')
+    ax.set_title(solverType + ' radial distance' + ' $\Delta t$ %.2g' %dt)
     ax.set_xlabel("time")
     ax.set_ylabel('radial distance')
     legends = []
@@ -243,5 +243,5 @@ def sunEarthTerminalVelocity():
     return sunEarth
 
 #%% 2, run     
-#sunearth, supNormValues, supNormAngularMomentum = sunEarth()
-sunearthTerminalVelocity = sunEarthTerminalVelocity()
+sunearth, supNormValues, supNormAngularMomentum = sunEarth()
+#sunearthTerminalVelocity = sunEarthTerminalVelocity()
