@@ -93,8 +93,7 @@ void Solver:: velocityVerlet()
         planets[1].setXposition(x);
         planets[1].setYposition(y);
 
-        //r = planet.getRadialDistance(planets[0]);
-        r = sqrt(x*x + y*y);
+        r = planets[1].getRadialDistance(planets[0]);
 
         planets[1].getForce(planets[0], &forceX, &forceY);
         planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
