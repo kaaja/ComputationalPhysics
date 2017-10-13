@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
     initialize( outfileName, finalTime, N, solverType, initialVy, beta, argc, argv);
 
     double pi = acos(-1.0);
+    Planet sun(1., 0., 0., 0. , 0.);
     Planet earth(0.000003, 1., 0., 0. , initialVy);
     double velocityEarth = 29.7559;
     double velocityJupiter = 13.0697;
@@ -22,7 +23,9 @@ int main(int argc, char* argv[])
     //initialVyJupiter = 2*pi*velocityJupiterToEarth;
     //Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter);
     Solver solution(N, finalTime, outfileName);
+    solution.addPlanet(sun);
     solution.addPlanet(earth);
+
     //solution.addPlanet(jupiter);
     //cout << earth.getInitialXPosition() << forwardEuler.
     if (solverType == "ForwardEuler")
