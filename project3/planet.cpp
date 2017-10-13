@@ -9,6 +9,7 @@ Planet:: Planet (double mass_, double xPosition_, double yPosition_, double xVel
     yVelocity = yVelocity_;
     xPosition = xPosition_;
     yPosition = yPosition_;
+    radialDistance = sqrt(xPosition*xPosition + yPosition*yPosition);
 
 }
 
@@ -17,10 +18,19 @@ double Planet::getMass() const
     return mass;
 }
 
-double Planet:: getInitialXPosition() const {return xPosition;}
-double Planet:: getInitialYPosition() const {return yPosition;}
-double Planet:: getInitialXVelocity() const {return xVelocity;}
-double Planet:: getInitialYVelocity() const {return yVelocity;}
+double Planet:: getXPosition() {return xPosition;}
+double Planet:: getYPosition() {return yPosition;}
+double Planet:: getRadialDistance(Planet otherPlanet_)
+{
+    double xPositionOtherPlanet = otherPlanet_.getXPosition();
+    double yPositionOtherPlanet = otherPlanet_.getYPosition();
+    double xDistance = xPosition - xPositionOtherPlanet;
+    double yDistance = yPosition - yPositionOtherPlanet;
+    double r = sqrt(xDistance*xDistance + yDistance*yDistance);
+    return r;
+}
+double Planet:: getXVelocity() {return xVelocity;}
+double Planet:: getYVelocity() {return yVelocity;}
 double Planet:: getKineticEnergy(double mass_, double vx_, double vy_)
 {
     double velocity2 = vx_*vx_ + vy_*vy_;
@@ -35,12 +45,12 @@ double Planet:: getAngularMomentum(double r_, double mass_, double vx_, double v
     double velocity = sqrt(vx_*vx_ + vy_*vy_);
     return r_*mass_*velocity;
 }
-void Planet:: getForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_)
+void Planet:: getForce(Planet otherPlanet, double *forceX_, double *forceY_)
 {
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
-    *forceX_ = -FourPi2*x_ *mass/(r_*r_*r_);
-    *forceY_ = -FourPi2*y_*mass/(r_*r_*r_);
+    *forceX_ = -FourPi2*xPosition *mass/radialDistance;
+    *forceY_ = -FourPi2*yPosition*mass/radialDistance;
 
 }
 void Planet:: getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_)
@@ -55,3 +65,9 @@ void Planet:: getAlternativeForce(double mass_, double x_, double y_, double r_,
     *forceX_ = -FourPi2*x_ *mass/(pow(r_,beta_));
     *forceY_ = -FourPi2*y_*mass/(pow(r_,beta_));
 }
+
+void Planet:: setXposition(double x_){ xPosition = x_;}
+void Planet:: setYposition(double y_){yPosition = y_;}
+void Planet:: setDistance(double r_){radialDistance = r_;}
+void Planet:: setXVelociy(double vx_){xVelocity = vx_;}
+void Planet:: setYVelociy(double vy_){yVelocity = vy_;}

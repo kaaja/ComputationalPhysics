@@ -5,12 +5,14 @@
 #include "time.h"
 #include <fstream>
 #include <iomanip>
+#include <vector>
 
 class Solver
 {
 private:
     Planet planet;
-    int N;
+    vector<Planet> planets;
+    int N, numberOfPlanets;
     double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld, timeUsed;
     string filename;
     clock_t start, finish;

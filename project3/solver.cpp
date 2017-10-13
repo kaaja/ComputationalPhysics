@@ -18,16 +18,18 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
 void Solver:: addPlanet(Planet planet_)
 {
     planet = planet_;
+    planets.push_back (planet);
+    numberOfPlanets += 1;
 }
 
 void Solver:: forwardEuler()
 {
-    x = planet.getInitialXPosition();
-    y = planet.getInitialYPosition();
-    vx = planet.getInitialXVelocity();
-    vy = planet.getInitialYVelocity();
+    x = planet.getXPosition();
+    y = planet.getYPosition();
+    vx = planet.getXVelocity();
+    vy = planet.getYVelocity();
     mass = planet.getMass();
-    r = sqrt(x*x + y*y);
+    r = sqrt(x*x + y*y); //r = planet.getDistance()//
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
     potentialEnergy = planet.getPotentialEnergy(r, mass);
@@ -62,13 +64,13 @@ void Solver:: velocityVerlet()
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
 
-    x = planet.getInitialXPosition();
-    y = planet.getInitialYPosition();
-    vx = planet.getInitialXVelocity();
-    vy = planet.getInitialYVelocity();
+    x = planet.getXPosition();
+    y = planet.getYPosition();
+    vx = planet.getXVelocity();
+    vy = planet.getYVelocity();
     mass = planet.getMass();
     r = sqrt(x*x + y*y);
-    planet.getForce(mass, x, y, r, &forceX, &forceY);
+    planet.getForce(planets[0], &forceX, &forceY);
     planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
     potentialEnergy = planet.getPotentialEnergy(r, mass);
@@ -83,7 +85,7 @@ void Solver:: velocityVerlet()
         x +=  step*vx + step*step/2.0* accelerationXOld;
         y +=  step*vy + step*step/2.0* accelerationYOld;
         r = sqrt(x*x + y*y);
-        planet.getForce(mass, x, y, r, &forceX, &forceY);
+        planet.getForce(planets[0], &forceX, &forceY);
         planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
         vx +=  step/2.0*(accelerationXOld + accelerationX);
         vy +=  step/2.0*(accelerationYOld + accelerationY);
@@ -107,10 +109,10 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
 
-    x = planet.getInitialXPosition();
-    y = planet.getInitialYPosition();
-    vx = planet.getInitialXVelocity();
-    vy = planet.getInitialYVelocity();
+    x = planet.getXPosition();
+    y = planet.getYPosition();
+    vx = planet.getXVelocity();
+    vy = planet.getYVelocity();
     mass = planet.getMass();
     r = sqrt(x*x + y*y);
     planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
