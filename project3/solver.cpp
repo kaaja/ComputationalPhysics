@@ -64,36 +64,54 @@ void Solver:: velocityVerlet()
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
 
-    x = planet.getXPosition();
-    y = planet.getYPosition();
-    vx = planet.getXVelocity();
-    vy = planet.getYVelocity();
-    mass = planet.getMass();
-    r = sqrt(x*x + y*y);
-    planet.getForce(planets[0], &forceX, &forceY);
-    planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
-
-    potentialEnergy = planet.getPotentialEnergy(r, mass);
-    kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
-    angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-    writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-
     start = clock();
     while (time < finalTime){
-        accelerationXOld = accelerationX;
-        accelerationYOld = accelerationY;
-        x +=  step*vx + step*step/2.0* accelerationXOld;
-        y +=  step*vy + step*step/2.0* accelerationYOld;
+
+        x = planet.getXPosition();
+        y = planet.getYPosition();
+        vx = planet.getXVelocity();
+        vy = planet.getYVelocity();
+        mass = planet.getMass();
+        //r = planet.getRadialDistance(planets);
         r = sqrt(x*x + y*y);
+
+        potentialEnergy = planet.getPotentialEnergy(r, mass);
+        kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
+        angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
+
+        if (time==0.0)
+            writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
         planet.getForce(planets[0], &forceX, &forceY);
         planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+
+        accelerationXOld = accelerationX;
+        accelerationYOld = accelerationY;
+
+        x +=  step*vx + step*step/2.0* accelerationXOld;
+        y +=  step*vy + step*step/2.0* accelerationYOld;
+
+        planet.setXposition(x);
+        planet.setYposition(y);
+
+        //r = planet.getRadialDistance(planets[0]);
+        r = sqrt(x*x + y*y);
+
+        planet.getForce(planets[0], &forceX, &forceY);
+        planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+
         vx +=  step/2.0*(accelerationXOld + accelerationX);
         vy +=  step/2.0*(accelerationYOld + accelerationY);
+
+        planet.setXVelociy(vx);
+        planet.setYVelociy(vy);
+
         potentialEnergy = planet.getPotentialEnergy(r, mass);
         kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
         angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
         time += step;
         writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
+
+
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));

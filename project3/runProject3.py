@@ -48,9 +48,9 @@ def sunEarth():
     outfileName = 'sunEarth'
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(0,4)]
+    finalTimes = [10**i for i in xrange(0,3)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 5)]
+    dts = [10.**(-i) for i in xrange(1, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -294,6 +294,6 @@ def sunEarthAlternativeGravitationalForce():
     return sunEarth
 
 #%% 2, run     
-#sunearth, supNormValues, supNormAngularMomentum = sunEarth()
+sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
-sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
+#sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
