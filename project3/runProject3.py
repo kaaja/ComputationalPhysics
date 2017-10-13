@@ -251,14 +251,14 @@ def sunEarthAlternativeGravitationalForce():
     
     outfileName = 'sunEarth'
     solverType = 'AlternativeForce'
-    betaValues = [3.0,  3.5, 4.0]
+    betaValues = [3.0,  3.5, 3.9, 4.0]
     finalTime = 10.**4
     #Ns = [10**i for i in xrange(3,8)]
     dt = 0.01
     N = finalTime/dt
-    numberOfSimulations = 4
-    epsilon = np.pi/2
-    start = np.pi/2 # start value Vy, when Vy = start*2pi/128
+    numberOfSimulations = 5
+    epsilon = np.pi/8
+    start = 2.*np.pi # start value Vy, when Vy = start*2pi/128
     initialVelocities = [start+(epsilon)*i for i in xrange(numberOfSimulations)]
     
     # Plots. Positions vs time
@@ -267,18 +267,21 @@ def sunEarthAlternativeGravitationalForce():
         sunEarth['beta %f' %beta] = {}
         fig, ax = plt.subplots()
         fig.hold('on')
-        ax.set_title(solverType + ' radial distance' + ' $\Delta t$ %.2g' %dt + "$\beta $" + str(beta))
+        #ax.set_title(solverType + ' radial distance' + ' $\Delta t$ %.2g' %dt + "$\beta $" + str(beta))
         ax.set_xlabel("time")
         ax.set_ylabel('radial distance')
         legends = []
         
+        if abs(beta - 4.0) < 1E-12:
+            initialVelocities = [2*np.pi - 1*np.pi/1024 + i*np.pi/1024 for i in xrange(3)] 
         for initialVelocityY in initialVelocities:
+        
             outfileName2 = outfileName + 'initialVelocityY%spibeta%s' %(str(initialVelocityY/np.pi).replace(".", ""), str(beta).replace(".", ""))
             print outfileName2 
             runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta)
             sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
                 			            delimiter=',')
-            #plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
+            plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
             ax.plot(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
             legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
         
