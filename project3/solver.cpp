@@ -80,8 +80,8 @@ void Solver:: velocityVerlet()
 
         if (time==0.0)
             writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-        planets[1].getForce(planets, &forceX, &forceY, numberOfPlanets);
-        planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+        planets[1].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
+        //planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
         accelerationXOld = accelerationX;
         accelerationYOld = accelerationY;
@@ -94,8 +94,8 @@ void Solver:: velocityVerlet()
 
         r = planets[1].getRadialDistance(planets[0]);
 
-        planets[1].getForce(planets, &forceX, &forceY, numberOfPlanets);
-        planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+        planets[1].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
+        //planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
         vx +=  step/2.0*(accelerationXOld + accelerationX);
         vy +=  step/2.0*(accelerationYOld + accelerationY);
@@ -132,7 +132,7 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
     mass = planet.getMass();
     r = sqrt(x*x + y*y);
     planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
-    planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+    //planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
     potentialEnergy = planet.getPotentialEnergy(r, mass);
     kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
@@ -147,7 +147,7 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
         y +=  step*vy + step*step/2.0* accelerationYOld;
         r = sqrt(x*x + y*y);
         planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
-        planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+        //planet.getAcceleration2(mass, &accelerationX, &accelerationY, forceX, forceY);
         vx +=  step/2.0*(accelerationXOld + accelerationX);
         vy +=  step/2.0*(accelerationYOld + accelerationY);
         potentialEnergy = planet.getPotentialEnergy(r, mass);

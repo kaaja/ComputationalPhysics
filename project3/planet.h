@@ -39,8 +39,7 @@ public:
     double getKineticEnergy(double mass_, double vx_, double vy_);
     double getPotentialEnergy(double r_, double mass_);
     double getAngularMomentum(double r_, double mass_, double vx_, double vy_);
-    void getForce( vector<Planet> planets_, double *forceX_, double *forceY_, int numberOfPlanets_);
-    void getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_);
+    void getAcceleration( vector<Planet> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_);
     void getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_);
     void setXposition(double x_);
     void setYposition(double y_);

@@ -45,30 +45,26 @@ double Planet:: getAngularMomentum(double r_, double mass_, double vx_, double v
     double velocity = sqrt(vx_*vx_ + vy_*vy_);
     return r_*mass_*velocity;
 }
-void Planet:: getForce(vector<Planet> planets_, double *forceX_, double *forceY_, int numberOfPlanets_)
+void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_)
 {
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double r;
-    //double forceXtemp, forceYtemp;
-    *forceX_ = -FourPi2*xPosition*mass/getRadialDistance(planets_[0]);
-    *forceY_ = -FourPi2*yPosition*mass/getRadialDistance(planets_[0]);
+    double forceX, forceY;
+    forceX = -FourPi2*xPosition*mass/getRadialDistance(planets_[0]);
+    forceY = -FourPi2*yPosition*mass/getRadialDistance(planets_[0]);
     for (int planetNumber = 1; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planetNumber != 1){
             r = getRadialDistance(planets_[planetNumber]);
-            *forceX_ += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(xPosition - planets_[planetNumber].getXPosition())/pow(r,3);
-            *forceY_ += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(yPosition - planets_[planetNumber].getYPosition())/pow(r,3);
+            forceX += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(xPosition - planets_[planetNumber].getXPosition())/pow(r,3);
+            forceY += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(yPosition - planets_[planetNumber].getYPosition())/pow(r,3);
         }
     }
-    //*forceX_ = forceXtemp;
-    //*forceY_ = forceYtemp;
+    *accelerationX_ = forceX/mass;
+    *accelerationY_ = forceY/mass;
 }
-void Planet:: getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_)
-{
-    *accelerationX = forceX_/mass_;
-    *accelerationY = forceY_/mass_;
-}
+
 void Planet:: getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_)
 {
     double pi = acos(-1.0);
