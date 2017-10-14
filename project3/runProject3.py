@@ -346,23 +346,40 @@ def multiBodyStationarySun():
             #ax.set_xlim(-2., 2.)
             #ax.set_ylim(-2., 2.)
             fig.savefig('results/' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
-            #plt.show()
             plt.close()
             
-
+            # Movie
             if finalTime == 10 and dt == 0.001:
-                saveInterval = 100
-                fig2, ax2 = plt.subplots()   
-                plt.hold('on')
+                saveInterval = 50
                 numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
-                for counter in xrange(numberOfObservations):
-                    for planet in planets:
-                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o', markersize=2)
-                    ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g' %(finalTime, dt))
-                    ax2.set_xlabel('x [Au]')
-                    ax2.set_ylabel('y [Au]')
-                    plt.axis('equal')
-                    fig2.savefig('movie/tmp_%04d.png' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
+                numberOfPlots = int(round(numberOfObservations/saveInterval))
+                fig2, ax2 = plt.subplots()
+                plt.hold('on')
+                ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
+                ax2.set_xlabel('x [Au]')
+                ax2.set_ylabel('y [Au]')
+                plt.axis('equal')
+                ax2.set_xlim(-10., 10.)
+                ax2.set_ylim(-10., 10.)
+                colors = ['b', 'r', 'g', 'c', 'm', 'y', 'k']
+                
+                for counter in xrange(numberOfPlots):
+                    for planet,color in zip(planets, colors):
+                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval],  'o%s'%color, ms=5)#  c = colors[colorCounter] ) 
+                    ax2.legend(legends, bbox_to_anchor=(1.05, 0.7), ncol=1)
+                    fig2.savefig('movie/tmp_%04d' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
+                plt.close()
+                
+                # Make video file
+                fps = 4  # frames per second
+                codec2ext = dict(libx264='mp4')  # video formats
+                filespec = 'movie/tmp_%04d' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png'
+                movie_program = 'ffmpeg'  # or 'avconv'
+                for codec in codec2ext:
+                    ext = codec2ext[codec]
+                    cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s ' \
+                          '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
+                    os.system(cmd)
     return multiBodies
 
 #%% 2, run     
