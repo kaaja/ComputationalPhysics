@@ -12,7 +12,8 @@ class Solver
 private:
     Planet planet;
     vector<Planet> planets;
-    int N, numberOfPlanets;
+    int N;
+    int numberOfPlanets = 0;
     double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld, timeUsed;
     string filename;
     clock_t start, finish;

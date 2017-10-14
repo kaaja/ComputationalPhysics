@@ -45,13 +45,24 @@ double Planet:: getAngularMomentum(double r_, double mass_, double vx_, double v
     double velocity = sqrt(vx_*vx_ + vy_*vy_);
     return r_*mass_*velocity;
 }
-void Planet:: getForce(Planet otherPlanet, double *forceX_, double *forceY_)
+void Planet:: getForce(vector<Planet> planets_, double *forceX_, double *forceY_, int numberOfPlanets_)
 {
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
-    *forceX_ = -FourPi2*xPosition *mass/radialDistance;
-    *forceY_ = -FourPi2*yPosition*mass/radialDistance;
-
+    double r;
+    //double forceXtemp, forceYtemp;
+    *forceX_ = -FourPi2*xPosition*mass/getRadialDistance(planets_[0]);
+    *forceY_ = -FourPi2*yPosition*mass/getRadialDistance(planets_[0]);
+    for (int planetNumber = 1; planetNumber < numberOfPlanets_; planetNumber++)
+    {
+        if (planetNumber != 1){
+            r = getRadialDistance(planets_[planetNumber]);
+            *forceX_ += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(xPosition - planets_[planetNumber].getXPosition())/pow(r,3);
+            *forceY_ += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(yPosition - planets_[planetNumber].getYPosition())/pow(r,3);
+        }
+    }
+    //*forceX_ = forceXtemp;
+    //*forceY_ = forceYtemp;
 }
 void Planet:: getAcceleration(double mass_, double *accelerationX, double *accelerationY, double forceX_, double forceY_)
 {

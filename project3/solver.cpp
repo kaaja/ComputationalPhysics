@@ -60,7 +60,6 @@ void Solver:: forwardEuler()
 
 void Solver:: velocityVerlet()
 {
-
     pi = acos(-1.0);
     FourPi2 = 4.*pi*pi;
 
@@ -81,7 +80,7 @@ void Solver:: velocityVerlet()
 
         if (time==0.0)
             writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-        planets[1].getForce(planets[1], &forceX, &forceY);
+        planets[1].getForce(planets, &forceX, &forceY, numberOfPlanets);
         planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
         accelerationXOld = accelerationX;
@@ -95,7 +94,7 @@ void Solver:: velocityVerlet()
 
         r = planets[1].getRadialDistance(planets[0]);
 
-        planets[1].getForce(planets[0], &forceX, &forceY);
+        planets[1].getForce(planets, &forceX, &forceY, numberOfPlanets);
         planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
 
         vx +=  step/2.0*(accelerationXOld + accelerationX);
