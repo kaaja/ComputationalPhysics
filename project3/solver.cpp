@@ -73,15 +73,9 @@ void Solver:: velocityVerlet()
             vx = planets[planetNumber].getXVelocity();
             vy = planets[planetNumber].getYVelocity();
             mass = planets[planetNumber].getMass();
-            r = planets[planetNumber].getRadialDistance(planets[0]);
-
-            //potentialEnergy = planets[planetNumber].getPotentialEnergy(r, mass);
-            //kineticEnergy   = planets[planetNumber].getKineticEnergy(mass, vx, vy);
-            //angularMomentum = planets[planetNumber].getAngularMomentum(r, mass, vx, vy);
 
             if (time==0.0){
-                //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-                planets[planetNumber].writeTofile(NAN, r);
+                planets[planetNumber].writeTofile(NAN);
             }
             planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
@@ -94,8 +88,6 @@ void Solver:: velocityVerlet()
             planets[planetNumber].setXposition(x);
             planets[planetNumber].setYposition(y);
 
-            r = planets[planetNumber].getRadialDistance(planets[0]);
-
             planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
             vx +=  step/2.0*(accelerationXOld + accelerationX);
@@ -104,23 +96,15 @@ void Solver:: velocityVerlet()
             planets[planetNumber].setXVelociy(vx);
             planets[planetNumber].setYVelociy(vy);
 
-            //potentialEnergy = planets[planetNumber].getPotentialEnergy(r, mass);
-            //kineticEnergy   = planets[planetNumber].getKineticEnergy(mass, vx, vy);
-            //angularMomentum = planets[planetNumber].getAngularMomentum(r, mass, vx, vy);
             planets[planetNumber].setTime(time+step);
-            planets[planetNumber].writeTofile(NAN, r);
+            planets[planetNumber].writeTofile(NAN);
         }
         time += step;
-        //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
     for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
-        planets[planetNumber].writeTofile(timeUsed, r);
-    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
-    //writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
-
-    //ofile.close();
+        planets[planetNumber].writeTofile(timeUsed);
 }
 
 void Solver:: alternativeForceVelocityVerlet(double beta_)
@@ -167,19 +151,4 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
 
     //ofile.close();
 }
-/*void Solver:: writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_ , double AngularMomentum_, double timeUsed_, double r_)
-{
-    ofile << setiosflags(ios::showpoint | ios::uppercase);
-    ofile << setw(15) << setprecision(16) << time_ << ", ";
-    ofile << setw(15) << setprecision(16) << x_ << ", ";
-    ofile << setw(15) << setprecision(16) << y_ << ", ";
-    ofile << setw(15) << setprecision(16) << vx_ << ", ";
-    ofile << setw(15) << setprecision(16) << vy_ << ", ";
-    ofile << setw(15) << setprecision(16) << potentialEnergy_ << ", ";
-    ofile << setw(15) << setprecision(16) << kineticEnergy_ << ", ";
-    ofile << setw(15) << setprecision(16) << AngularMomentum_ << ", ";
-    ofile << setw(15) << setprecision(16) << timeUsed_ << ", ";
-    ofile << setw(15) << setprecision(16) << log10(timeUsed_) << ", ";
-    ofile << setw(15) << setprecision(16) << r_ << endl;
-}
-*/
+

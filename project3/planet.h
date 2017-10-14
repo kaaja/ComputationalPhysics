@@ -39,12 +39,13 @@ public:
 
     double getXPosition();
     double getYPosition();
+    double getRPosition();
     double getRadialDistance(Planet OtherPlanet );
     double getXVelocity();
     double getYVelocity();
     double getKineticEnergy();
-    double getPotentialEnergy(double r_);
-    double getAngularMomentum(double r_);
+    double getPotentialEnergy();
+    double getAngularMomentum();
     void getAcceleration( vector<Planet> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_);
     void getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_);
     void setXposition(double x_);
@@ -53,7 +54,7 @@ public:
     void setXVelociy(double vx_);
     void setYVelociy(double vy_);
     void setTime(double time_);
-    void writeTofile(double timeUsed_, double r_);
+    void writeTofile(double timeUsed_);
 
 
 };
