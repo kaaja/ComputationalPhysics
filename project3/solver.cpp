@@ -65,51 +65,48 @@ void Solver:: velocityVerlet()
 
     start = clock();
     while (time < finalTime){
+        for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
+        {
+            x = planets[planetNumber].getXPosition();
+            y = planets[planetNumber].getYPosition();
+            vx = planets[planetNumber].getXVelocity();
+            vy = planets[planetNumber].getYVelocity();
+            mass = planets[planetNumber].getMass();
+            r = planets[planetNumber].getRadialDistance(planets[0]);
 
-        x = planets[1].getXPosition();
-        y = planets[1].getYPosition();
-        vx = planets[1].getXVelocity();
-        vy = planets[1].getYVelocity();
-        mass = planets[1].getMass();
-        r = planets[1].getRadialDistance(planets[0]);
-        //r = sqrt(x*x + y*y);
+            potentialEnergy = planets[planetNumber].getPotentialEnergy(r, mass);
+            kineticEnergy   = planets[planetNumber].getKineticEnergy(mass, vx, vy);
+            angularMomentum = planets[planetNumber].getAngularMomentum(r, mass, vx, vy);
 
-        potentialEnergy = planets[1].getPotentialEnergy(r, mass);
-        kineticEnergy   = planets[1].getKineticEnergy(mass, vx, vy);
-        angularMomentum = planets[1].getAngularMomentum(r, mass, vx, vy);
+            if (time==0.0)
+                writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
+            planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
-        if (time==0.0)
-            writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-        planets[1].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
-        //planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+            accelerationXOld = accelerationX;
+            accelerationYOld = accelerationY;
 
-        accelerationXOld = accelerationX;
-        accelerationYOld = accelerationY;
+            x +=  step*vx + step*step/2.0* accelerationXOld;
+            y +=  step*vy + step*step/2.0* accelerationYOld;
 
-        x +=  step*vx + step*step/2.0* accelerationXOld;
-        y +=  step*vy + step*step/2.0* accelerationYOld;
+            planets[planetNumber].setXposition(x);
+            planets[planetNumber].setYposition(y);
 
-        planets[1].setXposition(x);
-        planets[1].setYposition(y);
+            r = planets[planetNumber].getRadialDistance(planets[0]);
 
-        r = planets[1].getRadialDistance(planets[0]);
+            planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
-        planets[1].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
-        //planets[1].getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
+            vx +=  step/2.0*(accelerationXOld + accelerationX);
+            vy +=  step/2.0*(accelerationYOld + accelerationY);
 
-        vx +=  step/2.0*(accelerationXOld + accelerationX);
-        vy +=  step/2.0*(accelerationYOld + accelerationY);
+            planets[planetNumber].setXVelociy(vx);
+            planets[planetNumber].setYVelociy(vy);
 
-        planets[1].setXVelociy(vx);
-        planets[1].setYVelociy(vy);
-
-        potentialEnergy = planets[1].getPotentialEnergy(r, mass);
-        kineticEnergy   = planets[1].getKineticEnergy(mass, vx, vy);
-        angularMomentum = planets[1].getAngularMomentum(r, mass, vx, vy);
+            potentialEnergy = planets[planetNumber].getPotentialEnergy(r, mass);
+            kineticEnergy   = planets[planetNumber].getKineticEnergy(mass, vx, vy);
+            angularMomentum = planets[planetNumber].getAngularMomentum(r, mass, vx, vy);
+        }
         time += step;
         writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-
-
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));

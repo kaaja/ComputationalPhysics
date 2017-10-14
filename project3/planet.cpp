@@ -55,7 +55,7 @@ void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, d
     forceY = -FourPi2*yPosition*mass/getRadialDistance(planets_[0]);
     for (int planetNumber = 1; planetNumber < numberOfPlanets_; planetNumber++)
     {
-        if (planetNumber != 1){
+        if (planets_[planetNumber].getMass() != mass){
             r = getRadialDistance(planets_[planetNumber]);
             forceX += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(xPosition - planets_[planetNumber].getXPosition())/pow(r,3);
             forceY += FourPi2*planets_[planetNumber].getMass()/planets_[0].getMass()*(yPosition - planets_[planetNumber].getYPosition())/pow(r,3);
