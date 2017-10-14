@@ -19,6 +19,9 @@ except ImportError:
 
 if not os.path.isdir('results'):
 	os.mkdir('results')
+if not os.path.isdir('movie'):
+    os.mkdir('movie')
+        
 
 #%% Run 
 
@@ -48,9 +51,9 @@ def sunEarth():
     outfileName = 'sunEarth'
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(0,3)]
+    finalTimes = [10**i for i in xrange(0,5)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 4)]
+    dts = [10.**(-i) for i in xrange(1, 6)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -62,7 +65,7 @@ def sunEarth():
     ax[1].set_xlabel('t [Au]')
     ax[0].set_ylabel('x [Au]')
     ax[1].set_ylabel('y [Au]')
-    plt.ylim(-1.1, 1.1)    
+    #plt.ylim(-1.1, 1.1)    
     legends = []
     
     # Energy plots
@@ -71,7 +74,7 @@ def sunEarth():
     ax2.set_title(outfileName + ' ' + solverType + 'Energy')
     ax2.set_xlabel('t [Au]')
     ax2.set_ylabel('E ')
-    ax2.set_ylim(0.7, 1.05)    
+    #ax2.set_ylim(0.7, 1.05)    
     
 
     
@@ -81,7 +84,7 @@ def sunEarth():
     ax3.set_title(outfileName + ' ' + solverType + 'Angular momentum')
     ax3.set_xlabel('t [Au]')
     ax3.set_ylabel('Angular momentum ')
-    ax3.set_ylim(0.99, 1.05)    
+    #ax3.set_ylim(0.99, 1.05)    
     
     # supNorm ENergy plots
     fig4, ax4 = plt.subplots()
@@ -188,7 +191,7 @@ def plotSunEarthTimes(sunEarth, outfileName, solverType, N, finalTime):
     ax[0].set_ylabel('x [Au]')
     ax[1].set_ylabel('y [Au]')
     #ax.set_xlim(-2., 2.)
-    fig.ylim(-1.1, 1.1)
+    #fig.ylim(-1.1, 1.1)
     #fig.savefig('results/' + outfileName + 'times.png') 
     #plt.show()
     plt.close()
@@ -292,7 +295,78 @@ def sunEarthAlternativeGravitationalForce():
     
     return sunEarth
 
+#%% Multibody, sun stationar     
+
+def multiBodyStationarySun():
+    """
+
+    """
+    planets = ['Earth', 'Jupiter']
+    
+    initialVy = 2*np.pi
+    beta = 3.0
+    outfileName = 'multiBodies'
+    solverType = 'VelocityVerlet'
+    
+    finalTimes = [10**i for i in xrange(0,3)]
+    #Ns = [10**i for i in xrange(3,8)]   
+    dts = [10.**(-i) for i in xrange(1, 4)]
+    
+    Ns = np.asarray(finalTimes)/np.asarray(dts)
+    
+
+    
+    
+    multiBodies      = OrderedDict()
+    for finalTime in finalTimes:
+        multiBodies['FinalTime %f' %finalTime] = {}
+        for dt in dts:
+            multiBodies['FinalTime %f' %finalTime]['dt %f' %dt] = {}
+            N = finalTime/dt
+            print 'N = %d, final time = %.2g ' %(N, finalTime)  
+            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
+            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta)
+            fig, ax = plt.subplots()
+            legends = []
+            plt.hold('on')
+            
+            for planet in planets:
+                multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet] = pd.read_table("results/" + outfileName2 + planet + ".csv", 
+            			            delimiter=',')
+                
+                ax.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[:-1], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[:-1])
+                legends.append(planet)
+                
+            plt.legend(legends)
+            dt = finalTime/N
+            ax.set_title(solverType + '\n T %d, $\Delta$ t %.2g' %(finalTime, dt))
+            ax.set_xlabel('x [Au]')
+            ax.set_ylabel('y [Au]')
+            plt.axis('equal')
+            #ax.set_xlim(-2., 2.)
+            #ax.set_ylim(-2., 2.)
+            fig.savefig('results/' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
+            #plt.show()
+            plt.close()
+            
+
+            if finalTime == 10 and dt == 0.001:
+                saveInterval = 100
+                fig2, ax2 = plt.subplots()   
+                plt.hold('on')
+                numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
+                for counter in xrange(numberOfObservations):
+                    for planet in planets:
+                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o', markersize=2)
+                    ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g' %(finalTime, dt))
+                    ax2.set_xlabel('x [Au]')
+                    ax2.set_ylabel('y [Au]')
+                    plt.axis('equal')
+                    fig2.savefig('movie/tmp_%04d.png' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
+    return multiBodies
+
 #%% 2, run     
-sunearth, supNormValues, supNormAngularMomentum = sunEarth()
+#sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
+miltiBodies = multiBodyStationarySun()

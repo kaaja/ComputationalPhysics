@@ -20,11 +20,14 @@ int main(int argc, char* argv[])
     double velocityEarth = 29.7559;
     double velocityJupiter = 13.0697;
     double velocityJupiterToEarth = velocityJupiter/velocityEarth;
-    //initialVyJupiter = 2*pi*velocityJupiterToEarth;
-    //Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter);
+    initialVyJupiter = 2*pi*velocityJupiterToEarth;
+    Planet jupiter(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+
+
     Solver solution(N, finalTime, outfileName);
     solution.addPlanet(sun);
     solution.addPlanet(earth);
+    solution.addPlanet(jupiter);
 
     //solution.addPlanet(jupiter);
     //cout << earth.getInitialXPosition() << forwardEuler.
