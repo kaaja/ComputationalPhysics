@@ -1,10 +1,9 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 #include "planet.h"
-#include <string>
 #include "time.h"
-#include <fstream>
-#include <iomanip>
+//#include <fstream>
+//#include <iomanip>
 #include <vector>
 
 class Solver
@@ -28,7 +27,7 @@ public:
     void forwardEuler();
     void velocityVerlet();
     void alternativeForceVelocityVerlet(double beta_);
-    void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_, double timeUsed_, double r_);
+    //void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_, double timeUsed_, double r_);
 
 
 };

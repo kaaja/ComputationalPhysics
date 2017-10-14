@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
     initialize( outfileName, finalTime, N, solverType, initialVy, beta, argc, argv);
 
     double pi = acos(-1.0);
-    Planet sun(1., 0., 0., 0. , 0.);
-    Planet earth(0.000003, 1., 0., 0. , initialVy);
+    Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+    Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
     double velocityEarth = 29.7559;
     double velocityJupiter = 13.0697;
     double velocityJupiterToEarth = velocityJupiter/velocityEarth;

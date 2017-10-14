@@ -110,14 +110,13 @@ def sunEarth():
         sunEarth['FinalTime %f' %finalTime] = {}
         for dt in dts:
             N = finalTime/dt
-            print 'N = %d, final time = %.2g' %(N, finalTime)  
-            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(N).replace(".", "")
+            print 'N = %d, final time = %.2g ' %(N, finalTime)  
+            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
             runCpp(outfileName2, finalTime, N, solverType, initialVy, beta)
-            sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + ".csv", 
+            sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + "Earth.csv", 
             			            delimiter=',')
             plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
             if finalTime == finalTimes[1]:
-                #ax2.loglog(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time, sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy)
                 ax2.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], (sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[:-1] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[:-1])/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[0] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[0]))
                 ax3.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], (sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[:-1] )/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[0]))
                 ax[0].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], sunEarth['FinalTime %f' %finalTime]['N %f' %N].x[:-1])

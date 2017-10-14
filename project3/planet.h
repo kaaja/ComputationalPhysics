@@ -5,6 +5,9 @@
 #include<new>
 #include<vector>
 #include<cmath>
+#include <fstream>
+#include <iomanip>
+#include <string>
 
 using std::vector;
 using namespace std;
@@ -19,11 +22,14 @@ private:
     double yPosition = 0.0;
     double xVelocity = 0.0;
     double yVelocity = 0.0;
+    double time;
     double xForce, yForce, radialDistance;
+    string filename;
+    //ofstream ofile;
 
 public:
     Planet();
-    Planet(double mass_, double xPosition_, double yPosition_, double xVelocity_, double yVelocity_);
+    Planet(double mass_, double xPosition_, double yPosition_, double xVelocity_, double yVelocity_, string filename_, string planetName_);
 
     ~Planet () {} // end initializer
 
@@ -36,9 +42,9 @@ public:
     double getRadialDistance(Planet OtherPlanet );
     double getXVelocity();
     double getYVelocity();
-    double getKineticEnergy(double mass_, double vx_, double vy_);
-    double getPotentialEnergy(double r_, double mass_);
-    double getAngularMomentum(double r_, double mass_, double vx_, double vy_);
+    double getKineticEnergy();
+    double getPotentialEnergy(double r_);
+    double getAngularMomentum(double r_);
     void getAcceleration( vector<Planet> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_);
     void getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_);
     void setXposition(double x_);
@@ -46,6 +52,8 @@ public:
     void setDistance(double r_);
     void setXVelociy(double vx_);
     void setYVelociy(double vy_);
+    void setTime(double time_);
+    void writeTofile(double timeUsed_, double r_);
 
 
 };
