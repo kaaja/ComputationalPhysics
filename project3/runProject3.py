@@ -358,7 +358,7 @@ def multiBodyStationarySun(scenario):
             
             # Movie
             if finalTime == 100 and dt == 0.001:
-                saveInterval = 500
+                saveInterval = 200
                 numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
                 numberOfPlots = int(round(numberOfObservations/saveInterval))
                 fig2, ax2 = plt.subplots()
@@ -369,19 +369,20 @@ def multiBodyStationarySun(scenario):
                 plt.axis('equal')
                 ax2.set_xlim(-100., 100.)
                 ax2.set_ylim(-100., 100.)
-                #colors = ['b', 'r', 'g', 'y',  'm' , 'k', 'b', 'r', 'g']#, 'coral', 'cornsilk']
+
+                colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
                 #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
                 #color=iter(cm.rainbow(np.linspace(0,1,9)))
                 """for i in range(n):
                    c=next(color)
                    ax1.plot(x, y,c=c)"""
-                colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
+                #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
                 for counter in xrange(numberOfPlots):
                     for planet,color in zip(planets, colors):
                         #c = next(color)
-                        #ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
+                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
                         #ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o'+color, ms=5)#  
-                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o', ms=5)
+                        
                         ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g \n t %.2g' %(finalTime, dt, dt*saveInterval, multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[counter*saveInterval]))
                         
 
@@ -405,4 +406,4 @@ def multiBodyStationarySun(scenario):
 #sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
-miltiBodies = multiBodyStationarySun(scenario = "solarSystem")
+miltiBodies = multiBodyStationarySun(scenario = "threeBodies")
