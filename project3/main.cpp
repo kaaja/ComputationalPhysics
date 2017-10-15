@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
-        Planet jupiter(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+        Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
         solution.addPlanet(jupiter);
     }
     else if (scenario == "solarSystem")
