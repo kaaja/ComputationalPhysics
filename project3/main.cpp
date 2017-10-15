@@ -3,10 +3,12 @@
 
 using namespace std;
 
+void readData();
 void initialize ( string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
+    readData();
     int N;
     double finalTime, initialVy, beta;
     double initialVyJupiter;
@@ -54,4 +56,18 @@ void initialize (string& outfileName, double& finalTime, int& N, string& solverT
     solverType = argv[4];
     initialVy = atof(argv[5]);
     beta = atof(argv[6]);
+}
+
+void readData()
+{
+    string filename1 = "/home/karl/doc/subj/att/fys4150/project3/testReadFiles2";
+    ifstream ifile(filename1);
+    string planet; double mass; double x; double y; double vx; double vy; string planetName2;
+    if (ifile.is_open()){
+        while ( ifile >> planet >> mass >> x >> y >> vx >> vy >> planetName2)
+        {
+            Planet planet(mass, x, y, vx , vy, "testOutfileNameLoadData", planetName2);
+        }
+        ifile.close();
+    }
 }

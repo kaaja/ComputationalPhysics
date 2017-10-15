@@ -355,7 +355,7 @@ def multiBodyStationarySun():
                 numberOfPlots = int(round(numberOfObservations/saveInterval))
                 fig2, ax2 = plt.subplots()
                 plt.hold('on')
-                ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
+                #ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
                 ax2.set_xlabel('x [Au]')
                 ax2.set_ylabel('y [Au]')
                 plt.axis('equal')
@@ -366,6 +366,7 @@ def multiBodyStationarySun():
                 for counter in xrange(numberOfPlots):
                     for planet,color in zip(planets, colors):
                         ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval],  'o%s'%color, ms=5)#  c = colors[colorCounter] ) 
+                        ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g \n t %.2g' %(finalTime, dt, dt*saveInterval, multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[counter*saveInterval]))
                     ax2.legend(legends, bbox_to_anchor=(1.05, 0.7), ncol=1)
                     fig2.savefig('movie/tmp_%04d' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
                 plt.close()

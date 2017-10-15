@@ -24,7 +24,7 @@ private:
     double yVelocity = 0.0;
     double time;
     double xForce, yForce, radialDistance;
-    string filename;
+    string filename, planetName;
     //ofstream ofile;
 
 public:
@@ -33,6 +33,7 @@ public:
 
     ~Planet () {} // end initializer
 
+    string getPlanetName() const;
     double getMass() const;
     //vector<double> getInitialPosition() const;
     //vector<double> getInitialVelocity() const;

@@ -6,7 +6,6 @@ Planet:: Planet () { mass = xPosition = yPosition = xVelocity = yVelocity = 0.0;
 
 Planet:: Planet (double mass_, double xPosition_, double yPosition_, double xVelocity_, double yVelocity_, string filename_, string planetName_)
 {
-
     mass = mass_;
     xVelocity = xVelocity_;
     yVelocity = yVelocity_;
@@ -14,11 +13,17 @@ Planet:: Planet (double mass_, double xPosition_, double yPosition_, double xVel
     yPosition = yPosition_;
     time      = 0.0;
     radialDistance = sqrt(xPosition*xPosition + yPosition*yPosition);
+    planetName = planetName_;
     filename = filename_+ planetName_ + string(".csv");
     ofile.open(filename);
     ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r" << endl;
     ofile.close();
 
+}
+
+string Planet::getPlanetName() const
+{
+    return planetName;
 }
 
 double Planet::getMass() const
