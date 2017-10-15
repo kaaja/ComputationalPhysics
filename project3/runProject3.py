@@ -25,7 +25,7 @@ if not os.path.isdir('movie'):
 
 #%% Run 
 
-def runCpp(outfileName, finalTime, N, solverType, initialVy, beta):
+def runCpp(outfileName, finalTime, N, solverType, initialVy, beta, scenario):
     """
     Compiles and runs cpp program from the command line and
     makes sure the mesh size is not too big.
@@ -34,7 +34,7 @@ def runCpp(outfileName, finalTime, N, solverType, initialVy, beta):
     finalTime = str(finalTime)
     initialVy = str(initialVy)
     beta = str(beta)
-    call(["./AllrunVectorized", outfileName, finalTime, N, solverType, initialVy, beta])
+    call(["./AllrunVectorized", outfileName, finalTime, N, solverType, initialVy, beta, scenario])
     
 #%% 2, run 
 
@@ -42,6 +42,7 @@ def sunEarth():
     """
 
     """
+    scenario = "twoBody"
     initialVy = 2*np.pi
     sunEarth      = OrderedDict()
     supNormValues = []#OrderedDict()
@@ -51,9 +52,9 @@ def sunEarth():
     outfileName = 'sunEarth'
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(0,5)]
+    finalTimes = [10**i for i in xrange(0,3)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 6)]
+    dts = [10.**(-i) for i in xrange(1, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -115,7 +116,7 @@ def sunEarth():
             N = finalTime/dt
             print 'N = %d, final time = %.2g ' %(N, finalTime)  
             outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
-            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta)
+            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta, scenario)
             sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + "Earth.csv", 
             			            delimiter=',')
             plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
@@ -202,12 +203,13 @@ def sunEarthTerminalVelocity():
     """
 
     """
+    scenario = "twoBody"
     sunEarth      = OrderedDict()
     
     outfileName = 'sunEarthTerminalVelocity'
     solverType = 'VelocityVerlet'
     beta = 2.0
-    finalTime = 10.**5
+    finalTime = 10.**3
     #Ns = [10**i for i in xrange(3,8)]
     dt = 0.01
     N = finalTime/dt
@@ -230,7 +232,7 @@ def sunEarthTerminalVelocity():
     for initialVelocityY in initialVelocities:
         outfileName2 = outfileName + 'initialVelocityY%spi' %str(initialVelocityY/np.pi).replace(".", "")
         print outfileName2 
-        runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta)
+        runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta, scenario)
         sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
             			            delimiter=',')
         plotSunEarth(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
@@ -245,6 +247,7 @@ def sunEarthTerminalVelocity():
     
     return sunEarth
 
+#%% 
 def sunEarthAlternativeGravitationalForce():
     """
 
@@ -280,7 +283,7 @@ def sunEarthAlternativeGravitationalForce():
         
             outfileName2 = outfileName + 'initialVelocityY%spibeta%s' %(str(initialVelocityY/np.pi).replace(".", ""), str(beta).replace(".", ""))
             print outfileName2 
-            runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta)
+            runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta, scenario)
             sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
                 			            delimiter=',')
             plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
@@ -301,6 +304,7 @@ def multiBodyStationarySun():
     """
 
     """
+    scenario = "threeBodies"
     planets = ['Earth', 'Jupiter']
     
     initialVy = 2*np.pi
@@ -325,7 +329,7 @@ def multiBodyStationarySun():
             N = finalTime/dt
             print 'N = %d, final time = %.2g ' %(N, finalTime)  
             outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
-            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta)
+            runCpp(outfileName2, finalTime, N, solverType, initialVy, beta, scenario)
             fig, ax = plt.subplots()
             legends = []
             plt.hold('on')
@@ -385,6 +389,6 @@ def multiBodyStationarySun():
 
 #%% 2, run     
 #sunearth, supNormValues, supNormAngularMomentum = sunEarth()
-#sunearthTerminalVelocity = sunEarthTerminalVelocity()
+sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
-miltiBodies = multiBodyStationarySun()
+#miltiBodies = multiBodyStationarySun()
