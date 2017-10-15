@@ -70,8 +70,8 @@ void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, d
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    *accelerationX_ = -FourPi2*xPosition/getRadialDistance(planets_[0]);
-    *accelerationY_ = -FourPi2*yPosition/getRadialDistance(planets_[0]);
+    *accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
+    *accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
     for (int planetNumber = 1; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber].getMass() != mass){

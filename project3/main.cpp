@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void makeSolarSystem();
+void makeSolarSystem(string outfileName, Solver &solution);
 void initialize ( string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, string& scenario, int argc, char** argv);
 
 int main(int argc, char* argv[])
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     }
     else if (scenario == "solarSystem")
     {
-        makeSolarSystem();
+        makeSolarSystem(outfileName, solution);
     }
 
     if (solverType == "ForwardEuler")
@@ -50,7 +50,6 @@ int main(int argc, char* argv[])
         solution.alternativeForceVelocityVerlet(beta);
     return 0;
 }
-
 void initialize (string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, string& scenario, int argc, char** argv)
 {
     if( argc<= 1){
@@ -68,7 +67,7 @@ void initialize (string& outfileName, double& finalTime, int& N, string& solverT
     scenario = argv[7];
 }
 
-void makeSolarSystem()
+void makeSolarSystem(string outfileName, Solver &solution)
 {
     string filename1 = "/home/karl/doc/subj/att/fys4150/project3/dataProject3";
     ifstream ifile(filename1);
@@ -76,7 +75,8 @@ void makeSolarSystem()
     if (ifile.is_open()){
         while ( ifile >> planet >> mass >> x >> y >> vx >> vy >> planetName2)
         {
-            Planet planet(mass, x, y, vx , vy, "testOutfileNameLoadData", planetName2);
+            Planet planet(mass, x, y, vx , vy, outfileName, planetName2);
+            solution.addPlanet(planet);
         }
         ifile.close();
     }
