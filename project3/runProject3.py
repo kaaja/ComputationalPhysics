@@ -21,7 +21,9 @@ except ImportError:
 if not os.path.isdir('results'):
 	os.mkdir('results')
 
-        
+
+#%% clean results and movie directory
+call(["./Allclean"])       
 
 #%% Run 
 
@@ -300,13 +302,13 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(scenario):
+def multiBodyStationarySun(threePlanets, scenario):
     """
 
     """
     if not os.path.isdir('movie'):
         os.mkdir('movie')
-    if scenario == 'threeBodies':
+    if threePlanets:
         planets = ['Earth', 'Jupiter']
     elif scenario == 'solarSystem':
         planets = ['Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
@@ -321,9 +323,6 @@ def multiBodyStationarySun(scenario):
     dts = [10.**(-i) for i in xrange(1, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
-    
-
-    
     
     multiBodies      = OrderedDict()
     for finalTime in finalTimes:
@@ -379,10 +378,7 @@ def multiBodyStationarySun(scenario):
                 #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
                 for counter in xrange(numberOfPlots):
                     for planet,color in zip(planets, colors):
-                        #c = next(color)
                         ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
-                        #ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o'+color, ms=5)#  
-                        
                         ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g \n t %.2g' %(finalTime, dt, dt*saveInterval, multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[counter*saveInterval]))
                         
 
@@ -406,4 +402,5 @@ def multiBodyStationarySun(scenario):
 #sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
-miltiBodies = multiBodyStationarySun(scenario = "threeBodies")
+miltiBodies = multiBodyStationarySun(threePlanets = True, scenario = "threeBodiesJupiterTimes10")
+#miltiBodies = multiBodyStationarySun(scenario = "solarSystem")

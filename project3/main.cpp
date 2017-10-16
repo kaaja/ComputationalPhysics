@@ -26,16 +26,57 @@ int main(int argc, char* argv[])
     }
     else if (scenario == "threeBodies")
     {
+
         Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+
         Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
+
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
         Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
         solution.addPlanet(jupiter);
+
+        return 0;
+    }
+    else if (scenario == "threeBodiesJupiterTimes10")
+    {
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+
+        double velocityEarth = 29.7559;
+        double velocityJupiter = 13.0697;
+        double velocityJupiterToEarth = velocityJupiter/velocityEarth;
+        initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
+        Planet jupiter(9.5e-4*10, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
+        solution.addPlanet(jupiter);
+
+    }
+    else if (scenario == "threeBodiesJupiterTimes1000")
+    {
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+
+        double velocityEarth = 29.7559;
+        double velocityJupiter = 13.0697;
+        double velocityJupiterToEarth = velocityJupiter/velocityEarth;
+        initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
+        Planet jupiter(9.5e-4*1000, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
+        solution.addPlanet(jupiter);
+
     }
     else if (scenario == "solarSystem")
     {
