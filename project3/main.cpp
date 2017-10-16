@@ -81,6 +81,8 @@ int main(int argc, char* argv[])
     else if (scenario == "solarSystem")
     {
         makeSolarSystem(outfileName, solution);
+        solution.changeToCenterOfMassSystem();
+
     }
 
     if (solverType == "ForwardEuler")

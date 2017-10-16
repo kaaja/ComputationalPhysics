@@ -9,6 +9,7 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
     N = N_, finalTime = finalTime_;
     step = finalTime/double(N);
     time = 0.0;
+    centerOfMassSystem = "False";
     /*filename = filename_+string(".csv");
     ofile.open(filename);
     ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r" << endl;
@@ -65,8 +66,13 @@ void Solver:: velocityVerlet()
     FourPi2 = 4.*pi*pi;
 
     start = clock();
+
+    int iterationStart = 1;
+    if (centerOfMassSystem == "True")
+        iterationStart = 0;
+
     while (time < finalTime){
-        for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
+        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         {
             x = planets[planetNumber].getXPosition();
             y = planets[planetNumber].getYPosition();
@@ -103,7 +109,7 @@ void Solver:: velocityVerlet()
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
+    for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         planets[planetNumber].writeTofile(timeUsed);
 }
 
@@ -152,3 +158,57 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
     //ofile.close();
 }
 
+double Solver:: getCenterOfMassX()
+{
+    double centerOfMassX;
+    double totalMass;
+    for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
+    {
+        totalMass += planets[planetNumber].getMass();
+        centerOfMassX += planets[planetNumber].getXPosition()*planets[planetNumber].getMass();
+    }
+    cout << "center of mass x " << centerOfMassX/totalMass << endl;
+    return centerOfMassX/totalMass;
+}
+
+double Solver::getCenterOfMassY()
+{
+    double centerOfMassY;
+    double totalMass;
+    for ( int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
+    {
+        totalMass += planets[planetNumber].getMass();
+        centerOfMassY += planets[planetNumber].getYPosition()*planets[planetNumber].getMass();
+    }
+    cout << "center of mass y " << centerOfMassY/totalMass << endl;
+    return centerOfMassY/totalMass;
+}
+
+void Solver::changeToCenterOfMassSystem()
+{
+    double centerOfMassX = getCenterOfMassX();
+    double centerOfMassY = getCenterOfMassY();
+    for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
+    {
+        double xPosition = planets[planetNumber].getXPosition();
+        double yPosition = planets[planetNumber].getYPosition();
+        planets[planetNumber].setXposition(xPosition - centerOfMassX);
+        planets[planetNumber].setYposition(yPosition - centerOfMassY);
+        planets[planetNumber].changeToCenterOfMassSystemInAcceleration();
+    }
+    setSunVelocity();
+    centerOfMassSystem = "True";
+
+}
+
+void Solver::setSunVelocity()
+{
+    double momentumOfPlanetsX, momentumOfPlanetsY;
+    for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
+    {
+        momentumOfPlanetsX += planets[planetNumber].getMass()*planets[planetNumber].getXVelocity();
+        momentumOfPlanetsY += planets[planetNumber].getMass()*planets[planetNumber].getYVelocity();
+    }
+    planets[0].setXVelociy(-momentumOfPlanetsX/planets[0].getMass());
+    planets[0].setYVelociy(-momentumOfPlanetsY/planets[0].getMass());
+}

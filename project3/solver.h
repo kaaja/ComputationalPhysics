@@ -14,8 +14,13 @@ private:
     int N;
     int numberOfPlanets = 0;
     double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld, timeUsed;
-    string filename;
+    string filename, centerOfMassSystem;
     clock_t start, finish;
+
+    double getCenterOfMassX();
+    double getCenterOfMassY();
+    void setSunVelocity();
+
 
 public:
     Solver();
@@ -27,8 +32,8 @@ public:
     void forwardEuler();
     void velocityVerlet();
     void alternativeForceVelocityVerlet(double beta_);
-    //void writeTofile(double time_, double x_, double y_, double vx_, double vy_, double potentialEnergy_, double kineticEnergy_, double angularMomentum_, double timeUsed_, double r_);
 
+    void changeToCenterOfMassSystem();
 
 };
 

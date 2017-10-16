@@ -311,7 +311,7 @@ def multiBodyStationarySun(threePlanets, scenario):
     if threePlanets:
         planets = ['Earth', 'Jupiter']
     elif scenario == 'solarSystem':
-        planets = ['Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
     
     initialVy = 2*np.pi
     beta = 3.0
@@ -366,8 +366,8 @@ def multiBodyStationarySun(threePlanets, scenario):
                 ax2.set_xlabel('x [Au]')
                 ax2.set_ylabel('y [Au]')
                 plt.axis('equal')
-                ax2.set_xlim(-100., 100.)
-                ax2.set_ylim(-100., 100.)
+                ax2.set_xlim(-50., 50.)
+                ax2.set_ylim(-50., 50.)
 
                 colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
                 #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
@@ -403,4 +403,4 @@ def multiBodyStationarySun(threePlanets, scenario):
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
 miltiBodies = multiBodyStationarySun(threePlanets = True, scenario = "threeBodiesJupiterTimes10")
-#miltiBodies = multiBodyStationarySun(scenario = "solarSystem")
+#miltiBodies = multiBodyStationarySun(threePlanets = False, scenario = "solarSystem")
