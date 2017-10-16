@@ -71,15 +71,19 @@ void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, d
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    if (centerOfMassSystem == "False")
+    cout << "centerOfMassSystem " << centerOfMassSystem  << endl;
+    /*if (centerOfMassSystem == "False")
     {
         *accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
         *accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
-    }
+    }*/
+
+    //*accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
+    //*accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
 
     int start  = 1;
-    if (centerOfMassSystem == "True")
-        start = 0;
+    //if (centerOfMassSystem == "True")
+    //    start = 0;
 
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
