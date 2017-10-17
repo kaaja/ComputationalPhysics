@@ -14,7 +14,7 @@ using namespace std;
 
 class Planet
 {
-private:
+protected:
     double mass = 0.0;
     //vector<double> position(2);
     //vector<double> velocity(2);
@@ -25,7 +25,6 @@ private:
     double time;
     double xForce, yForce, radialDistance;
     string filename, planetName;
-    //ofstream ofile;
 
 public:
     Planet();

@@ -1,5 +1,6 @@
 #include "planet.h"
 #include "solver.h"
+#include "planetmercury.h"
 
 using namespace std;
 
@@ -23,6 +24,15 @@ int main(int argc, char* argv[])
         Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
         solution.addPlanet(sun);
         solution.addPlanet(earth);
+    }
+    else if (scenario == "mercury")
+    {
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        PlanetMercury mercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        //PlanetMercury mercury(1.65E-07, -0.371416469854018, -0.205909161582452, 2.94708800254162 , -8.48964317024071, outfileName, "Mercury");
+
+        solution.addPlanet(sun);
+        solution.addPlanet(mercury);
     }
     else if (scenario == "threeBodies")
     {
