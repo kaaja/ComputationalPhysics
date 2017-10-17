@@ -15,7 +15,6 @@ Planet:: Planet (double mass_, double xPosition_, double yPosition_, double xVel
     radialDistance = sqrt(xPosition*xPosition + yPosition*yPosition);
     planetName = planetName_;
     filename = filename_+ planetName_ + string(".csv");
-    string centerOfMassSystem = "False";
     ofile.open(filename);
     ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r,centerOfMassX,centerOfMassY" << endl;
     ofile.close();
@@ -71,20 +70,9 @@ void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, d
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    //cout << "centerOfMassSystem " << centerOfMassSystem  << endl;
-    /*if (centerOfMassSystem == "False")
-    {
-        *accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
-        *accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
-    }*/
-
-    //*accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
-    //*accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
     *accelerationX_ = 0.;
     *accelerationY_ = 0.;
     int start  = 0;
-    //if (centerOfMassSystem == "True")
-    //    start = 0;
 
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
@@ -130,5 +118,3 @@ void Planet:: writeTofile(double timeUsed_, double centerOfMassX_, double center
     ofile << setw(15) << setprecision(16) << centerOfMassY_ << endl;
     ofile.close();
 }
-
-void Planet:: changeToCenterOfMassSystemInAcceleration(){ centerOfMassSystem = "True";}

@@ -25,7 +25,6 @@ private:
     double time;
     double xForce, yForce, radialDistance;
     string filename, planetName;
-    string centerOfMassSystem;
     //ofstream ofile;
 
 public:
@@ -57,9 +56,6 @@ public:
     void setYVelociy(double vy_);
     void setTime(double time_);
     void writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_);
-    void changeToCenterOfMassSystemInAcceleration();
-
-
 };
 
 #endif // PLANET_H

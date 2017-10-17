@@ -78,11 +78,72 @@ int main(int argc, char* argv[])
         solution.addPlanet(jupiter);
 
     }
+    else if (scenario == "threeBodiesMovingSun")
+    {
+        //makeSolarSystem(outfileName, solution);
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+
+        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+
+        double velocityEarth = 29.7559;
+        double velocityJupiter = 13.0697;
+        double velocityJupiterToEarth = velocityJupiter/velocityEarth;
+        initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
+        Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
+        solution.addPlanet(jupiter);
+
+        solution.changeToCenterOfMassSystem();
+    }
+    else if (scenario == "threeBodiesJupiterMassTimes10MovingSun")
+    {
+        //makeSolarSystem(outfileName, solution);
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+
+        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+
+        double velocityEarth = 29.7559;
+        double velocityJupiter = 13.0697;
+        double velocityJupiterToEarth = velocityJupiter/velocityEarth;
+        initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
+        Planet jupiter(9.5e-3, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
+        solution.addPlanet(jupiter);
+
+        solution.changeToCenterOfMassSystem();
+    }
+
+    else if (scenario == "threeBodiesJupiterMassTimes1000MovingSun")
+    {
+        //makeSolarSystem(outfileName, solution);
+        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+
+        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+
+        double velocityEarth = 29.7559;
+        double velocityJupiter = 13.0697;
+        double velocityJupiterToEarth = velocityJupiter/velocityEarth;
+        initialVyJupiter = 2*pi*velocityJupiterToEarth;
+
+        Planet jupiter(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+
+        solution.addPlanet(sun);
+        solution.addPlanet(earth);
+        solution.addPlanet(jupiter);
+
+        solution.changeToCenterOfMassSystem();
+    }
+
     else if (scenario == "solarSystem")
     {
         makeSolarSystem(outfileName, solution);
         solution.changeToCenterOfMassSystem();
-
     }
 
     if (solverType == "ForwardEuler")

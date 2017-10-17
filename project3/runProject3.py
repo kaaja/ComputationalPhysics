@@ -302,7 +302,7 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(threePlanets, scenario):
+def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
     """
 
     """
@@ -310,17 +310,20 @@ def multiBodyStationarySun(threePlanets, scenario):
         os.mkdir('movie')
     if threePlanets:
         planets = ['Earth', 'Jupiter']
+    if threeBodiesMovingSun:
+        planets = ['Sun','Earth', 'Jupiter']
+        
     elif scenario == 'solarSystem':
         planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
     
     initialVy = 2*np.pi
     beta = 3.0
-    outfileName = 'multiBodies'
+    outfileName = scenario
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(0,3)]
+    finalTimes = [10**i for i in xrange(2,3)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 4)]
+    dts = [10.**(-i) for i in xrange(3, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -366,8 +369,8 @@ def multiBodyStationarySun(threePlanets, scenario):
                 ax2.set_xlabel('x [Au]')
                 ax2.set_ylabel('y [Au]')
                 plt.axis('equal')
-                ax2.set_xlim(-50., 50.)
-                ax2.set_ylim(-50., 50.)
+                ax2.set_xlim(-100., 100.)
+                ax2.set_ylim(-100., 100.)
 
                 colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
                 #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
@@ -402,5 +405,6 @@ def multiBodyStationarySun(threePlanets, scenario):
 #sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
-miltiBodies = multiBodyStationarySun(threePlanets = True, scenario = "threeBodiesJupiterTimes10")
-#miltiBodies = multiBodyStationarySun(threePlanets = False, scenario = "solarSystem")
+#miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
+miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")

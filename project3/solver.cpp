@@ -69,8 +69,11 @@ void Solver:: velocityVerlet()
 
     int iterationStart = 1;
 
-    /*if (centerOfMassSystem == "True")
-        iterationStart = 0;*/
+    if (centerOfMassSystem == "True")
+    {
+        iterationStart = 0;
+    }
+
 
     while (time < finalTime){
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
@@ -161,8 +164,8 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
 
 double Solver:: getCenterOfMassX()
 {
-    double centerOfMassX;
-    double totalMass;
+    double centerOfMassX = 0.;
+    double totalMass = 0.;
     for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
     {
         totalMass += planets[planetNumber].getMass();
@@ -173,8 +176,8 @@ double Solver:: getCenterOfMassX()
 
 double Solver::getCenterOfMassY()
 {
-    double centerOfMassY;
-    double totalMass;
+    double centerOfMassY = 0.;
+    double totalMass = 0.;
     for ( int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
     {
         totalMass += planets[planetNumber].getMass();
@@ -193,7 +196,6 @@ void Solver::changeToCenterOfMassSystem()
         double yPosition = planets[planetNumber].getYPosition();
         planets[planetNumber].setXposition(xPosition - centerOfMassX);
         planets[planetNumber].setYposition(yPosition - centerOfMassY);
-        planets[planetNumber].changeToCenterOfMassSystemInAcceleration();
     }
     setSunVelocity();
     centerOfMassSystem = "True";
@@ -202,7 +204,8 @@ void Solver::changeToCenterOfMassSystem()
 
 void Solver::setSunVelocity()
 {
-    double momentumOfPlanetsX, momentumOfPlanetsY;
+    double momentumOfPlanetsX = 0.;
+    double momentumOfPlanetsY = 0.;
     for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
     {
         momentumOfPlanetsX += planets[planetNumber].getMass()*planets[planetNumber].getXVelocity();
