@@ -68,8 +68,9 @@ void Solver:: velocityVerlet()
     start = clock();
 
     int iterationStart = 1;
-    if (centerOfMassSystem == "True")
-        iterationStart = 0;
+
+    /*if (centerOfMassSystem == "True")
+        iterationStart = 0;*/
 
     while (time < finalTime){
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
@@ -81,7 +82,7 @@ void Solver:: velocityVerlet()
             mass = planets[planetNumber].getMass();
 
             if (time==0.0){
-                planets[planetNumber].writeTofile(NAN);
+                planets[planetNumber].writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
             }
             planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
@@ -103,14 +104,14 @@ void Solver:: velocityVerlet()
             planets[planetNumber].setYVelociy(vy);
 
             planets[planetNumber].setTime(time+step);
-            planets[planetNumber].writeTofile(NAN);
+            planets[planetNumber].writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
         }
         time += step;
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
     for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        planets[planetNumber].writeTofile(timeUsed);
+        planets[planetNumber].writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
 }
 
 void Solver:: alternativeForceVelocityVerlet(double beta_)
@@ -167,7 +168,6 @@ double Solver:: getCenterOfMassX()
         totalMass += planets[planetNumber].getMass();
         centerOfMassX += planets[planetNumber].getXPosition()*planets[planetNumber].getMass();
     }
-    cout << "center of mass x " << centerOfMassX/totalMass << endl;
     return centerOfMassX/totalMass;
 }
 
@@ -180,7 +180,6 @@ double Solver::getCenterOfMassY()
         totalMass += planets[planetNumber].getMass();
         centerOfMassY += planets[planetNumber].getYPosition()*planets[planetNumber].getMass();
     }
-    cout << "center of mass y " << centerOfMassY/totalMass << endl;
     return centerOfMassY/totalMass;
 }
 

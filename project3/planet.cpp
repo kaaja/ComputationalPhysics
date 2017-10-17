@@ -17,7 +17,7 @@ Planet:: Planet (double mass_, double xPosition_, double yPosition_, double xVel
     filename = filename_+ planetName_ + string(".csv");
     string centerOfMassSystem = "False";
     ofile.open(filename);
-    ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r" << endl;
+    ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r,centerOfMassX,centerOfMassY" << endl;
     ofile.close();
 
 }
@@ -71,15 +71,15 @@ void Planet:: getAcceleration(vector<Planet> planets_, double *accelerationX_, d
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    cout << "centerOfMassSystem " << centerOfMassSystem  << endl;
+    //cout << "centerOfMassSystem " << centerOfMassSystem  << endl;
     /*if (centerOfMassSystem == "False")
     {
         *accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
         *accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
     }*/
 
-    //*accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
-    //*accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
+    *accelerationX_ = -FourPi2*xPosition/pow(getRadialDistance(planets_[0]), 3);
+    *accelerationY_ = -FourPi2*yPosition/pow(getRadialDistance(planets_[0]), 3);
 
     int start  = 1;
     //if (centerOfMassSystem == "True")
@@ -110,7 +110,7 @@ void Planet:: setXVelociy(double vx_){xVelocity = vx_;}
 void Planet:: setYVelociy(double vy_){yVelocity = vy_;}
 void Planet:: setTime(double time_){time = time_;}
 
-void Planet:: writeTofile(double timeUsed_)
+void Planet:: writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_)
 {
     ofile.open(filename, ios::out | ios::app);
     ofile << setiosflags(ios::showpoint | ios::uppercase);
@@ -124,7 +124,9 @@ void Planet:: writeTofile(double timeUsed_)
     ofile << setw(15) << setprecision(16) << getAngularMomentum() << ", ";
     ofile << setw(15) << setprecision(16) << timeUsed_ << ", ";
     ofile << setw(15) << setprecision(16) << log10(timeUsed_) << ", ";
-    ofile << setw(15) << setprecision(16) << getRPosition() << endl;
+    ofile << setw(15) << setprecision(16) << getRPosition() << ", ";
+    ofile << setw(15) << setprecision(16) << centerOfMassX_ << ", ";
+    ofile << setw(15) << setprecision(16) << centerOfMassY_ << endl;
     ofile.close();
 }
 

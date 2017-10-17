@@ -56,7 +56,7 @@ public:
     void setXVelociy(double vx_);
     void setYVelociy(double vy_);
     void setTime(double time_);
-    void writeTofile(double timeUsed_);
+    void writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_);
     void changeToCenterOfMassSystemInAcceleration();
 
 
