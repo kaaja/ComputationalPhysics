@@ -10,10 +10,6 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
     step = finalTime/double(N);
     time = 0.0;
     centerOfMassSystem = "False";
-    /*filename = filename_+string(".csv");
-    ofile.open(filename);
-    ofile << "time,x,y,vx/pi,vy/pi,potentialEnergy,kineticEnergy,angularMomentum,timeUsed,logTimeUsed,r" << endl;
-    */
 
 }
 
@@ -22,6 +18,7 @@ void Solver:: addPlanet(Planet &planet_)
     planet = &planet_;
     planets.push_back (planet);
     numberOfPlanets += 1;
+    planet->setStep(step);
 }
 
 /*

@@ -91,7 +91,7 @@ void Planet:: getAlternativeForce(double mass_, double x_, double y_, double r_,
     *forceX_ = -FourPi2*x_ *mass/(pow(r_,beta_));
     *forceY_ = -FourPi2*y_*mass/(pow(r_,beta_));
 }
-
+void Planet:: setStep(double step_){step = step_;}
 void Planet:: setXposition(double x_){ xPosition = x_;}
 void Planet:: setYposition(double y_){yPosition = y_;}
 void Planet:: setDistance(double r_){radialDistance = r_;}

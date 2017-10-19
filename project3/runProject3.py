@@ -302,7 +302,7 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
+def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
     """
 
     """
@@ -323,9 +323,9 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
     outfileName = scenario
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(1,2)]
+    finalTimes = [10**i for i in xrange(2,3)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(3, 4)]
+    dts = [10.**(-i) for i in xrange(7, 8)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -361,46 +361,59 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
             plt.close()
             
             # Movie
-            if finalTime == 100 and dt == 0.0001:
-                saveInterval = 200
-                numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
-                numberOfPlots = int(round(numberOfObservations/saveInterval))
-                fig2, ax2 = plt.subplots()
-                plt.hold('on')
-                #ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
-                ax2.set_xlabel('x [Au]')
-                ax2.set_ylabel('y [Au]')
-                plt.axis('equal')
-                ax2.set_xlim(-2., 2.)
-                ax2.set_ylim(-2., 2.)
-
-                colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
-                #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
-                #color=iter(cm.rainbow(np.linspace(0,1,9)))
-                """for i in range(n):
-                   c=next(color)
-                   ax1.plot(x, y,c=c)"""
-                #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
-                for counter in xrange(numberOfPlots):
-                    for planet,color in zip(planets, colors):
-                        ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
-                        ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g \n t %.2g' %(finalTime, dt, dt*saveInterval, multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[counter*saveInterval]))
+            if movie:
+                if finalTime == 100 and dt == 0.0001:
+                    saveInterval = 200
+                    numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
+                    numberOfPlots = int(round(numberOfObservations/saveInterval))
+                    fig2, ax2 = plt.subplots()
+                    plt.hold('on')
+                    #ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
+                    ax2.set_xlabel('x [Au]')
+                    ax2.set_ylabel('y [Au]')
+                    plt.axis('equal')
+                    ax2.set_xlim(-2., 2.)
+                    ax2.set_ylim(-2., 2.)
+    
+                    colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
+                    #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
+                    #color=iter(cm.rainbow(np.linspace(0,1,9)))
+                    """for i in range(n):
+                       c=next(color)
+                       ax1.plot(x, y,c=c)"""
+                    #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
+                    for counter in xrange(numberOfPlots):
+                        for planet,color in zip(planets, colors):
+                            ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
+                            ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g \n t %.2g' %(finalTime, dt, dt*saveInterval, multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[counter*saveInterval]))
+                            
+    
+                        ax2.legend(legends, bbox_to_anchor=(1.05, 0.7), ncol=1)
+                        fig2.savefig('movie/tmp_%04d' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
+                    plt.close()
+                    
+                    # Make video file
+                    fps = 4  # frames per second
+                    codec2ext = dict(libx264='mp4')  # video formats
+                    filespec = 'movie/tmp_%04d' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png'
+                    movie_program = 'ffmpeg'  # or 'avconv'
+                    for codec in codec2ext:
+                        ext = codec2ext[codec]
+                        cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s ' \
+                              '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
+                        os.system(cmd)
                         
-
-                    ax2.legend(legends, bbox_to_anchor=(1.05, 0.7), ncol=1)
-                    fig2.savefig('movie/tmp_%04d' %counter + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png') 
-                plt.close()
+            # Perillion precession
+            if scenario == 'mercury':
+                rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)
+                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)
+                xPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x.values[indexRPerrilion]
+                yPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y.values[indexRPerrilion]
+                theta = np.arctan(yPerrilion/xPerrilion)
+                precession = theta*206265.
+                print 'Perillion precessiun %.4f' %precession
+                print 'theta %.4f' %theta
                 
-                # Make video file
-                fps = 4  # frames per second
-                codec2ext = dict(libx264='mp4')  # video formats
-                filespec = 'movie/tmp_%04d' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png'
-                movie_program = 'ffmpeg'  # or 'avconv'
-                for codec in codec2ext:
-                    ext = codec2ext[codec]
-                    cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s ' \
-                          '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
-                    os.system(cmd)
     return multiBodies
 
 #%% 2, run     
@@ -410,5 +423,5 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
 #miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
 #miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
 #miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
-miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury')
+miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury', movie=False)
 

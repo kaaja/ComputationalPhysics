@@ -40,3 +40,11 @@ void PlanetMercury::getAcceleration(vector<Planet*> planets_, double *accelerati
         }
     }
 }
+
+void PlanetMercury:: writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_)
+{
+    if((time>99.75 && step < 0.001) || (step >= 0.001))
+    {
+        Planet::writeTofile(timeUsed_, centerOfMassX_, centerOfMassY_);
+    }
+}
