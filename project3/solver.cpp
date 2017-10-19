@@ -17,13 +17,14 @@ Solver:: Solver(int N_, double finalTime_, string filename_)
 
 }
 
-void Solver:: addPlanet(Planet planet_)
+void Solver:: addPlanet(Planet &planet_)
 {
-    planet = planet_;
+    planet = &planet_;
     planets.push_back (planet);
     numberOfPlanets += 1;
 }
 
+/*
 void Solver:: forwardEuler()
 {
     x = planet.getXPosition();
@@ -59,6 +60,7 @@ void Solver:: forwardEuler()
 
     //ofile.close();
 }
+*/
 
 void Solver:: velocityVerlet()
 {
@@ -78,16 +80,16 @@ void Solver:: velocityVerlet()
     while (time < finalTime){
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         {
-            x = planets[planetNumber].getXPosition();
-            y = planets[planetNumber].getYPosition();
-            vx = planets[planetNumber].getXVelocity();
-            vy = planets[planetNumber].getYVelocity();
-            mass = planets[planetNumber].getMass();
+            x = planets[planetNumber]->getXPosition();
+            y = planets[planetNumber]->getYPosition();
+            vx = planets[planetNumber]->getXVelocity();
+            vy = planets[planetNumber]->getYVelocity();
+            mass = planets[planetNumber]->getMass();
 
             if (time==0.0){
-                planets[planetNumber].writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
+                planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
             }
-            planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
+            planets[planetNumber]->getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
             accelerationXOld = accelerationX;
             accelerationYOld = accelerationY;
@@ -95,28 +97,29 @@ void Solver:: velocityVerlet()
             x +=  step*vx + step*step/2.0* accelerationXOld;
             y +=  step*vy + step*step/2.0* accelerationYOld;
 
-            planets[planetNumber].setXposition(x);
-            planets[planetNumber].setYposition(y);
+            planets[planetNumber]->setXposition(x);
+            planets[planetNumber]->setYposition(y);
 
-            planets[planetNumber].getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
+            planets[planetNumber]->getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
             vx +=  step/2.0*(accelerationXOld + accelerationX);
             vy +=  step/2.0*(accelerationYOld + accelerationY);
 
-            planets[planetNumber].setXVelociy(vx);
-            planets[planetNumber].setYVelociy(vy);
+            planets[planetNumber]->setXVelociy(vx);
+            planets[planetNumber]->setYVelociy(vy);
 
-            planets[planetNumber].setTime(time+step);
-            planets[planetNumber].writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
+            planets[planetNumber]->setTime(time+step);
+            planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
         }
         time += step;
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
     for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        planets[planetNumber].writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
+        planets[planetNumber]->writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
 }
 
+/*
 void Solver:: alternativeForceVelocityVerlet(double beta_)
 {
 
@@ -161,6 +164,7 @@ void Solver:: alternativeForceVelocityVerlet(double beta_)
 
     //ofile.close();
 }
+*/
 
 double Solver:: getCenterOfMassX()
 {
@@ -168,8 +172,8 @@ double Solver:: getCenterOfMassX()
     double totalMass = 0.;
     for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
     {
-        totalMass += planets[planetNumber].getMass();
-        centerOfMassX += planets[planetNumber].getXPosition()*planets[planetNumber].getMass();
+        totalMass += planets[planetNumber]->getMass();
+        centerOfMassX += planets[planetNumber]->getXPosition()*planets[planetNumber]->getMass();
     }
     return centerOfMassX/totalMass;
 }
@@ -180,8 +184,8 @@ double Solver::getCenterOfMassY()
     double totalMass = 0.;
     for ( int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
     {
-        totalMass += planets[planetNumber].getMass();
-        centerOfMassY += planets[planetNumber].getYPosition()*planets[planetNumber].getMass();
+        totalMass += planets[planetNumber]->getMass();
+        centerOfMassY += planets[planetNumber]->getYPosition()*planets[planetNumber]->getMass();
     }
     return centerOfMassY/totalMass;
 }
@@ -192,10 +196,10 @@ void Solver::changeToCenterOfMassSystem()
     double centerOfMassY = getCenterOfMassY();
     for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
     {
-        double xPosition = planets[planetNumber].getXPosition();
-        double yPosition = planets[planetNumber].getYPosition();
-        planets[planetNumber].setXposition(xPosition - centerOfMassX);
-        planets[planetNumber].setYposition(yPosition - centerOfMassY);
+        double xPosition = planets[planetNumber]->getXPosition();
+        double yPosition = planets[planetNumber]->getYPosition();
+        planets[planetNumber]->setXposition(xPosition - centerOfMassX);
+        planets[planetNumber]->setYposition(yPosition - centerOfMassY);
     }
     setSunVelocity();
     centerOfMassSystem = "True";
@@ -208,9 +212,9 @@ void Solver::setSunVelocity()
     double momentumOfPlanetsY = 0.;
     for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
     {
-        momentumOfPlanetsX += planets[planetNumber].getMass()*planets[planetNumber].getXVelocity();
-        momentumOfPlanetsY += planets[planetNumber].getMass()*planets[planetNumber].getYVelocity();
+        momentumOfPlanetsX += planets[planetNumber]->getMass()*planets[planetNumber]->getXVelocity();
+        momentumOfPlanetsY += planets[planetNumber]->getMass()*planets[planetNumber]->getYVelocity();
     }
-    planets[0].setXVelociy(-momentumOfPlanetsX/planets[0].getMass());
-    planets[0].setYVelociy(-momentumOfPlanetsY/planets[0].getMass());
+    planets[0]->setXVelociy(-momentumOfPlanetsX/planets[0]->getMass());
+    planets[0]->setYVelociy(-momentumOfPlanetsY/planets[0]->getMass());
 }

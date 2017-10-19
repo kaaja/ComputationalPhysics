@@ -193,9 +193,8 @@ void makeSolarSystem(string outfileName, Solver &solution)
     if (ifile.is_open()){
         while ( ifile >> planet >> mass >> x >> y >> vx >> vy >> planetName2)
         {
-            Planet * planet_;
-            planet_ = new Planet(mass, x, y, vx , vy, outfileName, planetName2);
-            solution.addPlanet(*planet_);
+            Planet planet(mass, x, y, vx , vy, outfileName, planetName2);
+            solution.addPlanet(planet);
         }
         ifile.close();
     }

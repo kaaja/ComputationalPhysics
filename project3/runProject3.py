@@ -323,9 +323,9 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
     outfileName = scenario
     solverType = 'VelocityVerlet'
     
-    finalTimes = [10**i for i in xrange(2,3)]
+    finalTimes = [10**i for i in xrange(1,2)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(4, 5)]
+    dts = [10.**(-i) for i in xrange(3, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -409,6 +409,6 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
 #miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
 #miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
-miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury')
+miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury')
 

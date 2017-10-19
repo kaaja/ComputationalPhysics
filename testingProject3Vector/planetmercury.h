@@ -34,7 +34,7 @@ void PlanetMercury::getAcceleration(vector<Planet*> planets_, double *accelerati
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber]->getMass() != mass){
-            rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check the star!
+            rPlanetDistance = getRadialDistance(&planets_[planetNumber]); // check the star!
             l = sqrt((xPosition*yVelocity)*(xPosition*yVelocity) + (- yPosition*xVelocity)*(- yPosition*xVelocity));
             relativisticCorrection = (3*l*l/(pow(rPlanetDistance,3)*c*c) );
             *accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3)*relativisticCorrection;
