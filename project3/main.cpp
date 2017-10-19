@@ -20,113 +20,111 @@ int main(int argc, char* argv[])
 
     if (scenario == "twoBody")
     {
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
     }
     else if (scenario == "mercury")
     {
-        //unique_ptr<Planet> PlanetMercury sun(1., 0., 0., 0. , 0., outfileName, "Sun");
-        //unique_ptr<Planet> PlanetMercury mercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
-        PlanetMercury sun(1., 0., 0., 0. , 0., outfileName, "Sun");
-        PlanetMercury mercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
-        //PlanetMercury mercury(1.65E-07, -0.371416469854018, -0.205909161582452, 2.94708800254162 , -8.48964317024071, outfileName, "Mercury");
-
-        solution.addPlanet(sun);
-        solution.addPlanet(mercury);
+        Planet * sun_;
+        PlanetMercury * mercury_;
+        sun_ = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        mercury_ = new PlanetMercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        solution.addPlanet(*sun_);
+        solution.addPlanet(*mercury_);
     }
     else if (scenario == "threeBodies")
     {
 
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+        Planet * jupiter = new Planet(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
         return 0;
     }
     else if (scenario == "threeBodiesJupiterTimes10")
     {
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-4*10, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
+        Planet * jupiter = new Planet(9.5e-4*10, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
     }
     else if (scenario == "threeBodiesJupiterTimes1000")
     {
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-4*1000, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
+        Planet * jupiter = new Planet(9.5e-4*1000, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
     }
     else if (scenario == "threeBodiesMovingSun")
     {
         //makeSolarSystem(outfileName, solution);
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+        Planet * jupiter = new Planet(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
         solution.changeToCenterOfMassSystem();
     }
     else if (scenario == "threeBodiesJupiterMassTimes10MovingSun")
     {
         //makeSolarSystem(outfileName, solution);
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-3, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+        Planet * jupiter = new Planet(9.5e-3, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
         solution.changeToCenterOfMassSystem();
     }
@@ -134,20 +132,20 @@ int main(int argc, char* argv[])
     else if (scenario == "threeBodiesJupiterMassTimes1000MovingSun")
     {
         //makeSolarSystem(outfileName, solution);
-        Planet sun(1., 0., 0., 0. , 0., outfileName, "Sun");
+        Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
-        Planet earth(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
+        Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
 
         double velocityEarth = 29.7559;
         double velocityJupiter = 13.0697;
         double velocityJupiterToEarth = velocityJupiter/velocityEarth;
         initialVyJupiter = 2*pi*velocityJupiterToEarth;
 
-        Planet jupiter(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
+        Planet * jupiter = new Planet(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(sun);
-        solution.addPlanet(earth);
-        solution.addPlanet(jupiter);
+        solution.addPlanet(*sun);
+        solution.addPlanet(*earth);
+        solution.addPlanet(*jupiter);
 
         solution.changeToCenterOfMassSystem();
     }

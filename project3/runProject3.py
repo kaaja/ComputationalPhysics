@@ -409,6 +409,6 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario):
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
 #miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
 #miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
-miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury')
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
+miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury')
 
