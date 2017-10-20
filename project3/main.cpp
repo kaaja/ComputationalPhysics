@@ -1,6 +1,7 @@
 #include "planet.h"
 #include "solver.h"
 #include "planetmercury.h"
+#include "alternativeplanet.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ int main(int argc, char* argv[])
     string outfileName, solverType, scenario;
 
     initialize( outfileName, finalTime, N, solverType, initialVy, beta, scenario, argc, argv);
-    Solver solution(N, finalTime, outfileName);
+    Solver solution(N, finalTime);
     double pi = acos(-1.0);
 
     if (scenario == "twoBody")
@@ -33,6 +34,15 @@ int main(int argc, char* argv[])
         mercury_ = new PlanetMercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
         solution.addPlanet(*sun_);
         solution.addPlanet(*mercury_);
+    }
+    else if (scenario == "alternativeForce")
+    {
+        Planet * sun_;
+        AlternativePlanet * earth_;
+        sun_ = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        earth_ = new AlternativePlanet(0.000003, 1, 0., 0. , initialVy, outfileName, "AlternativeEarth", beta);
+        solution.addPlanet(*sun_);
+        solution.addPlanet(*earth_);
     }
     else if (scenario == "threeBodies")
     {
@@ -155,15 +165,12 @@ int main(int argc, char* argv[])
         makeSolarSystem(outfileName, solution);
         solution.changeToCenterOfMassSystem();
     }
-    /*
+
     if (solverType == "ForwardEuler")
         solution.forwardEuler();
     else if (solverType == "VelocityVerlet")
         solution.velocityVerlet();
-    else
-        solution.alternativeForceVelocityVerlet(beta);
-    */
-    solution.velocityVerlet();
+    //solution.velocityVerlet();
     return 0;
 }
 void initialize (string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, string& scenario, int argc, char** argv)
@@ -185,7 +192,7 @@ void initialize (string& outfileName, double& finalTime, int& N, string& solverT
 
 void makeSolarSystem(string outfileName, Solver &solution)
 {
-    string filename1 = "/home/karl/doc/subj/att/fys4150/project3/dataProject3";
+    string filename1 = "/home/peterek/Documents/skole/fys4150/project3/dataProject3";
     ifstream ifile(filename1);
     string planet; double mass; double x; double y; double vx; double vy; string planetName2;
     if (ifile.is_open()){

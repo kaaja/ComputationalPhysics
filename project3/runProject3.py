@@ -52,7 +52,7 @@ def sunEarth():
     timesUsed = []
     beta = 3.0
     outfileName = 'sunEarth'
-    solverType = 'VelocityVerlet'
+    solverType = 'ForwardEuler'
     
     finalTimes = [10**i for i in xrange(0,3)]
     #Ns = [10**i for i in xrange(3,8)]   
@@ -118,7 +118,9 @@ def sunEarth():
             N = finalTime/dt
             print 'N = %d, final time = %.2g ' %(N, finalTime)  
             outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
+            
             runCpp(outfileName2, finalTime, N, solverType, initialVy, beta, scenario)
+            
             sunEarth['FinalTime %f' %finalTime]['N %f' %N] = pd.read_table("results/" + outfileName2 + "Earth.csv", 
             			            delimiter=',')
             plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
@@ -169,15 +171,16 @@ def supNorm(totalEnergy):
     return supNorm
 
 
-def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime):
+def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime, setAxis=True):
     dt = finalTime/N
     fig, ax = plt.subplots()
     ax.plot(sunEarth.x[:-1], sunEarth.y[:-1])
     ax.set_title(solverType + '\n T %d, $\Delta$ t %.2g' %(finalTime, dt))
     ax.set_xlabel('x [Au]')
     ax.set_ylabel('y [Au]')
-    #ax.set_xlim(-2., 2.)
-    #ax.set_ylim(-2., 2.)
+    if setAxis:
+    	ax.set_xlim(-2., 2.)
+    	ax.set_ylim(-2., 2.)
     fig.savefig('results/' + outfileName + solverType + '.png') 
     #plt.show()
     plt.close()
@@ -237,7 +240,7 @@ def sunEarthTerminalVelocity():
         runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta, scenario)
         sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + "Earth.csv", 
             			            delimiter=',')
-        plotSunEarth(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
+        plotSunEarth(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime, setAxis=False)
         ax.plot(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
         legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
     
@@ -255,10 +258,10 @@ def sunEarthAlternativeGravitationalForce():
 
     """
     sunEarth      = OrderedDict()
-    
+    scenario = 'alternativeForce'
     outfileName = 'sunEarth'
-    solverType = 'AlternativeForce'
-    betaValues = [3.0,  3.5, 3.9, 4.0]
+    solverType = 'VelocityVerlet'
+    betaValues = [4.0]#3.0,  3.5, 3.9, 
     finalTime = 10.**4
     #Ns = [10**i for i in xrange(3,8)]
     dt = 0.01
@@ -286,9 +289,9 @@ def sunEarthAlternativeGravitationalForce():
             outfileName2 = outfileName + 'initialVelocityY%spibeta%s' %(str(initialVelocityY/np.pi).replace(".", ""), str(beta).replace(".", ""))
             print outfileName2 
             runCpp(outfileName2, finalTime, N, solverType, initialVelocityY, beta, scenario)
-            sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + ".csv", 
+            sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)] = pd.read_table("results/" + outfileName2 + "AlternativeEarth.csv", 
                 			            delimiter=',')
-            plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime)
+            plotSunEarth(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime, setAxis=False)
             ax.plot(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
             legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
         
@@ -325,7 +328,7 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
     
     finalTimes = [10**i for i in xrange(2,3)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(7, 8)]
+    dts = [10.**(-i) for i in xrange(4, 5)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -405,9 +408,10 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
                         
             # Perillion precession
             if scenario == 'mercury':
-                relevantTime= np.where(np.abs(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time.values- 99.75) < 1E-6)
+                #relevantTime= np.where(np.abs(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time.values- 99.75) < 1E-6)
                 #rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
-                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
+                #indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
+                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)#[relevantTime:])
                 xPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x.values[indexRPerrilion]
                 yPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y.values[indexRPerrilion]
                 theta = np.arctan(yPerrilion/xPerrilion)
@@ -418,11 +422,11 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
     return multiBodies
 
 #%% 2, run     
-#sunearth, supNormValues, supNormAngularMomentum = sunEarth()
+sunearth, supNormValues, supNormAngularMomentum = sunEarth()
 #sunearthTerminalVelocity = sunEarthTerminalVelocity()
 #sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
 #miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
-miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury', movie=False)
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun",movie=False)
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem", movie=False)
+#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury', movie=False)
 
