@@ -16,14 +16,14 @@ class Planet
 {
 protected:
     double mass = 0.0;
-    //vector<double> position(2);
-    //vector<double> velocity(2);
     double xPosition = 0.0;
     double yPosition = 0.0;
     double xVelocity = 0.0;
     double yVelocity = 0.0;
-    double time, step;
-    double xForce, yForce, radialDistance;
+    double accelerationX_ = 0.0;
+    double accelerationY_ = 0.0;
+    double time, step, radialDistance;
+    vector<double> accelerations;
     string filename, planetName;
 
 public:
@@ -32,11 +32,9 @@ public:
 
     ~Planet () {} // end initializer
 
+    //getters
     string getPlanetName() const;
     double getMass() const;
-    //vector<double> getInitialPosition() const;
-    //vector<double> getInitialVelocity() const;
-
     double getXPosition();
     double getYPosition();
     double getRPosition();
@@ -46,8 +44,9 @@ public:
     double getKineticEnergy();
     double getPotentialEnergy();
     double getAngularMomentum();
-    virtual void getAcceleration( vector<Planet*> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_);
-    void getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_);
+    virtual vector<double> getAcceleration( vector<Planet*> planets_, int numberOfPlanets_);
+
+    //setters
     void setStep(double step_);
     void setXposition(double x_);
     void setYposition(double y_);
@@ -55,6 +54,7 @@ public:
     void setXVelociy(double vx_);
     void setYVelociy(double vy_);
     void setTime(double time_);
+    //generates files
     virtual void writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_);
 };
 
