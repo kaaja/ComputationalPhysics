@@ -82,16 +82,8 @@
 
 
 \section*{Note to instructurs about Github repository}
-If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail adress available at Github so that we can invite you. If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
+If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail adress available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
-
-\includemedia[
-	width=0.4\linewidth,
-	height=0.3\linewidth,
-	activate=pageopen,
-	addresource=/home/karl/doc/subj/att/fys4150/project3/movie3_6.mp4,
-	flashvars={source=/home/karl/doc/subj/att/fys4150/project3/movie3_6.mp4}
-]{}{VPlayer.swf}
 
 
 \section*{Abstract}
@@ -99,14 +91,25 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 \section{Introduction}
 
-
 \section{Theory}
+
+\subsection{Physics}
+Derive equations, scaling.
+
+\subsection{Programming}
+Motivate classes. 
 
 
 
 \section{Results}
+Short overview: our class program. Scenarios
 
-\subsection{Sun-Earth Forward Euler}
+\subsection{Class implementation}
+How we did it.
+
+\subsection{Forward Euler versus Velocity Verlet}
+The below figures show the results for the x and y-positions as functions of time, forward Euler to the left and Velocity Verlet to the right. 
+
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -126,6 +129,9 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+As can be seen of the figures above, both methods converges when $\Delta t$ is lowered.  Also the Velocity Verlet method seems to converge faster.\\
+
+The next two sets of figures shows the orbits for different $\Delta t$ for the two methods.
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -145,11 +151,13 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+
+
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime100N10000VelocityVerlet.png}
-		\caption{Sun-Earth system. Velocity Verlet. 100 years. \\ \textit{Large time step gives bad solutions also for Velocity Verlet.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000VelocityVerlet.png}
+		\caption{Sun-Earth system. Velocity Verlet. 1000 years. \\ \textit{Large time step gives bad solutions also for Velocity Verlet.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -157,11 +165,18 @@ If the above Github-link does not work, it is eighter because you have not yet a
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N100000000VelocityVerlet.png}
-		\caption{Sun-Earth system. Velocity Verlet. 1 000 years. \\ \textit{For velocity Verlet, the orbits seems to stay more circular compared to Forward Euler.}}
+		\caption{Sun-Earth system. Velocity Verlet. 1 000 years. \\ \textit{Compare to Forward Euler}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
+
+The 2 sets of figures above confirms what we found in the figures with x and y-position agains time: The precision is bettered when $\Delta t$ is lowered. \\
+
+DO: Explain why energy and angular momentum are preserved.\\
+
+The below figures show the difference in total energy compared to the initial total energy, forward Euler to the left and Velocity Verlet to the right.
+
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -180,6 +195,11 @@ If the above Github-link does not work, it is eighter because you have not yet a
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
+
+The two figures above show that for forward Euler, energy can actually increase, even for smaller $\Delta t$. For Velocity Verlet, energy seems to be preserved faster compared to Forward Euler. Also, Velocity Verlet never make energy, as is the case for Forward Euler.\\
+
+The next figure shows the same kind of figures as for energy above, but now for angular momentum. DO: Write why angular momentum is preserved.
+
 
 
 \begin{minipage}{.49\textwidth} 
@@ -200,6 +220,10 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+The figures above show that as $\delta t$ gets low, angular momentum is preserved. ALso, Velocity Verlet seems to give good angular momentum approximations compared to Forward Euler.\\
+
+Since we know the exact solution for energy and angular momentum, or more precisely, the exact solution for the change, we have constructed a norm measure for computing convergence rates of the schemes. The error-norm is the supremum of the largest difference in energy compared to initial energy. The below figures show the results. DO: Write what to expect of these norms. We have truncation estimate for velocity and position, so it should just be to insert this into energy equation.
+
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -217,6 +241,10 @@ If the above Github-link does not work, it is eighter because you have not yet a
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
+
+The above two figures shows that the error goes as 1st order for Forward Euler, while Velocity Verlet goes like 2nd order. DO: How does this compare to expectations?\\
+
+In the same manner as for the energy-norms above, we have also constructed a norm for angular momentum. DO: What to expect. The below figure displays the results for the angular momentum norms.
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -236,6 +264,10 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+The two figures above shows that also for angular momentum, the order of the error-norm is higher for Velocity Verlet compared to Forward Euler, but now the difference is of order two. Also we see that the orders are doubled from the energy norms. DO: Comment on why higher order than energy, and how the results compare to expectations.\\
+
+Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. DO: FLOP-count for Forward-Euler and Velocity Verlet. The below figures show the computation time for the methods, forard Euler to the left and Velocity Verlet to the right.
+
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -254,6 +286,33 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+The two figures above show that the Forward Euler and the Velocity Verlet method both has solution times that is of order 1 in N. This is as expected. The difference in FLOPS between forward Euler and Velocity Verlet is...DO.
+
+
+\subsection{Escape velocity}
+Another test to see if the solver obeys the physical laws, is to check if the escape velocity is correct. The escape velcoity equals the velcoity where potential energy equals kinetic energy
+
+\begin{subequations}
+	\begin{align}
+	E_k  &= E_p \\
+	\frac{1}{2} m_E v_{Escape}^2&= \frac{G M_{Sun} M_E}{r_0}\\
+	\rightarrow v_E&=\sqrt{\frac{2G M_{Sun} }{r_0}}\\
+	&=\sqrt{\frac{2* 4 \pi^2 AU^3 }{AU yr^2}}\\
+	&=2 \pi\sqrt{2}\frac{ AU }{yr}
+	\end{align}
+\end{subequations}
+
+Based on the above equation, we expect the simulations to gove escape then $v > 2\pi \sqrt{2}$. The figures below show the results.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityradialDistanceVelocityVerlet.png}
+	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{$v = 2\sqrt{2}\pi$ is an ustable equilibrium.}}
+	\label{1}
+\end{figure}
+
+
+
 \begin{minipage}{.33\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -271,21 +330,20 @@ If the above Github-link does not work, it is eighter because you have not yet a
 	\end{figure}
 \end{minipage}\hfill
 \begin{minipage}{.33\textwidth} 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityinitialVelocityY3piVelocityVerlet.png}
-	\caption{Sun-Earth system. Escape valocity. Orbits. \\ \textit{Escape for $v < 2/sqrt{2} \pi$}}
-	\label{1}
-\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityinitialVelocityY3piVelocityVerlet.png}
+		\caption{Sun-Earth system. Escape valocity. Orbits. \\ \textit{Escape for $v < 2/sqrt{2} \pi$}}
+		\label{1}
+	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityradialDistanceVelocityVerlet.png}
-	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{$v = 2\sqrt{2}\pi$ is an ustable equilibrium.}}
-	\label{1}
-\end{figure}
+The figures above show that the simulated escape velocity is very close to the exact terminal velcocity, $2 \pi \sqrt{2}$, supporting the previous results indicating the validity of our solver as a good approximation method.\\
+
+Another test, to see if the numerical solutions corresponds to analytical solutions, is to simulate the two planet system with different gravitational forces. DO: Write down a more general formula for the kinetic energy based on the revised forces.\\
+
+The below figures show escapce velocities for the three different gravitational forces, all forces being lower than the standard force simulated above.
 
 
 \begin{minipage}{.3\textwidth} 
@@ -314,13 +372,48 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \end{minipage}\hfill
 \vspace{2ex}
 
+The figures above show that the escape velocities are lowered when the gravitational forces are lowered. DO: Check agains thoretical expression. We see from the right most figure that the escape velocity is the same as the exact. DO: check the previous claim.
+
+\subsection{Three planets}
+Above we have seen that the solvers correspond well with expected behavoiur: Forward Euler does not preserve energy, while Velocity Verlet does, and basic exact results for escapce velocities, energy and angular momentum is well approximated. However, the above was only tested on a two-object system. To check whether the solver works for multibody systems, with more than two objects, a third planet, Jupiter, is added.\\
+
+The figure below shows the orbits of the three body-system.
+
+DO: Create and insert figures for 3 body non-moving sun here.\\
+
+The figures above shows that the solver produces reasonable results for the three body system also. As for two bodies, the largest $\delta t$'s give bad approximations, while the smaller $\Delta t$'s give good approximations. DO: check the previous claim.\\
+
+\subsection{Center of mass system}
+All the above simulations were based on the assumption that the sun was stationary. This is not the case in reality. To make the  solver more realistic, we now introduce movement in the sun by letting the sun be modelled just as the other planets, gravity affecting also the sun's movement. \\
+
+To make the plots easy to interpret, we make sure that the center of mass of the system is stationary. This we do by adjusting the initial velocity of the sun, utilizing the fact that the angular momentum of the system is preserved
+
+\begin{subequations}
+	\begin{align}
+	0 &= \frac{d \vec R}{dt}	\\
+	&= \frac{d}{dt} (\frac{1}{M} \sum_i^{Planets+Sun} m_i \vec{v}_i)\\
+	&= \frac{1}{M} \sum_i^{Planets+Sun} m_i v_i \\
+	\rightarrow 0 &=m_{sun} \vec{v}_{sun} + \sum_i^{Planets} m_i \vec{v}_i \\
+	\vec{v}_{Sun} &= - \frac{\sum_i^{Planets} m_i \vec{v}_i}{m_{Sun}}
+	\end{align}
+\end{subequations}
+
+The below figure shows the results with a moveing sun.\\
+
+DO: Insert figure with moving sun and normal Jupiter mass here.\\
+
+The figure above shows that the result of including movement in the sun is small. DO: Check the previous claim. To see how the program deals with a moving sun, we increase the mass of Jupiter. This should increase the movement of the sun, and make the results in the moving sun case different from the results in the stationary sun case. The results are shown in the figures below.\\
+
+DO: Insert figures with increased mass of Jupiter, both for moving and non-moving sun.\\
+
+The figures above show that when Jupiter's mass in increased, there is a signifiacant effect of introducing movement in the sun. The last figure also clearly shows that the center of mass remains fixed.
+
+
+\subsection{Solar system}
+
+\subsection{Perihelion precession}
 
 \section{Conclusions}
-
-
-
-
-
 
 \section{Feedback}
 \subsection{Project 1}
@@ -340,6 +433,21 @@ All in all, two thumbs up!
 	
 	\item Apart from the small details above, we are very happy about this project. How would have thought linear algebra could be fun?!
 \end{itemize}
+
+\subsection{Project 3}
+\begin{itemize}
+	\item  Classes: Very useful!
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
 
 
 
