@@ -410,8 +410,23 @@ The figures above show that when Jupiter's mass in increased, there is a signifi
 
 
 \subsection{Solar system}
+The solver producing reasonable results for the three-body system, we are now ready to simulate the full solar system. Since we are using classes, going from three objects to ten objects constitutes nearly no work at all! We read in all planets from file in a loop, and use the same method as earlier for adding planets. That is all. The below figures displays the results for the full solar system, with a moving sun. \\
+
+DO: Insert figure with solar system solutions here.\\
+
+The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. 
 
 \subsection{Perihelion precession}
+Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. Perihelion is the closest point between a planet and sun during one rotation. Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
+
+We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. Then we correct the acceleration function by overrideing it in the new class. We use only two objects for this simulation ,the sun and Mercury. Since the sun's mass is so much larger than the mass of Mercury, we solve this problem with a stationary sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble, so haivng a stationary sun in this scenario should not affect the results significantly. \\
+
+We assume initial position of Mercury at perihelion, and localize perihelion at $(x,y) = (0.3075 Au, 0)$. Initial velocity is set to 12.44 $Au/Yr$. When doing this, we get the following results for the perihelion precession for different $\Delta t$.\\
+
+DO: Insert table with preihelion precession and $\Delta t$.
+
+DO: Comment on the results in the table above. 
+
 
 \section{Conclusions}
 
