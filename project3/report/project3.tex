@@ -108,19 +108,131 @@ The next section of the report describes the equations and shows the scaling of 
 
 \section{Theory}
 
-\subsection{Physics}
-Derive equations, scaling.
+\subsection{Order reduction and differentiation methods}
+Lets describe the general procedure for reducing a 2nd order ODE to a 1st order system of ODEs. Say we have an equation describing Newton's 2nd law:
 
-\subsection{Programming}
-Motivate classes. 
+\begin{equation}
+F/m = a = \frac{d^2}{dx^2} = -kx
+\end{equation}
 
+Now make the "substitutions" $\frac{d^2x}{dt^2} = v$ and $v = \frac{dx}{dt}$ to get the system
+
+\begin{subequations}
+	\begin{align}\label{eq:dxdt}
+	\frac{dx}{dt} &= v
+	\end{align}
+	
+	\begin{align}
+	\frac{dv}{dt} &= \frac{d^2x}{dt^2}\\
+	 &= \frac{F}{m}\label{eq:dvdt}
+	\end{align}
+\end{subequations}
+
+In the above the 2nd order ODE is reduced to the system (\ref{eq:dxdt}) and (\ref{eq:dvdt}). Actually, this method can be used to reduce any higher order equation to a system of 1st order ODEs! The solar system is described with Newton's 2nd law, so the reduction of order for the ODEs for the solar system follows the same recepie as listed above.\\
+
+Now for the numerical methods, forward Euler and Velocity Verlet. Both these methods are derived from Taylor polynomials. The strength of these polynomials is that one has control over the order of the truncation error, the error one gets by truncating the Taylor series to get the wanted approximation. \\
+
+For the forward Euler method, a Taylor expansion around the point $x + h$ is done for $x$ and $v$, and one obtain the discretized system
+
+\begin{subequations}
+	\begin{align}
+		x_{i+1} = x_i + hv_i + \mathcal{O}(h^2)\label{eq:fev}
+	\end{align}
+	
+	\begin{align}
+		v_{i+1} = v_i + ha_i + \mathcal{O}(h^2)\label{eq:fea}
+	\end{align}
+\end{subequations}
+
+We see from (\ref{eq:fev}) and (\ref{eq:fev}) that the truncation error is of order $h^2$. However, the above is repeated $N$ times, there are $N$ time steps, to get the full solution. Since $h$ is proprtional to $N^{-1}$ ($h = T/N$), the global error goes like $\mathcal{O}(h)$. The forward Euler method is conditionally stable, meaning that is stable only for certain $\Delta t$.\\
+
+The velocity Verlet method is constructed in the same way as the forward Euler method, apllying Taylor polynomials. However, a more clever manipulation of the Taylor polynomials is applied, and one ends with
+
+\begin{subequations}
+	\begin{align}
+	v_{i+1} = v_i + h/2(a_{i+1} + a_i + \mathcal{O}(h^3)\label{eq:vvv}
+	\end{align}
+	
+	\begin{align}
+	x_{i+1} = x_i + hv_i + \frac{h^2}{2} a_i + \mathcal{O}(h^3)\label{eq:vvx}
+	\end{align}
+	
+	\begin{align}
+	a_i = F_i/m\label{eq:vva}
+	\end{align}
+\end{subequations}
+
+In the above one must update position before velocity, since we need the acceleration on the current and next step to get the velocity. Calcuating x first, we can insert this into the equation for a, and then we calculate v. We observe that the truncation error, and hence the also the global error, is one order higher compared to forward Euler. This method is unconditionally stable, meaning it is stable for all $\Delta t$. In addition, this method conserves energy.
+
+\subsection{The solar system equations}
+We describe the solar system by Newton's 2nd law assuming circular orbits and Newton's gravitational law, which for two objects are
+
+\begin{equation}
+F_G = M_{earth}\frac{v^2}{r}\label{eq:newtonCircle}
+\end{equation}
+
+\begin{equation}
+F_G = \frac{GM_{sun}G_{earth}}{r^2}\label{eq:newtonGravity}
+\end{equation}
+
+Dividing both equations above by $M_{Earth}$ gives
+
+\begin{equation}
+a = \frac{v^2}{r}\label{eq:newtonCircle2}
+\end{equation}
+
+\begin{equation}
+a = \frac{GM_{sun}}{r^2}\label{eq:newtonGravity2}
+\end{equation}
+
+
+Now we scale the equatons to Astronomical units, and get $v = \frac{2\pi r}{T} = \frac{2\pi Au}{Yr}$. Inserting this scaling into the above system gives
+
+\begin{equation}
+a = \frac{2^2 \pi^2 Au^2}{Au\;Yr^2}\label{eq:newtonCircle3}
+\end{equation}
+
+\begin{equation}
+a = \frac{GM_{sun}}{Au^2}\label{eq:newtonGravity3}
+\end{equation}
+
+Setting the above two equations equal and solving for $GM_{sun}$ gives
+
+\begin{equation}\label{eq:GMSun}
+GM_{Sun} = 4 \pi^2 (Au)^3/Yr^2
+\end{equation}
+
+Now we can insert (\ref{eq:GMSun}) into (\ref{eq:newtonGravity2}) to get
+
+\begin{equation}
+a = -\frac{4 \pi^2}{r^2}
+\end{equation}
+
+For the x-component we get
+\begin{subequations}
+	\begin{align}\label{eq:ax}
+		a_x &= -\frac{4 \pi^2}{r^2} \cos(\theta)\\
+		&= -\frac{4 \pi^2}{r^2 r} r\cos(\theta)\\
+		&= -\frac{4 \pi^2}{r^3} x
+	\end{align}
+\end{subequations}
+
+The same type of calculation gies the y-component. \\
+
+The next step is to add a planet to the system. This will add a new force between earth and the new planet, in addition to the force between the sun and the planets. The force between earth and the new planet will be of the exact same kind as the force between earth and sun, given in (\ref{eq:newtonGravity}), and the x accleration term (\ref{eq:ax}) for the earth will now be
+
+\begin{equation}\label{eq:3rdPlanet}
+a_x = -\frac{4 \pi^2}{r_{earth,sun}^3} (x_{earth}-x_{sun}) - \frac{4 \pi^2 \frac{M_{jupiter}}{M_{sun}}}{r_{earth,jupiter}^3}(x_{earth}-x_{jupiter}),
+\end{equation}
+
+where we see that the only difference between the two terms are the mass-factor, which in the earth-sun term is one. Now Jupiter will have the same kind of expression as above, only with Jupiter instead of earth in the subscripts. Note the similarity! Adding more planets happens in exactly the same way, nothing new happens! Also we note that the 2nd term will be equall for Jupiter and earth, which potentially can be taken advantage of when solving the equaions numerically. 
 
 
 \section{Results}
-Short overview: our class program. Scenarios
+Before turning to the results, we give a short overview of our class implementation.
 
 \subsection{Class implementation}
-How we did it.
+Insert a simple figure that contains boxes of the different classes and their inouts, and arrows between boxes.
 
 \subsection{Forward Euler versus Velocity Verlet}
 The below figures show the results for the x and y-positions as functions of time, forward Euler to the left and Velocity Verlet to the right. 
