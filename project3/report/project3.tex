@@ -87,6 +87,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
+Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet, and the observed perihelion precession of Mercury around the sun is reproduced by adding a relativistic correction in the gravitational force.
 
 
 \section{Introduction}
@@ -429,6 +430,24 @@ DO: Comment on the results in the table above.
 
 
 \section{Conclusions}
+In this project we solve problems for planetary motion, which mathematically are systems of 2nd order differential equations. To make the equations easier to work with, we scale the equations to astronomical units.\\
+
+The systems of 2nd order equations are reformulated to systems of 1st order equations by use of variable substitution. \\
+
+Solving the large system of equations in C++, we take apply classes and class inheritance.\\
+
+Two numerical methods are used: the forward Euler method and the Velocity Verlet method. We show that the velocity Verlet method reproduces physical results like conservation of energy and angular momentum, while the Forward Euler method does not reproduce these results. The Velocity Verlet method converges faster to correct solutions, for preservation of energy and angular momentim, compared to the Forward Euler method. The velocity Verlet has twice the convergence rate of forward Euler when it comes to sup-norm in energy and angular momentum preservation, the velocity Verlet method being of order two and four for these quantitites respectively. Both methods gives bad results for the largest time steps. The methods are shown to involve approximatly the same amount of FLOPS.\\
+
+The Velocity Verlet method reproduces the exact terminal velocity of a two object sun-earth system. Exact results are reproduced by Velocity Verlet also in scenarios where the gravitational force is changed. \\
+
+Adding a third planet, Jupiter, to the stationary Sun earth system, gives reasonable results using Velocity Verlet: The orbits stay circular and stable. Also here the largest time steps give strange results, while the finer time steps gives convergent solutions. Making Jupiter's mass equal to the Sun's mass makes the earth escape. More realistic scenarios, that includes movement in the sun, keeping the center of mass of the system constant, produces reasonable results: When Jupiter's mass is enlarged, the sun starts to move. The center of mass is shown to be fixed.\\
+
+The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. The result seems reasonable, all orbits being stable.\\
+
+By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is reproduced.\\
+
+For future reference, we add the we could have improved the speed of the solvers by taking into account that the gravitational force between two planets are equal in magnitude. This implies that we could have halved the number of FLOPS!
+
 
 \section{Feedback}
 \subsection{Project 1}
