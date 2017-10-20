@@ -8,22 +8,6 @@ import os
 from collections import OrderedDict
 from matplotlib.pyplot import cm
 from matplotlib import colors as mcolors
-try:
-    import seaborn
-    seaborn.set(style="white", context="notebook", font_scale=1.5,
-		            rc={"axes.grid": True, "legend.frameon": False,
-		                "lines.markeredgewidth": 1.4, "lines.markersize": 10})
-except ImportError:
-	print("Could not import seaborn for plot styling. Try")
-	print("\n    conda install seaborn\n\nor")
-	print("\n    pip install seaborn\n")
-
-if not os.path.isdir('results'):
-	os.mkdir('results')
-
-
-#%% clean results and movie directory
-call(["./Allclean"])       
 
 #%% Run 
 
@@ -40,7 +24,7 @@ def runCpp(outfileName, finalTime, N, solverType, initialVy, beta, scenario):
     
 #%% 2, run 
 
-def sunEarth():
+def sunEarth(solverType):
     """
 
     """
@@ -52,7 +36,6 @@ def sunEarth():
     timesUsed = []
     beta = 3.0
     outfileName = 'sunEarth'
-    solverType = 'ForwardEuler'
     
     finalTimes = [10**i for i in xrange(0,3)]
     #Ns = [10**i for i in xrange(3,8)]   
@@ -305,19 +288,23 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
+def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie):
     """
 
     """
-    if not os.path.isdir('movie'):
-        os.mkdir('movie')
+
     if threePlanets:
         planets = ['Earth', 'Jupiter']
-    if threeBodiesMovingSun:
+    
+    elif scenario == 'threeBodiesMovingSun':
         planets = ['Sun','Earth', 'Jupiter']
         
     elif scenario == 'solarSystem':
         planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+    
+    elif scenario == 'solarSystemMovingSun':
+        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+    
     elif scenario == 'mercury':
         planets = ['Mercury']
 
@@ -328,7 +315,7 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
     
     finalTimes = [10**i for i in xrange(1,4)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 4)]
+    dts = [10.**(-i) for i in xrange(3, 4)]
     
     Ns = np.asarray(finalTimes)/np.asarray(dts)
     
@@ -422,14 +409,66 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
     return multiBodies
 
 #%% 2, run     
-sunearth, supNormValues, supNormAngularMomentum = sunEarth()
-#sunearthTerminalVelocity = sunEarthTerminalVelocity()
-#sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
-miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodies", movie=False)
-#miltiBodies = multiBodyStationarySun(threePlanets = True, threeBodiesMovingSun=False, scenario = "threeBodiesJupiterTimes1000")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem")
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun",movie=False)
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = "solarSystem", movie=False)
-#miltiBodies = multiBodyStationarySun(threePlanets = False,threeBodiesMovingSun=False, scenario = 'mercury', movie=False)
+if __name__ == "__main__":
+	#%% clean results and movie directory
+	call(["./Allclean"]) 
+	try:
+		import seaborn
+		seaborn.set(style="white", context="notebook", font_scale=1.5,
+				        rc={"axes.grid": True, "legend.frameon": False,
+				            "lines.markeredgewidth": 1.4, "lines.markersize": 10})
+	except ImportError:
+		print("Could not import seaborn for plot styling. Try")
+		print("\n    conda install seaborn\n\nor")
+		print("\n    pip install seaborn\n")
+
+	if not os.path.isdir('results'):
+		os.mkdir('results')
+    
+	if not os.path.isdir('movie'):
+		os.mkdir('movie')      
+    
+	parser = argparse.ArgumentParser(description="starts a c++ program simulating the solarSystem, reads and  plots. \n Choose from several scenarios")
+
+	parser.add_argument("--twoBody", action='store_true', default=False, help="simulate two body case, Sun and Earth with velocity verlet")
+	parser.add_argument("--twoBodyFEuler", action='store_true', default=False, help="simulate two body case, Sun and Earth with forward Euler")
+	parser.add_argument("--threeBody", action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter")
+	parser.add_argument("--threeBodyJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
+	parser.add_argument("--threeBodyJupiter1000",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 1000 times its mass")
+	parser.add_argument("--threeBodyMovingSun", action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter")
+	parser.add_argument("--threeBodyMovingSunJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
+	parser.add_argument("--threeBodyMovingSunJupiter1000",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 1000 times its mass")
+	parser.add_argument("--solarSystem", action='store_true', default=False, help="simulate all 8(9) planets and the sun")
+	parser.add_argument("--solarSystemMovingSun", action='store_true', default=False, help="simulate all 8(9) planets and with a moving sun")
+	parser.add_argument("--terminalVelocity", action='store_true', default=False, help="investigate earth's escape velocity")
+	parser.add_argument("--terminalVelocityAltPlanet", action='store_true', default=False, help="investigate earth's escape velocity with different gravitational force")
+	
+	args = parser.parse_args()
+	if args.twoBody:
+		sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='VelocityVerlet')
+	elif args.twoBodyFEuler:
+		sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='ForwardEuler')
+	elif args.threeBody:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodies", movie=False)
+	elif args.threeBodyJupiter10:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodiesJupiterTimes10", movie=False)
+	elif args.threeBodyJupiter1000:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodiesJupiterTimes1000", movie=False)
+	elif args.threeBodyMovingSun:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesMovingSun", movie=False)
+	elif args.threeBodyMovingSunJupiter10:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesJupiterMassTimes10MovingSun", movie=False)
+	elif args.threeBodyMovingSunJupiter1000:
+		multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun", movie=False)
+	elif args.solarSystem:
+		multiBodies = multiBodyStationarySun(threePlanets = False,MovingSun=False, scenario = "solarSystem", movie=False)
+	elif args.solarSystemMovingSun:
+		multiBodies = multiBodyStationarySun(threePlanets = False,MovingSun=True, scenario = "solarSystemMovingSun", movie=False)
+	elif args.terminalVelocity:
+		sunearthTerminalVelocity = sunEarthTerminalVelocity()
+	elif args.terminalVelocityAltPlanet:
+		sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
+	
+	
+
 

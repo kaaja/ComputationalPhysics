@@ -172,7 +172,6 @@ void Solver::changeToCenterOfMassSystem()
     }
     setSunVelocity();
     centerOfMassSystem = true;
-
 }
 
 void Solver::setSunVelocity()
