@@ -11,10 +11,18 @@ class Solver
 private:
     Planet* planet;
     vector<Planet*> planets;
+    vector<double> accelerationsX;
+    vector<double> accelerationsY;
+    vector<double> acc;
     int N;
     int numberOfPlanets = 0;
-    double step, time, x, y, vx, vy, r, pi, FourPi2, finalTime, mass, potentialEnergy, kineticEnergy, angularMomentum, forceX, forceY, accelerationX, accelerationY, accelerationXOld, accelerationYOld, timeUsed;
-    string filename, centerOfMassSystem;
+    double step, time, x, y, vx, vy, r, finalTime, timeUsed;
+    double accelerationX = 0.0;
+    double accelerationY =0.0;
+    double accelerationXOld=0.0;
+    double accelerationYOld = 0.0;
+    string filename;
+    bool centerOfMassSystem;
     clock_t start, finish;
 
     double getCenterOfMassX();
@@ -24,7 +32,7 @@ private:
 
 public:
     Solver();
-    Solver(int N_, double T_, string filename_);
+    Solver(int N_, double T_);
 
     ~Solver() {} // Destructor
     void addPlanet(Planet &planet_);

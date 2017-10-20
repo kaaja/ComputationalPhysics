@@ -65,32 +65,29 @@ double Planet:: getAngularMomentum()
     double velocity = sqrt(xVelocity*xVelocity + yVelocity*yVelocity);
     return getRPosition()*mass*velocity;
 }
-void Planet:: getAcceleration(vector<Planet*> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_)
-{
+vector<double> Planet:: getAcceleration(vector<Planet*> planets_, int numberOfPlanets_)
+{    
+    vector<double> accelerations;
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    *accelerationX_ = 0.;
-    *accelerationY_ = 0.;
+    double accelerationX_ = 0.;
+    double accelerationY_ = 0.;
     int start  = 0;
 
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber]->getMass() != mass){
             rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check * infront of planets_!
-            *accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3);
-            *accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,3);
+            accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3);
+            accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,3);
         }
     }
+    accelerations.push_back(accelerationX_);
+    accelerations.push_back(accelerationY_);
+    return accelerations;
 }
 
-void Planet:: getAlternativeForce(double mass_, double x_, double y_, double r_, double *forceX_, double *forceY_, double beta_)
-{
-    double pi = acos(-1.0);
-    double FourPi2 = 4.*pi*pi;
-    *forceX_ = -FourPi2*x_ *mass/(pow(r_,beta_));
-    *forceY_ = -FourPi2*y_*mass/(pow(r_,beta_));
-}
 void Planet:: setStep(double step_){step = step_;}
 void Planet:: setXposition(double x_){ xPosition = x_;}
 void Planet:: setYposition(double y_){yPosition = y_;}

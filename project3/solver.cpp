@@ -4,12 +4,12 @@
 //ofstream ofile;
 
 Solver:: Solver() { N = finalTime = 0; filename = "";}
-Solver:: Solver(int N_, double finalTime_, string filename_)
+Solver:: Solver(int N_, double finalTime_)
 {
     N = N_, finalTime = finalTime_;
     step = finalTime/double(N);
     time = 0.0;
-    centerOfMassSystem = "False";
+    centerOfMassSystem = false;
 
 }
 
@@ -21,75 +21,91 @@ void Solver:: addPlanet(Planet &planet_)
     planet->setStep(step);
 }
 
-/*
+
 void Solver:: forwardEuler()
 {
-    x = planet.getXPosition();
-    y = planet.getYPosition();
-    vx = planet.getXVelocity();
-    vy = planet.getYVelocity();
-    mass = planet.getMass();
-    r = sqrt(x*x + y*y); //r = planet.getDistance()//
-    pi = acos(-1.0);
-    FourPi2 = 4.*pi*pi;
-    //potentialEnergy = planet.getPotentialEnergy(r, mass);
-    //kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
-    //angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-    //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
+    int iterationStart = 1;
 
+    if (centerOfMassSystem)
+    {
+        iterationStart = 0;
+    }
     start = clock();
     while (time < finalTime){
-        x += step*vx;
-        y += step*vy;
-        vx -= step*FourPi2*x/(r*r*r);
-        vy -= step*FourPi2*y/(r*r*r);
-        r = sqrt(x*x + y*y);
-        //potentialEnergy = planet.getPotentialEnergy(r, mass);
-        //kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
-        //angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
+        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
+        {
+            if (time==0.0)
+                planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
+
+            x = planets[planetNumber]->getXPosition();
+            y = planets[planetNumber]->getYPosition();
+            vx = planets[planetNumber]->getXVelocity();
+            vy = planets[planetNumber]->getYVelocity();
+
+
+            x += step*vx;
+            y += step*vy;
+
+            planets[planetNumber]->setXposition(x);
+            planets[planetNumber]->setYposition(y);
+
+            accelerationX = planets[planetNumber]->getAcceleration(planets, numberOfPlanets)[0];
+            accelerationY = planets[planetNumber]->getAcceleration(planets, numberOfPlanets)[1];
+
+            vx += step*accelerationX;
+            vy += step*accelerationY;
+
+            planets[planetNumber]->setXVelociy(vx);
+            planets[planetNumber]->setYVelociy(vy);
+
+            planets[planetNumber]->setTime(time+step);
+            planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
+        }
+        accelerationX = 0.0;
+        accelerationY = 0.0;
         time += step;
-        //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
     }
     finish = clock();
     timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
-    //writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
-
-    //ofile.close();
+    for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
+        planets[planetNumber]->writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
 }
-*/
 
 void Solver:: velocityVerlet()
 {
-    pi = acos(-1.0);
-    FourPi2 = 4.*pi*pi;
-
     start = clock();
 
     int iterationStart = 1;
 
-    if (centerOfMassSystem == "True")
+    if (centerOfMassSystem)
     {
         iterationStart = 0;
     }
-
-
     while (time < finalTime){
+        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
+        {
+            acc = planets[planetNumber]->getAcceleration(planets, numberOfPlanets);
+            if(iterationStart==1){
+                accelerationsX.push_back(0.0);
+                accelerationsY.push_back(0.0);
+            }
+            accelerationsX.push_back(acc[0]);
+            accelerationsY.push_back(acc[1]);
+            acc.clear();
+        }
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         {
             x = planets[planetNumber]->getXPosition();
             y = planets[planetNumber]->getYPosition();
             vx = planets[planetNumber]->getXVelocity();
             vy = planets[planetNumber]->getYVelocity();
-            mass = planets[planetNumber]->getMass();
 
             if (time==0.0){
                 planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
             }
-            planets[planetNumber]->getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
 
-            accelerationXOld = accelerationX;
-            accelerationYOld = accelerationY;
+            accelerationXOld = accelerationsX[planetNumber];
+            accelerationYOld = accelerationsY[planetNumber];
 
             x +=  step*vx + step*step/2.0* accelerationXOld;
             y +=  step*vy + step*step/2.0* accelerationYOld;
@@ -97,7 +113,8 @@ void Solver:: velocityVerlet()
             planets[planetNumber]->setXposition(x);
             planets[planetNumber]->setYposition(y);
 
-            planets[planetNumber]->getAcceleration(planets, &accelerationX, &accelerationY, numberOfPlanets);
+            accelerationX = planets[planetNumber]->getAcceleration(planets, numberOfPlanets)[0];
+            accelerationY = planets[planetNumber]->getAcceleration(planets, numberOfPlanets)[1];
 
             vx +=  step/2.0*(accelerationXOld + accelerationX);
             vy +=  step/2.0*(accelerationYOld + accelerationY);
@@ -108,6 +125,8 @@ void Solver:: velocityVerlet()
             planets[planetNumber]->setTime(time+step);
             planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
         }
+        accelerationsX.clear();
+        accelerationsY.clear();
         time += step;
     }
     finish = clock();
@@ -115,53 +134,6 @@ void Solver:: velocityVerlet()
     for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         planets[planetNumber]->writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
 }
-
-/*
-void Solver:: alternativeForceVelocityVerlet(double beta_)
-{
-
-    pi = acos(-1.0);
-    FourPi2 = 4.*pi*pi;
-
-    x = planet.getXPosition();
-    y = planet.getYPosition();
-    vx = planet.getXVelocity();
-    vy = planet.getYVelocity();
-    mass = planet.getMass();
-    r = sqrt(x*x + y*y);
-    planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
-    //planet.getAcceleration(mass, &accelerationX, &accelerationY, forceX, forceY);
-
-    //potentialEnergy = planet.getPotentialEnergy(r, mass);
-    //kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
-    //angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-    //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-
-    start = clock();
-    while (time < finalTime){
-        accelerationXOld = accelerationX;
-        accelerationYOld = accelerationY;
-        x +=  step*vx + step*step/2.0* accelerationXOld;
-        y +=  step*vy + step*step/2.0* accelerationYOld;
-        r = sqrt(x*x + y*y);
-        planet.getAlternativeForce(mass, x, y, r, &forceX, &forceY, beta_);
-        //planet.getAcceleration2(mass, &accelerationX, &accelerationY, forceX, forceY);
-        vx +=  step/2.0*(accelerationXOld + accelerationX);
-        vy +=  step/2.0*(accelerationYOld + accelerationY);
-        //potentialEnergy = planet.getPotentialEnergy(r, mass);
-        //kineticEnergy   = planet.getKineticEnergy(mass, vx, vy);
-        //angularMomentum = planet.getAngularMomentum(r, mass, vx, vy);
-        time += step;
-        //writeTofile(time, x, y, vx/pi, vy/pi, potentialEnergy, kineticEnergy, angularMomentum, NAN, r);
-    }
-    finish = clock();
-    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    //writeTofile(NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, timeUsed);
-    //writeTofile(0, 0, 0, 0, 0, 0, 0, 0, timeUsed, 0);
-
-    //ofile.close();
-}
-*/
 
 double Solver:: getCenterOfMassX()
 {
@@ -199,7 +171,7 @@ void Solver::changeToCenterOfMassSystem()
         planets[planetNumber]->setYposition(yPosition - centerOfMassY);
     }
     setSunVelocity();
-    centerOfMassSystem = "True";
+    centerOfMassSystem = true;
 
 }
 

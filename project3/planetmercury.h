@@ -13,7 +13,7 @@ public:
                   double yVelocity_,
                   string filename_,
                   string planetName_);
-    virtual void getAcceleration( vector<Planet*> planets_, double *accelerationX_, double *accelerationY_, int numberOfPlanets_) override;
+    virtual vector<double> getAcceleration( vector<Planet*> planets_, int numberOfPlanets_) override;
     virtual void writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_) override;
 
 
