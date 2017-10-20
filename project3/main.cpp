@@ -159,8 +159,12 @@ int main(int argc, char* argv[])
 
         solution.changeToCenterOfMassSystem();
     }
-
     else if (scenario == "solarSystem")
+    {
+        makeSolarSystem(outfileName, solution);
+    }
+
+    else if (scenario == "solarSystemMovingSun")
     {
         makeSolarSystem(outfileName, solution);
         solution.changeToCenterOfMassSystem();

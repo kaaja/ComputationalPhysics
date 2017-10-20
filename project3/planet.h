@@ -20,10 +20,7 @@ protected:
     double yPosition = 0.0;
     double xVelocity = 0.0;
     double yVelocity = 0.0;
-    double accelerationX_ = 0.0;
-    double accelerationY_ = 0.0;
     double time, step, radialDistance;
-    vector<double> accelerations;
     string filename, planetName;
 
 public:
