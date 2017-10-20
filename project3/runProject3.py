@@ -405,8 +405,9 @@ def multiBodyStationarySun(threePlanets, threeBodiesMovingSun,scenario,movie):
                         
             # Perillion precession
             if scenario == 'mercury':
-                rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)
-                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)
+                relevantTime= np.where(np.abs(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time.values- 99.75) < 1E-6)
+                #rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
+                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
                 xPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x.values[indexRPerrilion]
                 yPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y.values[indexRPerrilion]
                 theta = np.arctan(yPerrilion/xPerrilion)
