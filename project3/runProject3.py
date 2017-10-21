@@ -295,37 +295,34 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie, finalTimes, dts):
+def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario,movie, finalTimes, dts):
     """
 
     """
 
-    if threePlanets:
+    if not threePlanetsMovingSun and not solarSystemMovingSun:
         planets = ['Earth', 'Jupiter']
     
-    elif scenario == 'threeBodiesMovingSun':
+    elif threePlanetsMovingSun:
         planets = ['Sun','Earth', 'Jupiter']
         
-    elif scenario == 'solarSystem':
-        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+    elif not solarSystemMovingSun:
+        planets = [ 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
     
-    elif scenario == 'solarSystemMovingSun':
+    elif solarSystemMovingSun:
         planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+        if scenario == 'solarSystemMovingSunInnerPlanets':
+            planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
+            scenario = 'solarSystemMovingSun'
     
     elif scenario == 'mercury':
         planets = ['Mercury']
-
+    
+    print planets
     initialVy = 2*np.pi
     beta = 3.0
     outfileName = scenario
     solverType = 'VelocityVerlet'
-    
-    '''
-    finalTimes = [10**i for i in xrange(1,4)]
-    #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(3, 4)]
-    '''
-
     multiBodies      = OrderedDict()
     for finalTime in finalTimes:
         multiBodies['FinalTime %f' %finalTime] = {}
@@ -359,8 +356,8 @@ def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie, finalTimes, d
             
             # Movie
             if movie:
-                if finalTime == 100 and dt == 0.001:
-                    saveInterval = 200
+                if finalTime == 10 and dt == 0.001:
+                    saveInterval = 20
                     numberOfObservations = len(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time[:-1]) 
                     numberOfPlots = int(round(numberOfObservations/saveInterval))
                     fig2, ax2 = plt.subplots()
@@ -369,8 +366,8 @@ def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie, finalTimes, d
                     ax2.set_xlabel('x [Au]')
                     ax2.set_ylabel('y [Au]')
                     plt.axis('equal')
-                    ax2.set_xlim(-2., 2.)
-                    ax2.set_ylim(-2., 2.)
+                    ax2.set_xlim(-100., 100.)
+                    ax2.set_ylim(-100., 100.)
     
                     colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
                     #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
@@ -390,7 +387,7 @@ def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie, finalTimes, d
                     plt.close()
                     
                     # Make video file
-                    fps = 4  # frames per second
+                    fps = 8  # frames per second
                     codec2ext = dict(libx264='mp4')  # video formats
                     filespec = 'movie/tmp_%04d' + outfileName + solverType + 'T' + str(finalTime).replace(".", "") + 'dt' + str(dt).replace(".", "") + '.png'
                     movie_program = 'ffmpeg'  # or 'avconv'
@@ -440,13 +437,14 @@ if __name__ == "__main__":
     parser.add_argument("--twoBodyVelocityVerlet", action='store_true', default=False, help="simulate two body case, Sun and Earth with velocity verlet")
     parser.add_argument("--twoBodyFEuler", action='store_true', default=False, help="simulate two body case, Sun and Earth with forward Euler")
     parser.add_argument("--threeBodyFixedSun", action='store_true', default=False, help="simulate three body case, Sun (Fixed), Earth and Jupiter")
-    parser.add_argument("--threeBodyJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
-    parser.add_argument("--threeBodyJupiter1000",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 1000 times its mass")
+    parser.add_argument("--threeBodyFixedSunJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
+    parser.add_argument("--threeBodyFixedSunJupiter1000",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 1000 times its mass")
     parser.add_argument("--threeBodyMovingSun", action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter")
     parser.add_argument("--threeBodyMovingSunJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
     parser.add_argument("--threeBodyMovingSunJupiter1000",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 1000 times its mass")
     parser.add_argument("--solarSystemFixedSun", action='store_true', default=False, help="simulate all 8(9) planets and the sun")
     parser.add_argument("--solarSystemMovingSun", action='store_true', default=False, help="simulate all 8(9) planets and with a moving sun")
+    parser.add_argument("--solarSystemMovingSunInnerPlanets", action='store_true', default=False, help="simulate all 8(9) planets and with a moving sun, plot inner planets")
     parser.add_argument("--terminalVelocity", action='store_true', default=False, help="investigate earth's escape velocity")
     parser.add_argument("--terminalVelocityAlternativeForce", action='store_true', default=False, help="investigate earth's escape velocity with different gravitational force")
     
@@ -455,30 +453,46 @@ if __name__ == "__main__":
         sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='VelocityVerlet')
     elif args.twoBodyFEuler:
         sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='ForwardEuler')
+    
     elif args.threeBodyFixedSun:
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodies", movie=False, finalTimes = finalTimes , dts = dts)
-    elif args.threeBodyJupiter10:
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodiesJupiterTimes10", movie=False)
-    elif args.threeBodyJupiter1000:
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=False, scenario = "threeBodiesJupiterTimes1000", movie=False)
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False, solarSystemMovingSun = False, scenario = "threeBodies", movie=False, finalTimes = finalTimes , dts = dts)
+    elif args.threeBodyFixedSunJupiter10:
+        finalTimes = [10**i for i in xrange(1,4)]
+        dts = [10.**(-i) for i in xrange(3, 4)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False, solarSystemMovingSun = False, scenario = "threeBodiesJupiterTimes10", movie=False, finalTimes = finalTimes , dts = dts)
+    elif args.threeBodyFixedSunJupiter1000:
+        finalTimes = [10**i for i in xrange(1,4)]
+        dts = [10.**(-i) for i in xrange(3, 4)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False, solarSystemMovingSun = False, scenario = "threeBodiesJupiterTimes1000", movie=True, finalTimes = finalTimes , dts = dts)
+    
     elif args.threeBodyMovingSun:
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = True, solarSystemMovingSun = False, scenario = "threeBodiesMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
     elif args.threeBodyMovingSunJupiter10:
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesJupiterMassTimes10MovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        finalTimes = [10**i for i in xrange(1,4)]
+        dts = [10.**(-i) for i in xrange(3, 4)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = True, solarSystemMovingSun = False, scenario = "threeBodiesJupiterMassTimes10MovingSun", movie=False, finalTimes = finalTimes, dts = dts)
     elif args.threeBodyMovingSunJupiter1000:
-        multiBodies = multiBodyStationarySun(threePlanets = True, MovingSun=True, scenario = "threeBodiesJupiterMassTimes1000MovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        finalTimes = [10**i for i in xrange(1,4)]
+        dts = [10.**(-i) for i in xrange(3, 4)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = True, solarSystemMovingSun = False, scenario = "threeBodiesJupiterMassTimes1000MovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+    
     elif args.solarSystemFixedSun:
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
-        multiBodies = multiBodyStationarySun(threePlanets = False,MovingSun=False, scenario = "solarSystem", movie=False, finalTimes = finalTimes, dts = dts)
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "solarSystem", movie=False, finalTimes = finalTimes, dts = dts)
     elif args.solarSystemMovingSun:
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
-        multiBodies = multiBodyStationarySun(threePlanets = False,MovingSun=True, scenario = "solarSystemMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = True, scenario = "solarSystemMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+    elif args.solarSystemMovingSunInnerPlanets:
+        finalTimes = [10**i for i in xrange(1,4)]
+        dts = [10.**(-i) for i in xrange(3, 4)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = True, scenario = "solarSystemMovingSunInnerPlanets", movie=False, finalTimes = finalTimes, dts = dts)
+    
     elif args.terminalVelocity:
         sunearthTerminalVelocity = sunEarthTerminalVelocity()
     elif args.terminalVelocityAlternativeForce:

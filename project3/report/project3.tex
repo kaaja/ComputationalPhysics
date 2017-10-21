@@ -473,16 +473,9 @@ The below figures show escapce velocities for the three different gravitational 
 
 The figures above show that the escape velocities are lowered when the gravitational forces are lowered. DO: Check agains thoretical expression. We see from the right most figure that the escape velocity is the same as the exact. DO: check the previous claim.
 
-\subsection{Three planets}
+\subsection{Center of mass system}
 Above we have seen that the solvers correspond well with expected behavoiur: Forward Euler does not preserve energy, while Velocity Verlet does, and basic exact results for escapce velocities, energy and angular momentum is well approximated. However, the above was only tested on a two-object system. To check whether the solver works for multibody systems, with more than two objects, a third planet, Jupiter, is added.\\
 
-The figure below shows the orbits of the three body-system.
-
-DO: Create and insert figures for 3 body non-moving sun here.\\
-
-The figures above shows that the solver produces reasonable results for the three body system also. As for two bodies, the largest $\delta t$'s give bad approximations, while the smaller $\Delta t$'s give good approximations. DO: check the previous claim.\\
-
-\subsection{Center of mass system}
 All the above simulations were based on the assumption that the sun was stationary. This is not the case in reality. To make the  solver more realistic, we now introduce movement in the sun by letting the sun be modelled just as the other planets, gravity affecting also the sun's movement. \\
 
 To make the plots easy to interpret, we make sure that the center of mass of the system is stationary. This we do by adjusting the initial velocity of the sun, utilizing the fact that the angular momentum of the system is preserved
@@ -497,26 +490,99 @@ To make the plots easy to interpret, we make sure that the center of mass of the
 	\end{align}
 \end{subequations}
 
-The below figure shows the results with a moveing sun.\\
+The below figure shows the results for the three-body systems mentioned above, with fixed and with moving sun, for three different masses of Jupiter.
 
-DO: Insert figure with moving sun and normal Jupiter mass here.\\
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesVelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Fixed sun. Normal Jupiter mass. \\ \textit{Stable orbits}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesJupiterTimes10VelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Fixed sun. Jupiter mass times 10. \\ \textit{Little effect on orbits}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesJupiterTimes1000VelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Fixed sun.  Jupiter mass times 1000. \\ \textit{Earth escapes.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
-The figure above shows that the result of including movement in the sun is small. DO: Check the previous claim. To see how the program deals with a moving sun, we increase the mass of Jupiter. This should increase the movement of the sun, and make the results in the moving sun case different from the results in the stationary sun case. The results are shown in the figures below.\\
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesMovingSunVelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Moving sun. Normal Jupiter mass. \\ \textit{Stable orbits, as for fixed sun scenario.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesJupiterMassTimes10MovingSunVelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Moving sun. Jupiter mass times 10. \\ \textit{Some movement in Sun, but still very similar too fixed Sun scenario.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.3\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesJupiterMassTimes1000MovingSunVelocityVerletT1000dt0001.png}
+		\caption{3 bodies. Moving sun.  Jupiter mass times 1000. \\ \textit{Large movement in the Sun. Earth escapes.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
-DO: Insert figures with increased mass of Jupiter, both for moving and non-moving sun.\\
 
-The figures above show that when Jupiter's mass in increased, there is a signifiacant effect of introducing movement in the sun. The last figure also clearly shows that the center of mass remains fixed.
+
+The first rows in the figures above shows that the solver works for 3 body systems, and that the Earth escapes in the case where Jupiter's mass equals the Sun' mass.\\
+
+The 2nd row in the figures above shows the solutions for different masses of Jupiter in the case where the Sun is moving. We see that the solution for the two lowest masses of Jupiter resembles the fixed sun scenarios on the 1st row. For the case where the mass of Jupiter equals the mass of Sun, however, the solution is quite different in the case with moving sun compared to a fixed Sun. The earth still escapes, but now the Sun moves a lot, which is natural given Jupiter's mass equals the Sun's mass. \\
+
+The movies below show that the center of mass is fixed in the moving sun system. To run the movies, simply write "animate threeBodiesMovingSunJupiter1000.mp4" for the moving Sun case, and "animate threeBodiesFixedSunJupiter1000.mp4" for the fixed Sun case.
+
+
 
 
 \subsection{Solar system}
 The solver producing reasonable results for the three-body system, we are now ready to simulate the full solar system. Since we are using classes, going from three objects to ten objects constitutes nearly no work at all! We read in all planets from file in a loop, and use the same method as earlier for adding planets. That is all. The below figures displays the results for the full solar system, with a moving sun. \\
 
-DO: Insert figure with solar system solutions here.\\
 
-The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. 
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/solarSystemMovingSunVelocityVerletT1000dt0001.png}
+		\caption{Solar System. Moving sun.All planets 1000 years  \\ \textit{Orbits looks reasonable}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/solarSystemMovingSunVelocityVerletT100dt0001.png}
+		\caption{Solar System. Moving sun. Inner most planets. 100 years  \\ \textit{Extreme perihelion precession for Mercury}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
+
+The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnaturally large perihelion precession for Mercury around the Sun over a century. Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century.
 
 \subsection{Perihelion precession}
-Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. Perihelion is the closest point between a planet and sun during one rotation. Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
+Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. P Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
 
 We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. Then we correct the acceleration function by overrideing it in the new class. We use only two objects for this simulation ,the sun and Mercury. Since the sun's mass is so much larger than the mass of Mercury, we solve this problem with a stationary sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble, so haivng a stationary sun in this scenario should not affect the results significantly. \\
 
