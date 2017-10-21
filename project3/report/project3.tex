@@ -263,23 +263,11 @@ The next two sets of figures shows the orbits for different $\Delta t$ for the t
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N100000ForwardEuler.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000ForwardEuler.png}
 		\caption{Sun-Earth system. Forward Euler. 1 000 years \\ \textit{Non-circulat orbits when time step is large.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N100000000ForwardEuler.png}
-		\caption{Sun-Earth system. Forward Euler. 1 000 years. \\ \textit{For $\Delta t = 0.0001$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
-		\label{1}
-	\end{figure}
-\end{minipage}\hfill
-\vspace{2ex}
-
-
-
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -288,11 +276,21 @@ The next two sets of figures shows the orbits for different $\Delta t$ for the t
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
+\vspace{2ex}
+
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N100000000VelocityVerlet.png}
-		\caption{Sun-Earth system. Velocity Verlet. 1 000 years. \\ \textit{Compare to Forward Euler}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000000ForwardEuler.png}
+		\caption{Sun-Earth system. Forward Euler. 1 000 years. \\ \textit{For $\Delta t = 0.0001$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.49\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000000VelocityVerlet.png}
+		\caption{Sun-Earth system. Velocity Verlet. 1 000 years. \\ \textit{The solution looks similar to Forward Euler.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -433,40 +431,14 @@ Based on the above equation, we expect the simulations to gove escape then $v > 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityradialDistanceVelocityVerlet.png}
-	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{$v = 2\sqrt{2}\pi$ is an ustable equilibrium.}}
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityradialDistanceVelocityVerlet.png}
+	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{Escape for velocity equal to $0.1 \%$ of  $v = 2\sqrt{2}\pi$.}}
 	\label{1}
 \end{figure}
 
 
 
-\begin{minipage}{.33\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityinitialVelocityY1piVelocityVerlet.png}
-		\caption{Sun-Earth system. Escape valocity. Orbits. \\ \textit{No escape for $v < 2/sqrt{2} \pi$}}
-		\label{1}
-	\end{figure}
-\end{minipage}\hfill
-\begin{minipage}{.33\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityinitialVelocityY2piVelocityVerlet.png}
-		\caption{Sun-Earth system. Escape valocity. Orbits. \\ \textit{No escape for $v = 2/sqrt{2} \pi$}}
-		\label{1}
-	\end{figure}
-\end{minipage}\hfill
-\begin{minipage}{.33\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityinitialVelocityY3piVelocityVerlet.png}
-		\caption{Sun-Earth system. Escape valocity. Orbits. \\ \textit{Escape for $v < 2/sqrt{2} \pi$}}
-		\label{1}
-	\end{figure}
-\end{minipage}\hfill
-\vspace{2ex}
-
-The figures above show that the simulated escape velocity is very close to the exact terminal velcocity, $2 \pi \sqrt{2}$, supporting the previous results indicating the validity of our solver as a good approximation method.\\
+The figure above show that the simulated escape velocity is very close to the exact terminal velcocity, $2 \pi \sqrt{2}$, supporting the previous results indicating the validity of our solver as a good approximation method.\\
 
 Another test, to see if the numerical solutions corresponds to analytical solutions, is to simulate the two planet system with different gravitational forces. DO: Write down a more general formula for the kinetic energy based on the revised forces.\\
 
@@ -476,7 +448,7 @@ The below figures show escapce velocities for the three different gravitational 
 \begin{minipage}{.3\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceAlternativeForcebeta35.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceVelocityVerletbeta35.png}
 		\caption{Sun-Earth system. Alternative force. Escape valocity. $\beta = 2.5$ \\ \textit{Escape velocity is reduced compared to case with normal gravititation.}}
 		\label{1}
 	\end{figure}
@@ -484,7 +456,7 @@ The below figures show escapce velocities for the three different gravitational 
 \begin{minipage}{.3\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceAlternativeForcebeta39.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceVelocityVerletbeta39.png}
 		\caption{Sun-Earth system. Alternative force. Escape valocity. $\beta = 2.9$ \\ \textit{The escape velocity is further reduced, and seems to be closer to $2  \pi$}}
 		\label{1}
 	\end{figure}
@@ -492,7 +464,7 @@ The below figures show escapce velocities for the three different gravitational 
 \begin{minipage}{.3\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceAlternativeForcebeta40.png}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthradialDistanceVelocityVerletbeta40.png}
 		\caption{Sun-Earth system. Alternative force. Escape valocity. $\beta = 3.0$ \\ \textit{We get escape at $v = 2\pi$.}}
 		\label{1}
 	\end{figure}

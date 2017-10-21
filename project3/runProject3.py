@@ -37,11 +37,10 @@ def sunEarth(solverType):
     beta = 3.0
     outfileName = 'sunEarth'
     
-    finalTimes = [10**i for i in xrange(0,3)]
+    finalTimes = [10**i for i in xrange(0,4)]
     #Ns = [10**i for i in xrange(3,8)]   
-    dts = [10.**(-i) for i in xrange(1, 4)]
+    dts = [10.**(-i) for i in xrange(1, 5)]
     
-    Ns = np.asarray(finalTimes)/np.asarray(dts)
     
     
     # Plots. Positions vs time
@@ -51,7 +50,7 @@ def sunEarth(solverType):
     ax[1].set_xlabel('t [Au]')
     ax[0].set_ylabel('x [Au]')
     ax[1].set_ylabel('y [Au]')
-    #plt.ylim(-1.1, 1.1)    
+    plt.ylim(-2., 2.)    
     legends = []
     
     # Energy plots
@@ -59,8 +58,8 @@ def sunEarth(solverType):
     fig2.hold('on')
     ax2.set_title(outfileName + ' ' + solverType + 'Energy')
     ax2.set_xlabel('t [Au]')
-    ax2.set_ylabel('E ')
-    #ax2.set_ylim(0.7, 1.05)    
+    ax2.set_ylabel(r"$(E/E_0 - 1)*100 $")
+    ax2.set_ylim(-50., 30.)    
     
 
     
@@ -69,8 +68,8 @@ def sunEarth(solverType):
     fig3.hold('on')
     ax3.set_title(outfileName + ' ' + solverType + 'Angular momentum')
     ax3.set_xlabel('t [Au]')
-    ax3.set_ylabel('Angular momentum ')
-    #ax3.set_ylim(0.99, 1.05)    
+    ax3.set_ylabel(r"$(L/L_0 - 1)*100 $")
+    ax3.set_ylim(-5., 20.)    
     
     # supNorm ENergy plots
     fig4, ax4 = plt.subplots()
@@ -108,8 +107,11 @@ def sunEarth(solverType):
             			            delimiter=',')
             plotSunEarth(sunEarth['FinalTime %f' %finalTime]['N %f' %N], outfileName2, solverType, N, finalTime)
             if finalTime == finalTimes[1]:
-                ax2.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], (sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[:-1] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[:-1])/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[0] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[0]))
-                ax3.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], (sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[:-1] )/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[0]))
+                energyChange = ((sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[:-1] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[:-1])/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].kineticEnergy[0] + sunEarth['FinalTime %f' %finalTime]['N %f' %N].potentialEnergy[0])-1)*100
+                ax2.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], energyChange)
+                
+                angularMomentumChange = ((sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[:-1] )/(sunEarth['FinalTime %f' %finalTime]['N %f' %N].angularMomentum[0]) -1)*100
+                ax3.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], angularMomentumChange)
                 ax[0].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], sunEarth['FinalTime %f' %finalTime]['N %f' %N].x[:-1])
                 ax[1].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], sunEarth['FinalTime %f' %finalTime]['N %f' %N].y[:-1])
                 #fig.savefig('results/' + outfileName + 'times.png') 
@@ -141,6 +143,7 @@ def sunEarth(solverType):
     ax5.loglog(dts, supNormAngularMomentum)
     fig5.savefig('results/'+ outfileName + 'supNormAngularMomentum' + solverType + '.png')
     
+    Ns = finalTime/np.asarray(dts)
     ax6.loglog(Ns, timesUsed)
     fig6.savefig('results/'+ outfileName + 'logTimeUsed' + solverType + '.png')
     
@@ -162,8 +165,9 @@ def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime, setAxis=True):
     ax.set_xlabel('x [Au]')
     ax.set_ylabel('y [Au]')
     if setAxis:
-    	ax.set_xlim(-2., 2.)
-    	ax.set_ylim(-2., 2.)
+        plt.axis('equal')
+        ax.set_xlim(-2., 2.)
+        ax.set_ylim(-2., 2.)
     fig.savefig('results/' + outfileName + solverType + '.png') 
     #plt.show()
     plt.close()
@@ -199,12 +203,13 @@ def sunEarthTerminalVelocity():
     beta = 2.0
     finalTime = 10.**3
     #Ns = [10**i for i in xrange(3,8)]
-    dt = 0.01
+    dt = 0.001
     N = finalTime/dt
     numberOfSimulations = 3
-    epsilon = 1.0E-4
-    start = 2.*np.sqrt(2)-epsilon # start value Vy, when Vy = start*2pi/128
-    initialVelocities = [(start*np.pi)*(1+epsilon)**i for i in xrange(3)]
+    terminalVelocity = 2.*np.sqrt(2)*np.pi
+    epsilon = 0.01*terminalVelocity
+    start = terminalVelocity-epsilon # start value Vy, when Vy = start*2pi/128
+    initialVelocities = [start+epsilon*i for i in xrange(numberOfSimulations)]
     
     # Plots. Positions vs time
     
@@ -217,6 +222,7 @@ def sunEarthTerminalVelocity():
     ax.set_ylabel('radial distance')
     legends = []
     
+    counter = -1
     for initialVelocityY in initialVelocities:
         outfileName2 = outfileName + 'initialVelocityY%spi' %str(initialVelocityY/np.pi).replace(".", "")
         print outfileName2 
@@ -225,9 +231,10 @@ def sunEarthTerminalVelocity():
             			            delimiter=',')
         plotSunEarth(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)], outfileName2, solverType, N, finalTime, setAxis=False)
         ax.plot(sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
-        legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
+        legends.append('initialVy $2 \sqrt{2} \pi ( 1 + 0.001(%d) )$' %counter)
+        counter += 1
     
-    ax.legend(legends, bbox_to_anchor=(1.1, 0.7), ncol=1)
+    ax.legend(legends, loc=0) #bbox_to_anchor=(1.1, 0.7), ncol=1
     #ax.set_xlim(-2., 2.)
     #ax.set_ylim(0.9, 1.1)
     fig.savefig('results/'+ outfileName + 'radialDistance' + solverType + '.png')
@@ -244,10 +251,10 @@ def sunEarthAlternativeGravitationalForce():
     scenario = 'alternativeForce'
     outfileName = 'sunEarth'
     solverType = 'VelocityVerlet'
-    betaValues = [4.0]#3.0,  3.5, 3.9, 
-    finalTime = 10.**4
+    betaValues = [3.5, 3.9,4.0]# 
+    finalTime = 10.**3
     #Ns = [10**i for i in xrange(3,8)]
-    dt = 0.01
+    dt = 0.001
     N = finalTime/dt
     numberOfSimulations = 5
     epsilon = np.pi/8
@@ -278,7 +285,7 @@ def sunEarthAlternativeGravitationalForce():
             ax.plot(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
             legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
         
-        ax.legend(legends, bbox_to_anchor=(1.1, 0.7), ncol=1)
+        ax.legend(legends, loc = 0) #bbox_to_anchor=(1.1, 0.7), ncol=1
         #ax.set_xlim(-2., 2.)
         #ax.set_ylim(0.9, 1.1)
         fig.savefig('results/'+ outfileName + 'radialDistance' + solverType + 'beta' + str(beta).replace(".", "")+'.png')
@@ -288,7 +295,7 @@ def sunEarthAlternativeGravitationalForce():
 
 #%% Multibody, sun stationar     
 
-def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie):
+def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie, finalTimes, dts):
     """
 
     """
@@ -313,11 +320,11 @@ def multiBodyStationarySun(threePlanets, MovingSun,scenario,movie):
     outfileName = scenario
     solverType = 'VelocityVerlet'
     
+    '''
     finalTimes = [10**i for i in xrange(1,4)]
     #Ns = [10**i for i in xrange(3,8)]   
     dts = [10.**(-i) for i in xrange(3, 4)]
-    
-    Ns = np.asarray(finalTimes)/np.asarray(dts)
+    '''
     
     multiBodies      = OrderedDict()
     for finalTime in finalTimes:
@@ -430,7 +437,7 @@ if __name__ == "__main__":
     
 	parser = argparse.ArgumentParser(description="starts a c++ program simulating the solarSystem, reads and  plots. \n Choose from several scenarios")
 
-	parser.add_argument("--twoBody", action='store_true', default=False, help="simulate two body case, Sun and Earth with velocity verlet")
+	parser.add_argument("--twoBodyVelocityVerlet", action='store_true', default=False, help="simulate two body case, Sun and Earth with velocity verlet")
 	parser.add_argument("--twoBodyFEuler", action='store_true', default=False, help="simulate two body case, Sun and Earth with forward Euler")
 	parser.add_argument("--threeBody", action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter")
 	parser.add_argument("--threeBodyJupiter10",action='store_true', default=False, help="simulate three body case, Sun, Earth and Jupiter with 10 times its mass")
@@ -444,7 +451,7 @@ if __name__ == "__main__":
 	parser.add_argument("--terminalVelocityAltPlanet", action='store_true', default=False, help="investigate earth's escape velocity with different gravitational force")
 	
 	args = parser.parse_args()
-	if args.twoBody:
+	if args.twoBodyVelocityVerlet:
 		sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='VelocityVerlet')
 	elif args.twoBodyFEuler:
 		sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='ForwardEuler')
