@@ -61,8 +61,6 @@ int main(int argc, char* argv[])
         solution.addPlanet(*sun);
         solution.addPlanet(*earth);
         solution.addPlanet(*jupiter);
-
-        return 0;
     }
     else if (scenario == "threeBodiesJupiterTimes10")
     {
@@ -196,7 +194,7 @@ void initialize (string& outfileName, double& finalTime, int& N, string& solverT
 
 void makeSolarSystem(string outfileName, Solver &solution)
 {
-    string filename1 = "/home/peterek/Documents/skole/fys4150/project3/dataProject3";
+    string filename1 = "/home/karl/doc/subj/att/fys4150/project3/dataProject3";
     ifstream ifile(filename1);
     string planet; double mass; double x; double y; double vx; double vy; string planetName2;
     if (ifile.is_open()){

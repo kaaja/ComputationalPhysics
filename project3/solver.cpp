@@ -34,7 +34,7 @@ void Solver:: forwardEuler()
     while (time < finalTime){
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         {
-            if (time==0.0)
+            if (time==0.0 )
                 planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
 
             x = planets[planetNumber]->getXPosition();
@@ -85,7 +85,7 @@ void Solver:: velocityVerlet()
         for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
         {
             acc = planets[planetNumber]->getAcceleration(planets, numberOfPlanets);
-            if(iterationStart==1){
+            if(iterationStart==1 && planetNumber==iterationStart){
                 accelerationsX.push_back(0.0);
                 accelerationsY.push_back(0.0);
             }
