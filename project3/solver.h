@@ -13,7 +13,7 @@ private:
     vector<Planet*> planets;
     vector<double> accelerationsX;
     vector<double> accelerationsY;
-    vector<double> acc;
+    vector<double> acc, accXVec, accYVec, accXVecOld, accYVecOld;
     int N;
     int numberOfPlanets = 0;
     double step, time, x, y, vx, vy, r, finalTime, timeUsed;
@@ -38,7 +38,9 @@ public:
     void addPlanet(Planet &planet_);
 
     void forwardEuler();
+    void forwardEulerOld();
     void velocityVerlet();
+    void velocityVerletOld();
     void alternativeForceVelocityVerlet(double beta_);
 
     void changeToCenterOfMassSystem();

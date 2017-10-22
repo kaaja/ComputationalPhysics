@@ -478,10 +478,16 @@ if __name__ == "__main__":
     parser.add_argument("--perihelionMovingSun", action='store_true', default=False, help="find the perihelion precession of Mercury with moving Sun")
     
     args = parser.parse_args()
+    
     if args.twoBodyVelocityVerlet:
         sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='VelocityVerlet')
     elif args.twoBodyFEuler:
         sunearth, supNormValues, supNormAngularMomentum = sunEarth(solverType='ForwardEuler')
+        
+    elif args.terminalVelocity:
+        sunearthTerminalVelocity = sunEarthTerminalVelocity()
+    elif args.terminalVelocityAlternativeForce:
+        sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
     
     elif args.threeBodyFixedSun:
         finalTimes = [10**i for i in xrange(1,4)]
@@ -524,19 +530,16 @@ if __name__ == "__main__":
 
     elif args.perihelion:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(8, 9)]
+        dts = [10.**(-i) for i in xrange(7, 8)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
         
     elif args.perihelionMovingSun:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(8, 9)]
+        dts = [10.**(-i) for i in xrange(4, 5)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelionMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
 
     
-    elif args.terminalVelocity:
-        sunearthTerminalVelocity = sunEarthTerminalVelocity()
-    elif args.terminalVelocityAlternativeForce:
-        sunEarthAlternativeGravitationalForce = sunEarthAlternativeGravitationalForce()
+
     
     
 

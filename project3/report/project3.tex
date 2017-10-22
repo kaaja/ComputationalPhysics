@@ -108,7 +108,7 @@ The next section of the report describes the equations and shows the scaling of 
 
 \section{Theory}
 
-\subsection{Order reduction and differentiation methods}
+\subsection{Order reduction}
 Lets describe the general procedure for reducing a 2nd order ODE to a 1st order system of ODEs. Say we have an equation describing Newton's 2nd law:
 
 \begin{equation}
@@ -130,7 +130,8 @@ Now make the "substitutions" $\frac{d^2x}{dt^2} = v$ and $v = \frac{dx}{dt}$ to 
 
 In the above the 2nd order ODE is reduced to the system (\ref{eq:dxdt}) and (\ref{eq:dvdt}). Actually, this method can be used to reduce any higher order equation to a system of 1st order ODEs! The solar system is described with Newton's 2nd law, so the reduction of order for the ODEs for the solar system follows the same recepie as listed above.\\
 
-Now for the numerical methods, forward Euler and Velocity Verlet. Both these methods are derived from Taylor polynomials. The strength of these polynomials is that one has control over the order of the truncation error, the error one gets by truncating the Taylor series to get the wanted approximation. \\
+\subsection{Numerical schemes}
+Now for the numerical scehmes, forward Euler and Velocity Verlet. Both these methods are derived from Taylor polynomials. The strength of these polynomials is that one has control over the order of the truncation error, the error one gets by truncating the Taylor series to get the wanted approximation. \\
 
 For the forward Euler method, a Taylor expansion around the point $x + h$ is done for $x$ and $v$, and one obtain the discretized system
 
@@ -163,6 +164,66 @@ The velocity Verlet method is constructed in the same way as the forward Euler m
 \end{subequations}
 
 In the above one must update position before velocity, since we need the acceleration on the current and next step to get the velocity. Calcuating x first, we can insert this into the equation for a, and then we calculate v. We observe that the truncation error, and hence the also the global error, is one order higher compared to forward Euler. This method is unconditionally stable, meaning it is stable for all $\Delta t$. In addition, this method conserves energy.
+
+\subsubsection{Algorithm Velocity Verlet and FLOP count}
+
+The velocity Verlet method is implemented with the following algorithm
+
+\begin{lstlisting}
+for time in [0,...,T]:
+	1) Make acceleration vector
+	for planet in planets: 
+		accVec[planet] = F[planet]/mass[planet]
+					
+	2) Calculate position
+	for planet in planets: 
+		x += hv + h^2/2 accVec[planet]
+		
+	3) Update vector with old accelerations
+	accVecOld = accVec
+	
+	4) Calculate new acceleration
+	for planet in planets: 
+		accVec[planet] = F[planet]/mass[planet]
+		
+	5) Calculate velocity
+	for planet in planets:
+		v += v + h/2(accVecOld[planet] + accVec[planet]])			
+\end{lstlisting}
+
+Now we will count the FLOPS of the above algorithm, For reference, accelerations are calculated with the following formulae
+
+\begin{lstlisting}
+rPlanetDistance = getRadialDistance(*planets_[planetNumber]); 
+
+accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3);
+\end{lstlisting}
+
+From the above listing, we get that each acceleration calculation involves $1(+=) + 1(fourPi2+planets_) + 1(fourPi2+planets_/planets_[0]->getMass) + 1(fourPi2+planets_/planets_[0]->getMass*(xPosition - planets_)) + 1(xPosition - planets_)+ 3(.../r^3) = 8\; FLOPS$.\\
+
+With P denoting the number of planets, N denoting the number of time steps, and the use of the result above for FLOPS per acceleration calculation, the above algorithm gives the following FLOP count for the Velocity Verlet algorithm
+
+\begin{itemize}
+	\item  1) $P*(F)_{FLOPS} = P*8\; FLOPS$
+	
+	\item 2) $P*[1(+=) + 1(+hv) + 1(hv) +2(h^2) + 1(h^2/2) + 8 (F)] = 14 P \; FLOPS$
+	
+	\item 3) 0 FLOPS
+	
+	\item 4) Same as 1): $8P\; FLOPS$
+	
+	\item 5) $P[1(+=) + 1(h/2) + 1(accVecOld + accVec) + 1(h/2*(accVecOld + accVec)] = 4P\;FLOPS$
+	
+	\item SUM 1) - 5) = 34 P FLOPS
+	
+	\item TOTAL FLOPS = SUM*N = 34 P N FLOPS $\approx \mathcal{O}(N)\;FLOPS$
+\end{itemize}
+
+The above is not fully exact, as how one implements e.g. $4 \pi^2$ into the program affects the FLOP count. However, all necessary terms of the implemented algorithm should be included for the above count to give a correct order, which is $\mathcal{O}(N)\;FLOPS$. Also, in the program x and y are separated, so we get twice as many FLOPS as calculated above. Once again, this does not effect the order properties of the FLOPS, which will be analyzed.\\
+
+We will do an explicit FLOP count for Forward Euler, which is easier to count for. However, the method for counting FLOPS for Forward Euler is the same as the one applied above. From the lectures, we know that also forward Euler is $\mathcal{O}(N)$ when it comes to FLOPS, with only a few FLOPS less than Velocity Verlet.
+
+
 
 \subsection{The solar system equations}
 We describe the solar system by Newton's 2nd law assuming circular orbits and Newton's gravitational law, which for two objects are
@@ -232,9 +293,11 @@ where we see that the only difference between the two terms are the mass-factor,
 Before turning to the results, we give a short overview of our class implementation.
 
 \subsection{Class implementation}
-Insert a simple figure that contains boxes of the different classes and their inouts, and arrows between boxes.
+DO Insert a simple figure that contains boxes of the different classes and their inouts, and arrows between boxes.
 
 \subsection{Forward Euler versus Velocity Verlet}
+
+\subsubsection{Positions}
 The below figures show the results for the x and y-positions as functions of time, forward Euler to the left and Velocity Verlet to the right. 
 
 
@@ -296,8 +359,9 @@ The next two sets of figures shows the orbits for different $\Delta t$ for the t
 \end{minipage}\hfill
 \vspace{2ex}
 
-The 2 sets of figures above confirms what we found in the figures with x and y-position agains time: The precision is bettered when $\Delta t$ is lowered. \\
+The 2 sets of figures above confirms what we found in the figures with x and y-position agains time: The precision is bettered when $\Delta t$ is lowered. 
 
+\subsubsection{Energy and angular momentum}
 Next we analyze the evolution of energy in the numerical solutions. Since all forces in our systems are conservative, meaning that the work done by the forces is path independent, total mecahnical energy, the sum of kinetic and potential energy, should be preserved. Consearvation of energy is a crucial physical principle which we want to maintain in our numerical solutions. The below figures show the difference in total energy compared to the initial total energy, forward Euler to the left and Velocity Verlet to the right.
 
 
@@ -385,9 +449,10 @@ Since we know the exact solution for energy and angular momentum, or more precis
 
 The figures on the first row show that the energy norm error goes as 1st order for Forward Euler, while Velocity Verlet goes like 2nd order, so the Velocity Verlet method has twice the convergence rate of forward Euler, as expected.\\
 
-The figures on the 2nd row above show that also for the angular momentum norm, the order for Velocity Verlet is twice that of Forward Euler, as expected.\\
+The figures on the 2nd row above show that also for the angular momentum norm, the order for Velocity Verlet is twice that of Forward Euler, as expected.
 
-Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. DO: FLOP-count for Forward-Euler and Velocity Verlet. The below figures show the computation time for the methods, forard Euler to the left and Velocity Verlet to the right.
+\subsubsection{Algorithm efficiency}
+Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. Now we want to see that the efficiency of the algorithms replicate the behaviour we would expect based on the FLOP-count we did in the section "Algorithm Velocity Verlet and FLOP count". In the mentioned section we calculated velocity Verlet to be $\mathcal{O}(N)$ FLOPS. Computational time should be more or less proprtional to FLOPS, so we expect the computational time to be of the same order as the FLOPS. The below figures show the computation time for the methods, forard Euler to the left and Velocity Verlet to the right.
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -407,7 +472,7 @@ Knowledge about a methods correctness, discussed above, is crucial, but efficien
 \end{minipage}\hfill
 \vspace{2ex}
 
-The two figures above show that the Forward Euler and the Velocity Verlet method both has solution times that is of order 1 in N. This is as expected. The difference in FLOPS between forward Euler and Velocity Verlet is...DO.
+The two figures above show that the Forward Euler and the Velocity Verlet method both has solution times that is of order 1 in N. This is as expected. 
 
 
 \subsection{Escape velocity}
@@ -576,7 +641,7 @@ The solver producing reasonable results for the three-body system, we are now re
 The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnatural movement for Mercury. This has to do with the ommission of the relativistc correction term in the graviational force. See next section for more on this.
 
 \subsection{Perihelion precession}
-Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. P Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
+Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term,$\frac{GM_{Sun} M_{Mercury}}{r^2} \frac{3l^2}{r^2c^2}$, where $l = |\vec{r} \times \vec{v}|$, in Mercury's acceleration term. Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
 
 We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. Then we correct the acceleration function by overrideing it in the new class. We use only two objects for this simulation ,the sun and Mercury. Since the sun's mass is so much larger than the mass of Mercury, we solve this problem with a stationary sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble, so haivng a stationary sun in this scenario should not affect the results significantly. \\
 
