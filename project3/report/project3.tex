@@ -101,7 +101,9 @@ Working with many equations on the computer, can increase the probability of err
 
 In this project we will deal with some special situations, like introduction of a relativistic correctional term to the gravitational force on Mercury (for calculation of the periihelion precession) and other alternative gravitational forces. Introduction of such modifications can be dealt with more smoothly, compared to adding lots of if-tests inside the classes, by utlizing class inheritance. With class ineritance, one simply construct new classes that inherits all the property of the old classes and then make simple changes to new class. This method potentially increases the readability and generality of the code, the last part implying that it can be used easier with other problems.\\
 
-It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise method is implemented in this project. First a two-body system with only the sun and the earth, where the sun is stationary, is solved. On this system several things are tested: The performance of the solversm and the escape velocity for different gravitational forces. Then a three-body system is introduced, where checking for the effects of the mass of the third planet on the orbits. Finally a real center of mass system with a moving sun is introduced in the three body system, before the full solar system is simulated. The perihelion precession of Mercury around Sun is simulated as an end test of the precission of the program.\\
+It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise method is implemented in this project. \\
+
+First a two-body system with only the sun and the earth, where the sun is stationary, is solved. On this system several things are tested: The performance of the solvers and the escape velocity for different gravitational forces. Then a three-body system is introduced, where checking for the effects of the mass of the third planet on the orbits. Finally a real center of mass system with a moving sun is introduced in the three body system, before the full solar system is simulated. The perihelion precession of Mercury around Sun is simulated as an end test of the precission of the program.\\
 
 The next section of the report describes the equations and shows the scaling of these, in addition to describing the main idea of our class setup. The proceeding section includes all results, while the final section deals with conlcusions and discussion of limitations.
 
@@ -678,17 +680,17 @@ We assume initial position of Mercury at perihelion, and localize perihelion at 
 
 
 Using $365.25$ days in scalings.\\
-$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession} X$\\
-$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession} X$\\
-$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession} 32.3673$\\
+$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession}\; X$\\
+$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession}\; X$\\
+$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession}\; 32.3673$\\
 
-$\text{Moving Sun} \Delta t = 10^{-6}\; \text{Precession} X$\\
-$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession} 32.1241$\\
-$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession} 32.5604$\\
+$\text{Moving Sun} \Delta t = 10^{-6}\; \text{Precession}\; X$\\
+$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; 32.1241$\\
+$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; 32.5604$\\
 
 As a test, in the scaling of $c$ we changed from 365.25 days to 365 days. This gave the result
 
-$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession} 32.2965$,\\
+$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; 32.2965$,\\
 
 so the effect of this change was insignificant.\\
 
@@ -710,7 +712,7 @@ Adding a third planet, Jupiter, to the stationary Sun earth system, gives reason
 
 The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. The result seems reasonable, all orbits being stable.\\
 
-By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun, and with 365 and 365.25 days in the scalings, we get a Perihelion precesion of 32 arc secconds for both $\Delta = 10^{-7}$ and $\Delta t = 10^{-8}$. Since we cannot find anything wrong in our solver and program, we suspect that we must have done a sligth error in the downloads of data from NASA, since we hard coded these files. \\
+By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun, and with 365 and 365.25 days in the scalings, we get a Perihelion precesion of 32 arc secconds for both $\Delta = 10^{-7}$ and $\Delta t = 10^{-8}$. We have not been able to find any error's in the solvers or in the input data for this scenario.  \\
 
 For future reference, we add the we could have improved the speed of the solvers by taking into account that the gravitational force between two planets are equal in magnitude. Taking this into account in the force calculations, we could have halved the number of FLOPS!
 

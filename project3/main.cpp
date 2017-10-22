@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
         PlanetGeneralRelativityForce * sun_;
         PlanetGeneralRelativityForce * mercury_;
         sun_ = new PlanetGeneralRelativityForce(1., 0., 0., 0. , 0., outfileName, "Sun");
-        mercury_ = new PlanetGeneralRelativityForce(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        //mercury_ = new PlanetGeneralRelativityForce(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        mercury_ = new PlanetGeneralRelativityForce(1.2E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
         solarsystem.addPlanet(*sun_);
         solarsystem.addPlanet(*mercury_);
     }
