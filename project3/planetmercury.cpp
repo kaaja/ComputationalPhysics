@@ -24,7 +24,7 @@ vector<double> PlanetMercury::getAcceleration(vector<Planet*> planets_, int numb
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    double c = 173.0*365.25;
+    double c = 173.0*365.;//.25;
     double l, relativisticCorrection;
     double accelerationX_ = 0.;
     double accelerationY_ = 0.;

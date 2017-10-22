@@ -87,7 +87,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
-Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet, and the observed perihelion precession of Mercury around the sun is reproduced by adding a relativistic correction in the gravitational force.
+Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet, while the observed perihelion precession of Mercury around the sun is not fully reproduced when adding a relativistic correction in the gravitational force.
 
 
 \section{Introduction}
@@ -101,7 +101,7 @@ Working with many equations on the computer, can increase the probability of err
 
 In this project we will deal with some special situations, like introduction of a relativistic correctional term to the gravitational force on Mercury (for calculation of the periihelion precession) and other alternative gravitational forces. Introduction of such modifications can be dealt with more smoothly, compared to adding lots of if-tests inside the classes, by utlizing class inheritance. With class ineritance, one simply construct new classes that inherits all the property of the old classes and then make simple changes to new class. This method potentially increases the readability and generality of the code, the last part implying that it can be used easier with other problems.\\
 
-It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise method is implemented in this project. First a two-body system with only the sun and the earth, where the sun is stationary, is solved. On this system several things are tested: The performance of the solversm and the escape velocity for different gravitational forces. Then a three-body system is introduced, where checking for the effects of the mass of the third planet on the orbits. Finally a real center of mass system with a moving sun is introduced in the three body system, before the full solar system is simulated. \\
+It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise method is implemented in this project. First a two-body system with only the sun and the earth, where the sun is stationary, is solved. On this system several things are tested: The performance of the solversm and the escape velocity for different gravitational forces. Then a three-body system is introduced, where checking for the effects of the mass of the third planet on the orbits. Finally a real center of mass system with a moving sun is introduced in the three body system, before the full solar system is simulated. The perihelion precession of Mercury around Sun is simulated as an end test of the precission of the program.\\
 
 The next section of the report describes the equations and shows the scaling of these, in addition to describing the main idea of our class setup. The proceeding section includes all results, while the final section deals with conlcusions and discussion of limitations.
 
@@ -670,13 +670,29 @@ The above figure shows that the program nicely simulates the basic dynamics of t
 \subsection{Perihelion precession}
 Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term,$\frac{GM_{Sun} M_{Mercury}}{r^2} \frac{3l^2}{r^2c^2}$, where $l = |\vec{r} \times \vec{v}|$, in Mercury's acceleration term. Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
 
-We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. Then we correct the acceleration function by overrideing it in the new class. We use only two objects for this simulation ,the sun and Mercury. Since the sun's mass is so much larger than the mass of Mercury, we solve this problem with a stationary sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble, so haivng a stationary sun in this scenario should not affect the results significantly. \\
+We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. The acceleration function is corrected by overrideing it in the new class. The new correction term is scaled in the same way as the other terms, and we  end with an acceration equation of type $a = Uncanged(1 + ScaledCorrection)$. \\
+
+We use only two objects for this simulation ,the sun and Mercury. We solve this problem with a stationary sun, and with a moving Sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble. However, now we are trying to identify small effects, so the effect of a moving Sun might not be imprtant anymore. \\
 
 We assume initial position of Mercury at perihelion, and localize perihelion at $(x,y) = (0.3075 Au, 0)$. Initial velocity is set to 12.44 $Au/Yr$. When doing this, we get the following results for the perihelion precession for different $\Delta t$.\\
 
-DO: Insert table with preihelion precession and $\Delta t$.
 
-DO: Comment on the results in the table above. 
+Using $365.25$ days in scalings.\\
+$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession} X$\\
+$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession} X$\\
+$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession} 32.3673$\\
+
+$\text{Moving Sun} \Delta t = 10^{-6}\; \text{Precession} X$\\
+$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession} 32.1241$\\
+$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession} 32.5604$\\
+
+As a test, in the scaling of $c$ we changed from 365.25 days to 365 days. This gave the result
+
+$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession} 32.2965$,\\
+
+so the effect of this change was insignificant.\\
+
+We cannot find anything wrong in our solver, and the results above seems very consistent. We suspect that the error lays in the data-files, which we hard coded from NASA.
 
 
 \section{Conclusions}
@@ -694,9 +710,9 @@ Adding a third planet, Jupiter, to the stationary Sun earth system, gives reason
 
 The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. The result seems reasonable, all orbits being stable.\\
 
-By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is reproduced.\\
+By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun, and with 365 and 365.25 days in the scalings, we get a Perihelion precesion of 32 arc secconds for both $\Delta = 10^{-7}$ and $\Delta t = 10^{-8}$. Since we cannot find anything wrong in our solver and program, we suspect that we must have done a sligth error in the downloads of data from NASA, since we hard coded these files. \\
 
-For future reference, we add the we could have improved the speed of the solvers by taking into account that the gravitational force between two planets are equal in magnitude. This implies that we could have halved the number of FLOPS!
+For future reference, we add the we could have improved the speed of the solvers by taking into account that the gravitational force between two planets are equal in magnitude. Taking this into account in the force calculations, we could have halved the number of FLOPS!
 
 
 \section{Feedback}
@@ -721,6 +737,8 @@ All in all, two thumbs up!
 \subsection{Project 3}
 \begin{itemize}
 	\item  Classes: Very useful!
+	
+	\item Extra fun working with a system that one "knows" a little bit about. Also easier to judge the quality of the results, and find potential errors.
 \end{itemize}
 
 
@@ -737,28 +755,12 @@ All in all, two thumbs up!
 
 \pagebreak
 \begin{thebibliography}{9}
-	\bibitem{barth} 
-	Barth, Martin, Wilkinson (1967)
-	Calculation of eigenvalues of a symmetric tridiagonal matrix by the method of bisection. \textit{Numeriche mathematik 9, 386 - 393 (1967)}
-	
 	\bibitem{MHJ} 
 	Hjorth-Jensen, M.(2015)
 	Computational physics. Lectures fall 2015. 
 	\url{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/Lectures}
 	
-	\bibitem{MHJProject2} 
-	Hjorth-Jensen, M.(2017)
-	Project 2, fys4150 2017.
-	\url{https://github.com/CompPhysics/ComputationalPhysics/blob/master/doc/Projects/2017/Project2/pdf/Project2.pdf}
-	
-	\bibitem{kiusalaas} 
-	Kiusalaas, J.(2013)
-	Numerical Methods in Engineering with Python 3. 3rd edition.
-	
-	\bibitem{taut} 
-	Taut, M. (1993)
-	Two electrons in an external oscillator potential: Particular analytic solutions of a Coulomb correlation problem \textit{Phys. Rev. A 48, 3561 (1993).}
-	
+
 	
 
 

@@ -317,10 +317,8 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
         planets = [ 'Sun' ,'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
     elif scenario == 'solarSystemMovingSunInnerPlanets':
         planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
-    elif scenario == 'perihelion':
+    elif scenario == 'perihelion' or scenario == 'perihelionMovingSun':
         planets = ['Mercury']
-    elif scenario == 'perihelionMovingSun':
-        planets = ['Sun', 'Mercury']
 
 
 #    if not threePlanetsMovingSun and not solar!=SystemMovingSun: 
@@ -530,7 +528,7 @@ if __name__ == "__main__":
 
     elif args.perihelion:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(6, 7)]
+        dts = [10.**(-i) for i in xrange(8, 9)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
         
     elif args.perihelionMovingSun:
