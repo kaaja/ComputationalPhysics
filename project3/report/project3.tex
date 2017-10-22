@@ -694,7 +694,7 @@ $\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; 32.2965$,\\
 
 so the effect of this change was insignificant.\\
 
-We cannot find anything wrong in our solver, and the results above seems very consistent. We suspect that the error lays in the data-files, which we hard coded from NASA.
+We cannot find anything wrong in our solver, and the results above seems very consistent. One possibility for our failed result could be that the needed numerical precision to get fine enough $\Delta t$ implies loss of numerical precision. We know that the global truncation error in both position and velocity for Velocity Verlet is $\mathcal{O}(\Delta t^2)$. Using finer $\Delta t$ than we have done, $\Delta t < 10^{-8}$, would result in a global truncation error estimate $10^{-16}$, which might cause numerical precision issues.
 
 
 \section{Conclusions}

@@ -528,7 +528,7 @@ if __name__ == "__main__":
 
     elif args.perihelion:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(6, 7)]
+        dts = [10.**(-i) for i in xrange(7, 8)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
         
     elif args.perihelionMovingSun:
