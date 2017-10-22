@@ -293,7 +293,34 @@ where we see that the only difference between the two terms are the mass-factor,
 Before turning to the results, we give a short overview of our class implementation.
 
 \subsection{Class implementation}
-DO Insert a simple figure that contains boxes of the different classes and their inouts, and arrows between boxes.
+The figures below show our class herarcy and the flow-chart.
+
+\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/classHiearchy.png}
+		\caption{Class hierarcy}
+		\label{1}
+\end{figure}
+
+\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/flowChartProject3.png}
+		\caption{Flow chart}
+		\label{1}
+\end{figure}
+
+
+The class hierarchy figure shows how the program in project3 is divided into different objects. We have a super class "Planet" which defines all properties of a planet. Then we have two subclasses of "Planet" called "planetGeneralRelativity" and "PlanetAlternativeForce".\\ 
+
+The System class contains all planet objects, and the Solver class contains algorithms for solving ODE's. The algorithms in the class is forward Euler and Velocity verlet.\\
+
+The subclasses inherits all the properties of planet, except that their acceleration is changed. For the PlanetGeneralRelativityForce class we have a correction term on the acceleration to get a relativistic gravitational force. In the PlanetAlternativeForce class the acceleration is changed from beeing divided by $r^3$ to $r^{\beta}$, where $\beta \in [2,3]$, to investigate it's impact on the planet system.\\  
+
+In the flow chart figure we can se the flow of the program. In the class System we have a vector containing objects of the class planets. The planets can be of the type "Planet" or of either one of the subclasses "PlanetGeneralRelativityForce" or "PlanetAlternativeForce".\\ 
+
+Inside the Planet classes we can obtain certain values of the planet by calling on the "get methods". There is also set methods to set velues of the planets. \\
+
+Within the System class we can simulate the planetary system by using the Solver class. Calling the method "simulate" will send all the planet objects to a solver, who solves a system of ODE's for all the planets in the planetary. This is done by either using forward euler method or velocity verlet method, which is specified by the user. 
 
 \subsection{Forward Euler versus Velocity Verlet}
 
