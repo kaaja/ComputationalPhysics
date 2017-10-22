@@ -1,9 +1,9 @@
-#include "planetmercury.h"
+#include "planetgeneralrelativityforce.h"
 
 
-PlanetMercury::PlanetMercury() : Planet(){}
+PlanetGeneralRelativityForce::PlanetGeneralRelativityForce() : Planet(){}
 
-PlanetMercury::PlanetMercury(double mass_,
+PlanetGeneralRelativityForce::PlanetGeneralRelativityForce(double mass_,
                              double xPosition_,
                              double yPosition_,
                              double xVelocity_,
@@ -18,13 +18,13 @@ PlanetMercury::PlanetMercury(double mass_,
              filename_,
              planetName_){}
 
-vector<double> PlanetMercury::getAcceleration(vector<Planet*> planets_, int numberOfPlanets_)
+vector<double> PlanetGeneralRelativityForce::getAcceleration(vector<Planet*> planets_, int numberOfPlanets_)
 {
     vector<double> accelerations;
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     double rPlanetDistance;
-    double c = 173.0*365.;//.25;
+    double c = 173.0*365.;
     double l, relativisticCorrection;
     double accelerationX_ = 0.;
     double accelerationY_ = 0.;
@@ -45,13 +45,14 @@ vector<double> PlanetMercury::getAcceleration(vector<Planet*> planets_, int numb
     return accelerations;
 }
 
-void PlanetMercury:: writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_)
+void PlanetGeneralRelativityForce:: writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_)
 {
-    if (planetName == "Mercury")
+    if(planetName=="Mercury")
     {
-        if((time>99.75 && step < 0.001) || (step >= 0.001))
+        if( (time>99.75 && step < 0.001) || (step >= 0.001))
         {
             Planet::writeTofile(timeUsed_, centerOfMassX_, centerOfMassY_);
         }
     }
+
 }

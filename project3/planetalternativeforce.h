@@ -1,14 +1,14 @@
-#ifndef ALTERNATIVEPLANET_H
-#define ALTERNATIVEPLANET_H
+#ifndef PLANETALTERNATIVEFORCE_H
+#define PLANETALTERNATIVEFORCE_H
 #include "planet.h"
 
-class AlternativePlanet : public Planet
+class PlanetAlternativeForce : public Planet
 {
 private:
     double beta;
 public:
-    AlternativePlanet();
-    AlternativePlanet(double mass_,
+    PlanetAlternativeForce();
+    PlanetAlternativeForce(double mass_,
                       double xPosition_,
                       double yPosition_,
                       double xVelocity_,
@@ -19,4 +19,4 @@ public:
 
 };
 
-#endif // ALTERNATIVEPLANET_H
+#endif // PLANETALTERNATIVEFORCE_H

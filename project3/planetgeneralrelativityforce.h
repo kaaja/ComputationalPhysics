@@ -1,12 +1,12 @@
-#ifndef PLANETMERCURY_H
-#define PLANETMERCURY_H
+#ifndef PLANETGENERALRELATIVITYFORCE_H
+#define PLANETGENERALRELATIVITYFORCE_H
 #include "planet.h"
 
-class PlanetMercury : public Planet
+class PlanetGeneralRelativityForce : public Planet
 {
 public:
-    PlanetMercury();
-    PlanetMercury(double mass_,
+    PlanetGeneralRelativityForce();
+    PlanetGeneralRelativityForce(double mass_,
                   double xPosition_,
                   double yPosition_,
                   double xVelocity_,
@@ -15,8 +15,5 @@ public:
                   string planetName_);
     virtual vector<double> getAcceleration( vector<Planet*> planets_, int numberOfPlanets_) override;
     virtual void writeTofile(double timeUsed_, double centerOfMassX_, double centerOfMassY_) override;
-
-
 };
-
-#endif // PLANETMERCURY_H
+#endif // PLANETGENERALRELATIVITYFORCE_H

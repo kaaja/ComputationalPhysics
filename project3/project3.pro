@@ -6,11 +6,13 @@ CONFIG -= qt
 SOURCES += main.cpp \
     planet.cpp \
     solver.cpp \
-    planetmercury.cpp \
-    alternativeplanet.cpp
+    system.cpp \
+    planetgeneralrelativityforce.cpp \
+    planetalternativeforce.cpp
 
 HEADERS += \
     planet.h \
     solver.h \
-    planetmercury.h \
-    alternativeplanet.h
+    system.h \
+    planetgeneralrelativityforce.h \
+    planetalternativeforce.h

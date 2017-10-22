@@ -1,8 +1,8 @@
-#include "alternativeplanet.h"
+#include "planetalternativeforce.h"
 
-AlternativePlanet::AlternativePlanet() : Planet(){}
+PlanetAlternativeForce::PlanetAlternativeForce() : Planet(){}
 
-AlternativePlanet::AlternativePlanet(double mass_,
+PlanetAlternativeForce::PlanetAlternativeForce(double mass_,
                                      double xPosition_,
                                      double yPosition_,
                                      double xVelocity_,
@@ -20,7 +20,7 @@ AlternativePlanet::AlternativePlanet(double mass_,
 {
     beta = beta_;
 }
-vector<double> AlternativePlanet::getAcceleration(vector<Planet*> planets_, int numberOfPlanets_)
+vector<double> PlanetAlternativeForce::getAcceleration(vector<Planet*> planets_, int numberOfPlanets_)
 {
     vector<double> accelerations;
     double pi = acos(-1.0);

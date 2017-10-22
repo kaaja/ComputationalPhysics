@@ -1,228 +1,178 @@
 #include "solver.h"
 
+Solver:: Solver(string solverType_) {solverType=solverType_;}
 
-//ofstream ofile;
-
-Solver:: Solver() { N = finalTime = 0; filename = "";}
-Solver:: Solver(int N_, double finalTime_)
+void Solver:: solve(double step_, vector<Planet *> planets_, int numberOfplanets_, int iterationStart_)
 {
-    N = N_, finalTime = finalTime_;
-    step = finalTime/double(N);
-    time = 0.0;
-    centerOfMassSystem = false;
-
-}
-
-void Solver:: addPlanet(Planet &planet_)
-{
-    planet = &planet_;
-    planets.push_back (planet);
-    numberOfPlanets += 1;
-    planet->setStep(step);
+    step = step_;
+    if (solverType == "ForwardEuler") forwardEuler(planets_, numberOfplanets_, iterationStart_);
+    else if (solverType == "VelocityVerlet") velocityVerlet(planets_, numberOfplanets_, iterationStart_);
 }
 
 
-void Solver:: forwardEuler()
+void Solver:: forwardEuler(vector<Planet *> planets_, int numberOfplanets_, int iterationStart)
 {
-    start = clock();
-
-    int iterationStart = 1; // If fixed sun
-
-    if (centerOfMassSystem) // Moving sun
+    // Position
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
     {
-        iterationStart = 0;
-    }
-    // Write initial values
-    for(int planetNumber=iterationStart;planetNumber<numberOfPlanets;planetNumber++){
-        planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
-    }
-    while (time < finalTime){
-        // Position
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            x = planets[planetNumber]->getXPosition();
-            y = planets[planetNumber]->getYPosition();
-            vx = planets[planetNumber]->getXVelocity();
-            vy = planets[planetNumber]->getYVelocity();
+        x = planets_[planetNumber]->getXPosition();
+        y = planets_[planetNumber]->getYPosition();
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
 
-            x +=  step*vx;
-            y +=  step*vy;
-            planets[planetNumber]->setXposition(x);
-            planets[planetNumber]->setYposition(y);
+        x +=  step*vx;
+        y +=  step*vy;
+        planets_[planetNumber]->setXposition(x);
+        planets_[planetNumber]->setYposition(y);
+    }
+    //  Accelerations vector all planets_
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
+    {
+        acc= planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_);
+        if(iterationStart==1 && planetNumber==iterationStart){
+            accXVec.push_back(0.0);
+            accYVec.push_back(0.0);
         }
-        //  Accelerations vector all planets
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            acc= planets[planetNumber]->getAcceleration(planets, numberOfPlanets);
-            if(iterationStart==1 && planetNumber==iterationStart){
-                accXVec.push_back(0.0);
-                accYVec.push_back(0.0);
-            }
-            accXVec.push_back(acc[0]);
-            accYVec.push_back(acc[1]);
-            acc.clear();
-        }
-        // Velocity
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            vx = planets[planetNumber]->getXVelocity();
-            vy = planets[planetNumber]->getYVelocity();
+        accXVec.push_back(acc[0]);
+        accYVec.push_back(acc[1]);
+        acc.clear();
+    }
+    // Velocity
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
+    {
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
 
-            vx +=  step*accXVec[planetNumber];
-            vy +=  step*accYVec[planetNumber];
-            planets[planetNumber]->setXVelociy(vx);
-            planets[planetNumber]->setYVelociy(vy);
-        }
-        // Reset acceleration vectors
-        accXVec.clear();
-        accYVec.clear();
+        vx +=  step*accXVec[planetNumber];
+        vy +=  step*accYVec[planetNumber];
+        planets_[planetNumber]->setXVelociy(vx);
+        planets_[planetNumber]->setYVelociy(vy);
+
         // Write results
-        for(int planetNumber=iterationStart;planetNumber<numberOfPlanets;planetNumber++){
-            planets[planetNumber]->setTime(time+step);
-            planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
-        }
-        time += step;
+        planets_[planetNumber]->writeTofile(NAN, 0.0, 0.0);
     }
-    finish = clock();
-    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    // Write time used only
-    for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        planets[planetNumber]->writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
+    // Reset acceleration vectors
+    accXVec.clear();
+    accYVec.clear();
+
 }
 
-void Solver:: velocityVerlet()
+void Solver:: velocityVerlet(vector<Planet *> planets_, int numberOfplanets_, int iterationStart)
 {
-    start = clock();
-
-    int iterationStart = 1; // If fixed sun
-
-    if (centerOfMassSystem) // Moving sun
+    // Vector accelerations all planets
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
     {
-        iterationStart = 0;
-    }
-    // Write initial values
-    for(int planetNumber=iterationStart;planetNumber<numberOfPlanets;planetNumber++){
-        planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
-    }
-    while (time < finalTime){
-        // Vector accelerations all planets
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            acc= planets[planetNumber]->getAcceleration(planets, numberOfPlanets);
-            if(iterationStart==1 && planetNumber==iterationStart){
-                accXVec.push_back(0.0);
-                accYVec.push_back(0.0);
-            }
-            accXVec.push_back(acc[0]);
-            accYVec.push_back(acc[1]);
-            acc.clear();
+        acc= planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_);
+        if(iterationStart==1 && planetNumber==iterationStart){
+            accXVec.push_back(0.0);
+            accYVec.push_back(0.0);
         }
-        // Position
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            x = planets[planetNumber]->getXPosition();
-            y = planets[planetNumber]->getYPosition();
-            vx = planets[planetNumber]->getXVelocity();
-            vy = planets[planetNumber]->getYVelocity();
+        accXVec.push_back(acc[0]);
+        accYVec.push_back(acc[1]);
+        acc.clear();
+    }
+    // Position
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
+    {
+        x = planets_[planetNumber]->getXPosition();
+        y = planets_[planetNumber]->getYPosition();
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
 
-            x +=  step*vx + step*step/2.0* accXVec[planetNumber];
-            y +=  step*vy + step*step/2.0* accYVec[planetNumber];
-            planets[planetNumber]->setXposition(x);
-            planets[planetNumber]->setYposition(y);
-        }
-        // Vector old accelerations
-        accXVecOld.clear();
-        accYVecOld.clear();
-        accXVecOld = accXVec;
-        accYVecOld = accYVec;
-        accXVec.clear();
-        accYVec.clear();
-        // Acceleration update
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            acc= planets[planetNumber]->getAcceleration(planets, numberOfPlanets);
-            if(iterationStart==1 && planetNumber==iterationStart){
-                accXVec.push_back(0.0);
-                accYVec.push_back(0.0);
-            }
-            accXVec.push_back(acc[0]);
-            accYVec.push_back(acc[1]);
-            acc.clear();
-        }
-        // Velocity
-        for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        {
-            vx = planets[planetNumber]->getXVelocity();
-            vy = planets[planetNumber]->getYVelocity();
-
-            vx +=  step/2.0*(accXVecOld[planetNumber] + accXVec[planetNumber]);
-            vy +=  step/2.0*(accYVecOld[planetNumber] + accYVec[planetNumber]);
-            planets[planetNumber]->setXVelociy(vx);
-            planets[planetNumber]->setYVelociy(vy);
-        }
-        // Write results
-        for(int planetNumber=iterationStart;planetNumber<numberOfPlanets;planetNumber++){
-            planets[planetNumber]->setTime(time+step);
-            planets[planetNumber]->writeTofile(NAN, getCenterOfMassX(), getCenterOfMassY());
-        }
-        time += step;
+        x +=  step*vx + step*step/2.0* accXVec[planetNumber];
+        y +=  step*vy + step*step/2.0* accYVec[planetNumber];
+        planets_[planetNumber]->setXposition(x);
+        planets_[planetNumber]->setYposition(y);
     }
-    finish = clock();
-    timeUsed = (double)((finish - start)/double(CLOCKS_PER_SEC));
-    // Write time used only
-    for (int planetNumber = iterationStart; planetNumber < numberOfPlanets; planetNumber++)
-        planets[planetNumber]->writeTofile(timeUsed, getCenterOfMassX(), getCenterOfMassY());
+    // Vector old accelerations
+    accXVecOld.clear();   accYVecOld.clear();
+    accXVecOld = accXVec; accYVecOld = accYVec;
+    accXVec.clear();      accYVec.clear();
+    // Acceleration update
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
+    {
+        acc= planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_);
+        if(iterationStart==1 && planetNumber==iterationStart){
+            accXVec.push_back(0.0);
+            accYVec.push_back(0.0);
+        }
+        accXVec.push_back(acc[0]);
+        accYVec.push_back(acc[1]);
+        acc.clear();
+    }
+    // Velocity
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
+    {
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
+
+        vx +=  step/2.0*(accXVecOld[planetNumber] + accXVec[planetNumber]);
+        vy +=  step/2.0*(accYVecOld[planetNumber] + accYVec[planetNumber]);
+        planets_[planetNumber]->setXVelociy(vx);
+        planets_[planetNumber]->setYVelociy(vy);
+        // write results
+        planets_[planetNumber]->writeTofile(NAN, 0.0, 0.0);
+    }
 }
 
-
-double Solver:: getCenterOfMassX()
+/*
+void Solver:: velocityVerlet(vector<Planet *> planets_, int numberOfplanets_, int iterationStart)
 {
-    double centerOfMassX = 0.;
-    double totalMass = 0.;
-    for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
     {
-        totalMass += planets[planetNumber]->getMass();
-        centerOfMassX += planets[planetNumber]->getXPosition()*planets[planetNumber]->getMass();
+        x = planets_[planetNumber]->getXPosition();
+        y = planets_[planetNumber]->getYPosition();
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
+
+        accelerationXOld = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[0];
+        accelerationYOld = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[1];
+
+        x +=  step*vx + step*step/2.0* accelerationXOld;
+        y +=  step*vy + step*step/2.0* accelerationYOld;
+
+        planets_[planetNumber]->setXposition(x);
+        planets_[planetNumber]->setYposition(y);
+
+        accelerationX = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[0];
+        accelerationY = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[1];
+
+        vx +=  step/2.0*(accelerationXOld + accelerationX);
+        vy +=  step/2.0*(accelerationYOld + accelerationY);
+
+        planets_[planetNumber]->setXVelociy(vx);
+        planets_[planetNumber]->setYVelociy(vy);
+
+        planets_[planetNumber]->writeTofile(NAN, 0.0, 0.0);
     }
-    return centerOfMassX/totalMass;
 }
 
-double Solver::getCenterOfMassY()
+void Solver:: forwardEuler(vector<Planet *> planets_, int numberOfplanets_, int iterationStart)
 {
-    double centerOfMassY = 0.;
-    double totalMass = 0.;
-    for ( int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
+    for (int planetNumber = iterationStart; planetNumber < numberOfplanets_; planetNumber++)
     {
-        totalMass += planets[planetNumber]->getMass();
-        centerOfMassY += planets[planetNumber]->getYPosition()*planets[planetNumber]->getMass();
-    }
-    return centerOfMassY/totalMass;
-}
+        x = planets_[planetNumber]->getXPosition();
+        y = planets_[planetNumber]->getYPosition();
+        vx = planets_[planetNumber]->getXVelocity();
+        vy = planets_[planetNumber]->getYVelocity();
 
-void Solver::changeToCenterOfMassSystem()
-{
-    double centerOfMassX = getCenterOfMassX();
-    double centerOfMassY = getCenterOfMassY();
-    for (int planetNumber = 0; planetNumber < numberOfPlanets; planetNumber++)
-    {
-        double xPosition = planets[planetNumber]->getXPosition();
-        double yPosition = planets[planetNumber]->getYPosition();
-        planets[planetNumber]->setXposition(xPosition - centerOfMassX);
-        planets[planetNumber]->setYposition(yPosition - centerOfMassY);
-    }
-    setSunVelocity();
-    centerOfMassSystem = true;
-}
+        x += step*vx;
+        y += step*vy;
 
-void Solver::setSunVelocity()
-{
-    double momentumOfPlanetsX = 0.;
-    double momentumOfPlanetsY = 0.;
-    for (int planetNumber = 1; planetNumber < numberOfPlanets; planetNumber++)
-    {
-        momentumOfPlanetsX += planets[planetNumber]->getMass()*planets[planetNumber]->getXVelocity();
-        momentumOfPlanetsY += planets[planetNumber]->getMass()*planets[planetNumber]->getYVelocity();
+        planets_[planetNumber]->setXposition(x);
+        planets_[planetNumber]->setYposition(y);
+
+        accelerationX = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[0];
+        accelerationY = planets_[planetNumber]->getAcceleration(planets_, numberOfplanets_)[1];
+
+        vx += step*accelerationX;
+        vy += step*accelerationY;
+
+        planets_[planetNumber]->setXVelociy(vx);
+        planets_[planetNumber]->setYVelociy(vy);
+
+        planets_[planetNumber]->writeTofile(NAN, 0.0, 0.0);
     }
-    planets[0]->setXVelociy(-momentumOfPlanetsX/planets[0]->getMass());
-    planets[0]->setYVelociy(-momentumOfPlanetsY/planets[0]->getMass());
-}
+    accelerationX = 0.0;
+    accelerationY = 0.0;
+}*/

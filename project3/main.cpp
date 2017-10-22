@@ -1,11 +1,12 @@
 #include "planet.h"
 #include "solver.h"
-#include "planetmercury.h"
-#include "alternativeplanet.h"
+#include "planetgeneralrelativityforce.h"
+#include "planetalternativeforce.h"
+#include "system.h"
 
 using namespace std;
 
-void makeSolarSystem(string outfileName, Solver &solution);
+void makeSolarSystem(string outfileName, System &solarsystem);
 void initialize ( string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, string& scenario, int argc, char** argv);
 
 int main(int argc, char* argv[])
@@ -16,43 +17,44 @@ int main(int argc, char* argv[])
     string outfileName, solverType, scenario;
 
     initialize( outfileName, finalTime, N, solverType, initialVy, beta, scenario, argc, argv);
-    Solver solution(N, finalTime);
+    System solarsystem;
+    Solver solver(solverType);
     double pi = acos(-1.0);
 
     if (scenario == "twoBody")
     {
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
     }
     else if (scenario == "perihelion")
     {
-        PlanetMercury * sun_;
-        PlanetMercury * mercury_;
-        sun_ = new PlanetMercury(1., 0., 0., 0. , 0., outfileName, "Sun");
-        mercury_ = new PlanetMercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
-        solution.addPlanet(*sun_);
-        solution.addPlanet(*mercury_);
+        PlanetGeneralRelativityForce * sun_;
+        PlanetGeneralRelativityForce * mercury_;
+        sun_ = new PlanetGeneralRelativityForce(1., 0., 0., 0. , 0., outfileName, "Sun");
+        mercury_ = new PlanetGeneralRelativityForce(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        solarsystem.addPlanet(*sun_);
+        solarsystem.addPlanet(*mercury_);
     }
     else if (scenario == "perihelionMovingSun")
     {
-        PlanetMercury * sun_;
-        PlanetMercury * mercury_;
-        sun_ = new PlanetMercury(1., 0., 0., 0. , 0., outfileName, "Sun");
-        mercury_ = new PlanetMercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
-        solution.addPlanet(*sun_);
-        solution.addPlanet(*mercury_);
-        solution.changeToCenterOfMassSystem();
+        PlanetGeneralRelativityForce * sun_;
+        PlanetGeneralRelativityForce * mercury_;
+        sun_ = new PlanetGeneralRelativityForce(1., 0., 0., 0. , 0., outfileName, "Sun");
+        mercury_ = new PlanetGeneralRelativityForce(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
+        solarsystem.addPlanet(*sun_);
+        solarsystem.addPlanet(*mercury_);
+        solarsystem.changeToCenterOfMassSystem();
     }
     else if (scenario == "alternativeForce")
     {
         Planet * sun_;
-        AlternativePlanet * earth_;
+        PlanetAlternativeForce * earth_;
         sun_ = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
-        earth_ = new AlternativePlanet(0.000003, 1, 0., 0. , initialVy, outfileName, "AlternativeEarth", beta);
-        solution.addPlanet(*sun_);
-        solution.addPlanet(*earth_);
+        earth_ = new PlanetAlternativeForce(0.000003, 1, 0., 0. , initialVy, outfileName, "AlternativeEarth", beta);
+        solarsystem.addPlanet(*sun_);
+        solarsystem.addPlanet(*earth_);
     }
     else if (scenario == "threeBodies")
     {
@@ -68,9 +70,9 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
     }
     else if (scenario == "threeBodiesJupiterTimes10")
     {
@@ -84,9 +86,9 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-4*10, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
 
     }
     else if (scenario == "threeBodiesJupiterTimes1000")
@@ -101,14 +103,13 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-4*1000, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter");
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
 
     }
     else if (scenario == "threeBodiesMovingSun")
     {
-        //makeSolarSystem(outfileName, solution);
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
@@ -120,15 +121,15 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-4, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
 
-        solution.changeToCenterOfMassSystem();
+        solarsystem.changeToCenterOfMassSystem();
     }
     else if (scenario == "threeBodiesJupiterMassTimes10MovingSun")
     {
-        //makeSolarSystem(outfileName, solution);
+        //makeSolarSystem(outfileName, solarsystem);
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
@@ -140,16 +141,16 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-3, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
 
-        solution.changeToCenterOfMassSystem();
+        solarsystem.changeToCenterOfMassSystem();
     }
 
     else if (scenario == "threeBodiesJupiterMassTimes1000MovingSun")
     {
-        //makeSolarSystem(outfileName, solution);
+        //makeSolarSystem(outfileName, solarsystem);
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
@@ -161,28 +162,24 @@ int main(int argc, char* argv[])
 
         Planet * jupiter = new Planet(9.5e-1, 5.2, 0., 0., initialVyJupiter, outfileName, "Jupiter"); //9.5e-4
 
-        solution.addPlanet(*sun);
-        solution.addPlanet(*earth);
-        solution.addPlanet(*jupiter);
+        solarsystem.addPlanet(*sun);
+        solarsystem.addPlanet(*earth);
+        solarsystem.addPlanet(*jupiter);
 
-        solution.changeToCenterOfMassSystem();
+        solarsystem.changeToCenterOfMassSystem();
     }
     else if (scenario == "solarSystem")
     {
-        makeSolarSystem(outfileName, solution);
+        makeSolarSystem(outfileName, solarsystem);
     }
 
     else if (scenario == "solarSystemMovingSun" || "solarSystemMovingSunInnerPlanets")
     {
-        makeSolarSystem(outfileName, solution);
-        solution.changeToCenterOfMassSystem();
+        makeSolarSystem(outfileName, solarsystem);
+        solarsystem.changeToCenterOfMassSystem();
     }
 
-    if (solverType == "ForwardEuler")
-        solution.forwardEuler();
-    else if (solverType == "VelocityVerlet")
-        solution.velocityVerlet();
-    //solution.velocityVerlet();
+    solarsystem.simulate(solver, N, finalTime);
     return 0;
 }
 void initialize (string& outfileName, double& finalTime, int& N, string& solverType, double &initialVy, double &beta, string& scenario, int argc, char** argv)
@@ -202,9 +199,9 @@ void initialize (string& outfileName, double& finalTime, int& N, string& solverT
     scenario = argv[7];
 }
 
-void makeSolarSystem(string outfileName, Solver &solution)
+void makeSolarSystem(string outfileName, System &solarsystem)
 {
-    string filename1 = "/home/karl/doc/subj/att/fys4150/project3/dataProject3";
+    string filename1 = "/home/peterek/Documents/skole/fys4150/project3/dataProject3";
     ifstream ifile(filename1);
     string planet; double mass; double x; double y; double vx; double vy; string planetName2;
     if (ifile.is_open()){
@@ -212,7 +209,7 @@ void makeSolarSystem(string outfileName, Solver &solution)
         {
             Planet * planet_;
             planet_ = new Planet(mass, x, y, vx , vy, outfileName, planetName2);
-            solution.addPlanet(*planet_);
+            solarsystem.addPlanet(*planet_);
         }
         ifile.close();
     }

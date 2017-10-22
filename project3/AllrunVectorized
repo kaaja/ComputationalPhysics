@@ -2,7 +2,7 @@
 cd ${0%/*} || exit 1    # run from this directory
 # to make executable: chmod u+x Allrun
 
-c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetmercury.cpp alternativeplanet.cpp
+c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetgeneralrelativityforce.cpp planetalternativeforce.cpp system.cpp
 #g++ -o main.exe main.cpp lib.cpp
 ./project3.x $1 $2 $3 $4 $5 $6 $7
 cd results
