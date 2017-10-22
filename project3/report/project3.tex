@@ -93,7 +93,7 @@ Systems of 2nd order ordinary differential equations (ODEs), describing planetar
 \section{Introduction}
 Multibody systems governed by coupled 2nd order ordinary differential equations (ODEs) appear several places in physics, among other places in mechanics and astrophysics. Systems like these can be simplified by variable subsitution, leading to a larger system of only 1st order ODEs. This technique is demonstrated and applied here.\\
 
-Often the more general a method is, the more useful it is. In this project, which deals with planetary orbits, the equations are scaled to astronomical units. In addition to making the equations easier to work with, the scaling also makes the equations and their solutions more general and potentially applicable to other physical problems without the need to do large changes to the computer programs.\\
+Often the more general a method is, the more useful it is. In this project, which deals with planetary orbits, the equations are scaled to astronomical units. In addition to making the equations easier to work with, the scaling also makes the equations and their solutions more general and potentially applicable to other physical problems without the need to do large changes to the computer programs. In addition scaling was necessary in this case, since use of SI units probably would lead to numerical problems with overflow.\\
 
 Solving large systems like these cannot be done analytically, and must be done numerically. Several methods are available for calculating derivatives that appears in the equation system. Knowledge about the properties of the different methods is crucial for getting quality solutions. There are several examples where lack of knowledge about numerical methods has led to dissasters in the real world. In this project we use the forward Euler method and Velocity Verlet method, and it is shown that the Forward Euler method do not obey basic physical properties such as energy and angular momentum preservation. Also it is shown that the speed of convergence of the Velocity Verlet method is twice that of Forward Euler.\\
 
@@ -186,7 +186,7 @@ a = \frac{GM_{sun}}{r^2}\label{eq:newtonGravity2}
 \end{equation}
 
 
-Now we scale the equatons to Astronomical units, and get $v = \frac{2\pi r}{T} = \frac{2\pi Au}{Yr}$. Inserting this scaling into the above system gives
+To make the equations simpler, and also to avoid overflow issues that potentially would occour if we had used SI units, we now scale the equatons to Astronomical units to get $v = \frac{2\pi r}{T} = \frac{2\pi Au}{Yr}$. Inserting this scaling into the above system gives
 
 \begin{equation}
 a = \frac{2^2 \pi^2 Au^2}{Au\;Yr^2}\label{eq:newtonCircle3}
@@ -298,9 +298,7 @@ The next two sets of figures shows the orbits for different $\Delta t$ for the t
 
 The 2 sets of figures above confirms what we found in the figures with x and y-position agains time: The precision is bettered when $\Delta t$ is lowered. \\
 
-DO: Explain why energy and angular momentum are preserved.\\
-
-The below figures show the difference in total energy compared to the initial total energy, forward Euler to the left and Velocity Verlet to the right.
+Next we analyze the evolution of energy in the numerical solutions. Since all forces in our systems are conservative, meaning that the work done by the forces is path independent, total mecahnical energy, the sum of kinetic and potential energy, should be preserved. Consearvation of energy is a crucial physical principle which we want to maintain in our numerical solutions. The below figures show the difference in total energy compared to the initial total energy, forward Euler to the left and Velocity Verlet to the right.
 
 
 \begin{minipage}{.49\textwidth} 
@@ -323,7 +321,7 @@ The below figures show the difference in total energy compared to the initial to
 
 The two figures above show that for forward Euler, energy can actually increase, even for smaller $\Delta t$. For Velocity Verlet, energy seems to be preserved faster compared to Forward Euler. Also, Velocity Verlet never make energy, as is the case for Forward Euler.\\
 
-The next figure shows the same kind of figures as for energy above, but now for angular momentum. DO: Write why angular momentum is preserved.
+Another important physical property which we want to contain in the numerical simulations, is presevation of angular momentum conservation, $\frac{d \vec{L}}{dt} = \sum_i \vec{r}_i \times \vec{F^{ext}_i} = 0$. There is zero change in angular momentum, since the net external forces are zero. The next figure shows the same kind of figures as for energy above, but now for angular momentum. 
 
 
 
@@ -345,9 +343,9 @@ The next figure shows the same kind of figures as for energy above, but now for 
 \end{minipage}\hfill
 \vspace{2ex}
 
-The figures above show that as $\delta t$ gets low, angular momentum is preserved. ALso, Velocity Verlet seems to give good angular momentum approximations compared to Forward Euler.\\
+The figures above show that as $\Delta t$ gets low, angular momentum is preserved. Also, Velocity Verlet seems to give good angular momentum approximations compared to Forward Euler.\\
 
-Since we know the exact solution for energy and angular momentum, or more precisely, the exact solution for the change, we have constructed a norm measure for computing convergence rates of the schemes. The error-norm is the supremum of the largest difference in energy compared to initial energy. The below figures show the results. DO: Write what to expect of these norms. We have truncation estimate for velocity and position, so it should just be to insert this into energy equation.
+Since we know the exact solution for energy and angular momentum, or more precisely, the exact solution for the change, we have constructed a norm measure for computing convergence rates of the schemes. The error-norm is the supremum of the largest difference in energy compared to initial energy. From above we know that the global error's for $x$ and $y$ in Forward Euler should go as respectively $\mathcal{O}(\Delta t)$ and $\mathcal{O}(\Delta t^2)$, so the orders of global errors in position and velocity is always twice as high in the Velocity Verlet method compared to the forward Euler method. Since both energy and angual momentum depend on position and velocity, we expect the convergence rate of norms related to energy and norms related to angular momentum to be twice as high for the Velocity Verlet method compared to the forward Euler method. The figures below shows the convergence for energy norm and angular momentum norm for Forward Euler and Velocity Verlet.
 
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
@@ -367,10 +365,6 @@ Since we know the exact solution for energy and angular momentum, or more precis
 \end{minipage}\hfill
 \vspace{2ex}
 
-The above two figures shows that the error goes as 1st order for Forward Euler, while Velocity Verlet goes like 2nd order. DO: How does this compare to expectations?\\
-
-In the same manner as for the energy-norms above, we have also constructed a norm for angular momentum. DO: What to expect. The below figure displays the results for the angular momentum norms.
-
 \begin{minipage}{.49\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -383,13 +377,15 @@ In the same manner as for the energy-norms above, we have also constructed a nor
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumVelocityVerlet.png}
-		\caption{Sun-Earth system. Sup-norm Angular momentum. Velocity Verlet \\ \textit{Velocity Verlet's sup-norm error less than $10^{-12}$ like $\mathcal{O}(\Delta t^4)$.}}
+		\caption{Sun-Earth system. Sup-norm Angular momentum. Velocity Verlet \\ \textit{Velocity Verlet's sup-norm error is $\mathcal{O}(\Delta t^4)$.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-The two figures above shows that also for angular momentum, the order of the error-norm is higher for Velocity Verlet compared to Forward Euler, but now the difference is of order two. Also we see that the orders are doubled from the energy norms. DO: Comment on why higher order than energy, and how the results compare to expectations.\\
+The figures on the first row show that the energy norm error goes as 1st order for Forward Euler, while Velocity Verlet goes like 2nd order, so the Velocity Verlet method has twice the convergence rate of forward Euler, as expected.\\
+
+The figures on the 2nd row above show that also for the angular momentum norm, the order for Velocity Verlet is twice that of Forward Euler, as expected.\\
 
 Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. DO: FLOP-count for Forward-Euler and Velocity Verlet. The below figures show the computation time for the methods, forard Euler to the left and Velocity Verlet to the right.
 
@@ -422,8 +418,8 @@ Another test to see if the solver obeys the physical laws, is to check if the es
 	E_k  &= E_p \\
 	\frac{1}{2} m_E v_{Escape}^2&= \frac{G M_{Sun} M_E}{r_0}\\
 	\rightarrow v_E&=\sqrt{\frac{2G M_{Sun} }{r_0}}\\
-	&=\sqrt{\frac{2* 4 \pi^2 AU^3 }{AU yr^2}}\\
-	&=2 \pi\sqrt{2}\frac{ AU }{yr}
+	&=\sqrt{\frac{2* 4 \pi^2 AU^3 }{AU (Yr)^2}}\\
+	&=2 \pi\sqrt{2}\frac{ AU }{(Yr)}
 	\end{align}
 \end{subequations}
 
@@ -440,9 +436,7 @@ Based on the above equation, we expect the simulations to gove escape then $v > 
 
 The figure above show that the simulated escape velocity is very close to the exact terminal velcocity, $2 \pi \sqrt{2}$, supporting the previous results indicating the validity of our solver as a good approximation method.\\
 
-Another test, to see if the numerical solutions corresponds to analytical solutions, is to simulate the two planet system with different gravitational forces. DO: Write down a more general formula for the kinetic energy based on the revised forces.\\
-
-The below figures show escapce velocities for the three different gravitational forces, all forces being lower than the standard force simulated above.
+Another test, to see if the numerical solutions corresponds with physics, is to simulate the two planet system with different gravitational forces. We noe assume the gravitational force $F_G = \frac{G M_{Sun} M_{Earth}}{r^\beta}, \beta \in [2,3]$, so that the force is decreased from the original gravitational force when $\beta > 2$. This should give lower escape velocities, since the force is lower. The below figures show escapce velocities for the three different gravitational forces, all forces being lower than the standard force simulated above.
 
 
 \begin{minipage}{.3\textwidth} 
@@ -471,7 +465,7 @@ The below figures show escapce velocities for the three different gravitational 
 \end{minipage}\hfill
 \vspace{2ex}
 
-The figures above show that the escape velocities are lowered when the gravitational forces are lowered. DO: Check agains thoretical expression. We see from the right most figure that the escape velocity is the same as the exact. DO: check the previous claim.
+The figures above show that the escape velocities are lowered when the gravitational forces are lowered, as expected.  
 
 \subsection{Center of mass system}
 Above we have seen that the solvers correspond well with expected behavoiur: Forward Euler does not preserve energy, while Velocity Verlet does, and basic exact results for escapce velocities, energy and angular momentum is well approximated. However, the above was only tested on a two-object system. To check whether the solver works for multibody systems, with more than two objects, a third planet, Jupiter, is added.\\
@@ -579,10 +573,10 @@ The solver producing reasonable results for the three-body system, we are now re
 
 
 
-The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnaturally large perihelion precession for Mercury around the Sun over a century. Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century.
+The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnatural movement for Mercury. This has to do with the ommission of the relativistc correction term in the graviational force. See next section for more on this.
 
 \subsection{Perihelion precession}
-Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. P Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
+Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term in the force on Mercury. P Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
 
 We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. Then we correct the acceleration function by overrideing it in the new class. We use only two objects for this simulation ,the sun and Mercury. Since the sun's mass is so much larger than the mass of Mercury, we solve this problem with a stationary sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble, so haivng a stationary sun in this scenario should not affect the results significantly. \\
 

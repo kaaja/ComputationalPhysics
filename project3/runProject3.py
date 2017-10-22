@@ -299,24 +299,51 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
     """
 
     """
-
-    if not threePlanetsMovingSun and not solarSystemMovingSun:
+    if scenario == 'threeBodies':
         planets = ['Earth', 'Jupiter']
-    
-    elif threePlanetsMovingSun:
-        planets = ['Sun','Earth', 'Jupiter']
-        
-    elif not solarSystemMovingSun:
+    elif scenario == 'threeBodiesJupiterTimes10':
+        planets = ['Earth', 'Jupiter']
+    elif scenario == 'threeBodiesJupiterTimes1000':
+        planets = ['Earth', 'Jupiter']
+    elif scenario == 'threeBodiesMovingSun':
+        planets = ['Sun', 'Earth', 'Jupiter']
+    elif scenario == 'threeBodiesJupiterMassTimes10MovingSun':
+        planets = ['Sun', 'Earth', 'Jupiter']
+    elif scenario == 'threeBodiesJupiterMassTimes1000MovingSun':
+        planets = ['Sun', 'Earth', 'Jupiter']
+    elif scenario == 'solarSystem':
         planets = [ 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
-    
-    elif solarSystemMovingSun:
-        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
-        if scenario == 'solarSystemMovingSunInnerPlanets':
-            planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
-            scenario = 'solarSystemMovingSun'
-    
-    elif scenario == 'mercury':
+    elif scenario == 'solarSystemMovingSun':
+        planets = [ 'Sun' ,'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+    elif scenario == 'solarSystemMovingSunInnerPlanets':
+        planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
+    elif scenario == 'perihelion':
         planets = ['Mercury']
+    elif scenario == 'perihelionMovingSun':
+        planets = ['Sun', 'Mercury']
+
+
+#    if not threePlanetsMovingSun and not solar!=SystemMovingSun: 
+#        if scenario != 'perihelion' or scenario !=  'perihelionMovingSun':
+#            print scenario
+#            planets = ['Earth', 'Jupiter']
+#    
+#    elif threePlanetsMovingSun:
+#        planets = ['Sun','Earth', 'Jupiter']
+#        
+#    elif not solarSystemMovingSun:
+#        planets = [ 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+#    
+#    elif solarSystemMovingSun:
+#        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
+#        if scenario == 'solarSystemMovingSunInnerPlanets':
+#            planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
+#            scenario = 'solarSystemMovingSun'
+#    
+#    elif scenario == 'perihelion':
+#        planets = ['Mercury']
+#    elif scenario == 'perihelionMovingSun':
+#        planets = ['sun', 'Mercury']
     
     print planets
     initialVy = 2*np.pi
@@ -398,7 +425,7 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
                         os.system(cmd)
                         
             # Perillion precession
-            if scenario == 'mercury':
+            if scenario == 'perihelion' or scenario == 'perihelionMovingSun':
                 #relevantTime= np.where(np.abs(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time.values- 99.75) < 1E-6)
                 #rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
                 #indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
@@ -447,6 +474,8 @@ if __name__ == "__main__":
     parser.add_argument("--solarSystemMovingSunInnerPlanets", action='store_true', default=False, help="simulate all 8(9) planets and with a moving sun, plot inner planets")
     parser.add_argument("--terminalVelocity", action='store_true', default=False, help="investigate earth's escape velocity")
     parser.add_argument("--terminalVelocityAlternativeForce", action='store_true', default=False, help="investigate earth's escape velocity with different gravitational force")
+    parser.add_argument("--perihelion", action='store_true', default=False, help="find the perihelion precession of Mercury")
+    parser.add_argument("--perihelionMovingSun", action='store_true', default=False, help="find the perihelion precession of Mercury with moving Sun")
     
     args = parser.parse_args()
     if args.twoBodyVelocityVerlet:
@@ -492,6 +521,17 @@ if __name__ == "__main__":
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = True, scenario = "solarSystemMovingSunInnerPlanets", movie=False, finalTimes = finalTimes, dts = dts)
+
+    elif args.perihelion:
+        finalTimes = [10**i for i in xrange(2,3)]
+        dts = [10.**(-i) for i in xrange(8, 9)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
+        
+    elif args.perihelionMovingSun:
+        finalTimes = [10**i for i in xrange(2,3)]
+        dts = [10.**(-i) for i in xrange(8, 9)]
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelionMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+
     
     elif args.terminalVelocity:
         sunearthTerminalVelocity = sunEarthTerminalVelocity()
