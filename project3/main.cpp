@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
     }
     else if (scenario == "perihelionMovingSun")
     {
-        Planet * sun_;
+        PlanetMercury * sun_;
         PlanetMercury * mercury_;
-        sun_ = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
+        sun_ = new PlanetMercury(1., 0., 0., 0. , 0., outfileName, "Sun");
         mercury_ = new PlanetMercury(1.65E-07, 0.3075, 0., 0. , 12.44, outfileName, "Mercury");
         solution.addPlanet(*sun_);
         solution.addPlanet(*mercury_);
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
         makeSolarSystem(outfileName, solution);
     }
 
-    else if (scenario == "solarSystemMovingSun")
+    else if (scenario == "solarSystemMovingSun" || "solarSystemMovingSunInnerPlanets")
     {
         makeSolarSystem(outfileName, solution);
         solution.changeToCenterOfMassSystem();

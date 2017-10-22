@@ -513,7 +513,7 @@ if __name__ == "__main__":
     elif args.threeBodyMovingSunJupiter1000:
         finalTimes = [10**i for i in xrange(1,4)]
         dts = [10.**(-i) for i in xrange(3, 4)]
-        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = True, solarSystemMovingSun = False, scenario = "threeBodiesJupiterMassTimes1000MovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = True, solarSystemMovingSun = False, scenario = "threeBodiesJupiterMassTimes1000MovingSun", movie=True, finalTimes = finalTimes, dts = dts)
     
     elif args.solarSystemFixedSun:
         finalTimes = [10**i for i in xrange(1,4)]
