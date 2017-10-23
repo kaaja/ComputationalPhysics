@@ -9,7 +9,7 @@ The file runProject3.py can be used to run different cases.
 To get an overwiev of how to run runProject3.py, type the following comands in the terminal:
 > python runProject3.py -h
 The above command gives you the necesary commandline input and an explanation, to make the program run.
-You will then get a list of argument inputs to run different cases. 
+You will then get a list of argument inputs to run different cases: 
     --twoBodyVelocityVerlet
     --twoBodyFEuler
     --threeBodyFixedSun
@@ -31,7 +31,7 @@ An example would be:
 
 If one wants to run the c++ files directly, and not visualizing, type the following in the terminal:
 c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetgeneralrelativityforce.cpp planetalternativeforce.cpp system.cpp
-./project3.x outfileName, finalTime, N, solverType, initialVy, beta, scenario
+> ./project3.x outfileName, finalTime, N, solverType, initialVy, beta, scenario
 Here you can choose "solverType" to be:
   VelocityVerlet
   ForwardEuler
