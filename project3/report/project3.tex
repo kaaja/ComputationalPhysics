@@ -678,23 +678,14 @@ We use only two objects for this simulation ,the sun and Mercury. We solve this 
 
 We assume initial position of Mercury at perihelion, and localize perihelion at $(x,y) = (0.3075 Au, 0)$. Initial velocity is set to 12.44 $Au/Yr$. When doing this, we get the following results for the perihelion precession for different $\Delta t$.\\
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/Perihelion.png}
+	\caption{Perihelion precession Mercury . \\ \textit{The fixed sun and moving Sun approximatins both converges, the moving sun approximation closest to the observed value}}
+	\label{1}
+\end{figure}
 
-Using $365.25$ days in scalings.\\
-$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession}\; 46.65$\\
-$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession}\; 42.80$\\
-$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession}\; 42.85$\\
-
-$\text{Moving Sun} \Delta t = 10^{-6}\; \text{Precession}\; X$\\
-$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; X$\\
-$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; 43.04$\\
-
-As a test, in the scaling of $c$ we changed from 365.25 days to 365 days. This gave the result
-
-$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; X$,\\
-
-so the effect of this change was insignificant.\\
-
-The above suggests that the solver is able to predict the perihelion precession of Mercury fairly well. MOre precise results would need even finer time steps.
+The above suggests that the solver is able to predict the perihelion precession of Mercury well. The reuslts for the precesions for $\Delta t = 10^{-8}$ is $42.85$ and $43.04$ for fixed and moving sun respectively, suggesting that applying a real center of mass system, as the moving sun system, gives better approximations for fine effects like Mercury's perihelion precession.
 
 \section{Conclusions}
 In this project we solve problems for planetary motion, which mathematically are systems of 2nd order differential equations. To make the equations easier to work with, we scale the equations to astronomical units.\\

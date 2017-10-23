@@ -318,6 +318,7 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
     elif scenario == 'solarSystemMovingSunInnerPlanets':
         planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
     elif scenario == 'perihelion' or scenario == 'perihelionMovingSun':
+        precessions = []
         planets = ['Mercury']
 
 
@@ -434,8 +435,12 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
                 precession = theta*206265. #206265
                 print 'Perillion precessiun %.4f' %precession
                 print 'theta %.4f' %theta
+                precessions.append(precession)
                 
-    return multiBodies
+    if scenario == 'perihelion' or scenario == 'perihelionMovingSun':
+        return multiBodies, precessions
+    else:
+        return multiBodies
 
 #%% 2, run     
 if __name__ == "__main__":
@@ -527,16 +532,29 @@ if __name__ == "__main__":
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = True, scenario = "solarSystemMovingSunInnerPlanets", movie=False, finalTimes = finalTimes, dts = dts)
 
     elif args.perihelion:
+        systemTypes = ['FixedSun', 'MovingSun']
+        scenarios = ["perihelion", "perihelionMovingSun"]
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(8, 9)]
-        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
+        dts = [10.**(-i) for i in xrange(5, 9)]
+        fig, ax = plt.subplots()
+        fig.hold('on')
+        ax.set_title('Perihelion Precession Mercury ')
+        ax.set_xlabel("$\log_{10}\Delta t $")
+        ax.set_ylabel('Perhelion precession [Arc secconds]')
+        for scenario in scenarios:
+            multiBodies, precessions = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = scenario, movie=False, finalTimes = finalTimes, dts = dts)
+            ax.plot(np.log10(dts), precessions)
+        ax.legend(systemTypes)
+        ax.invert_xaxis()
+        fig.savefig('results/' + 'Perihelion'+ '.png')
+    
         
     elif args.perihelionMovingSun:
+        systemType = 'MovingSun'
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(8, 9)]
-        multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelionMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
+        dts = [10.**(-i) for i in xrange(5, 9)]
+        multiBodies, precessions = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelionMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
 
-    
 
     
     
