@@ -87,7 +87,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
-Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet, while the observed perihelion precession of Mercury around the sun is not fully reproduced when adding a relativistic correction in the gravitational force.
+Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet. Also the observed perihelion precession of Mercury around the sun is fairly well reproduced by adding a relativistic correction in the gravitational force.
 
 
 \section{Introduction}
@@ -680,22 +680,21 @@ We assume initial position of Mercury at perihelion, and localize perihelion at 
 
 
 Using $365.25$ days in scalings.\\
-$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession}\; X$\\
-$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession}\; X$\\
-$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession}\; 32.3673$\\
+$\text{FixedSun} \Delta t = 10^{-6}\; \text{Precession}\; 46.65$\\
+$\text{FixedSun} \Delta t = 10^{-7}\; \text{Precession}\; 42.80$\\
+$\text{Fixed Sun} \Delta t = 10^{-8}\; \text{Precession}\; 42.85$\\
 
 $\text{Moving Sun} \Delta t = 10^{-6}\; \text{Precession}\; X$\\
-$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; 32.1241$\\
-$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; 32.5604$\\
+$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; X$\\
+$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; X$\\
 
 As a test, in the scaling of $c$ we changed from 365.25 days to 365 days. This gave the result
 
-$\text{Moving Sun} \Delta t = 10^{-7}\; \text{Precession}\; 32.2965$,\\
+$\text{Moving Sun} \Delta t = 10^{-8}\; \text{Precession}\; X$,\\
 
 so the effect of this change was insignificant.\\
 
-We cannot find anything wrong in our solver, and the results above seems very consistent. One possibility for our failed result could be that the needed numerical precision to get fine enough $\Delta t$ implies loss of numerical precision. We know that the global truncation error in both position and velocity for Velocity Verlet is $\mathcal{O}(\Delta t^2)$. Using finer $\Delta t$ than we have done, $\Delta t < 10^{-8}$, would result in a global truncation error estimate $10^{-16}$, which might cause numerical precision issues.
-
+The above suggests that the solver is able to predict the perihelion precession of Mercury fairly well. MOre precise results would need even finer time steps.
 
 \section{Conclusions}
 In this project we solve problems for planetary motion, which mathematically are systems of 2nd order differential equations. To make the equations easier to work with, we scale the equations to astronomical units.\\
@@ -712,7 +711,7 @@ Adding a third planet, Jupiter, to the stationary Sun earth system, gives reason
 
 The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. The result seems reasonable, all orbits being stable.\\
 
-By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun, and with 365 and 365.25 days in the scalings, we get a Perihelion precesion of 32 arc secconds for both $\Delta = 10^{-7}$ and $\Delta t = 10^{-8}$. We have not been able to find any error's in the solvers or in the input data for this scenario.  \\
+By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun, and with 365 and 365.25 days in the scalings, we get a Perihelion precesion of 42.8 arc secconds for both $\Delta = 10^{-7}$ and $\Delta t = 10^{-8}$. \\
 
 For future reference, we add the we could have improved the speed of the solvers by taking into account that the gravitational force between two planets are equal in magnitude. Taking this into account in the force calculations, we could have halved the number of FLOPS!
 

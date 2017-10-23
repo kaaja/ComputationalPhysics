@@ -34,10 +34,10 @@ vector<double> PlanetGeneralRelativityForce::getAcceleration(vector<Planet*> pla
     {
         if (planets_[planetNumber]->getMass() != mass){
             rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check the star!
-            l = sqrt((xPosition*yVelocity)*(xPosition*yVelocity) + (- yPosition*xVelocity)*(- yPosition*xVelocity));
+            l = sqrt(pow((xPosition*yVelocity - yPosition*xVelocity), 2));
             relativisticCorrection = (3*l*l/(pow(rPlanetDistance,2)*c*c) );
             accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3)*(1.+ relativisticCorrection);
-            accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,3)*(1. + relativisticCorrection);
+            accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,3)*(1.+ relativisticCorrection);
         }
     }
     accelerations.push_back(accelerationX_);

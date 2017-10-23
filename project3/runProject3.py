@@ -430,8 +430,8 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
                 indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)#[relevantTime:])
                 xPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x.values[indexRPerrilion]
                 yPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y.values[indexRPerrilion]
-                theta = np.arctan(yPerrilion/xPerrilion)
-                precession = theta*206265.
+                theta = np.arctan(float(yPerrilion)/xPerrilion)
+                precession = theta*206265. #206265
                 print 'Perillion precessiun %.4f' %precession
                 print 'theta %.4f' %theta
                 
@@ -528,12 +528,12 @@ if __name__ == "__main__":
 
     elif args.perihelion:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(7, 8)]
+        dts = [10.**(-i) for i in xrange(8, 9)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelion", movie=False, finalTimes = finalTimes, dts = dts)
         
     elif args.perihelionMovingSun:
         finalTimes = [10**i for i in xrange(2,3)]
-        dts = [10.**(-i) for i in xrange(7, 8)]
+        dts = [10.**(-i) for i in xrange(8, 9)]
         multiBodies = multiBodyStationarySun(threePlanetsMovingSun = False,solarSystemMovingSun = False, scenario = "perihelionMovingSun", movie=False, finalTimes = finalTimes, dts = dts)
 
     
