@@ -108,6 +108,49 @@ First a two-body system with only the sun and the earth, where the sun is statio
 The next section of the report describes the equations and shows the scaling of these, in addition to describing the main idea of our class setup. The proceeding section includes all results, while the final section deals with conlcusions and discussion of limitations.
 
 
+\section{Data}
+
+\subsection{Data sources}
+All data are taken from the NASA's page \href{{http://ssd.jpl.nasa.gov/horizons.cgi#top}}{\nolinkurl{http://ssd.jpl.nasa.gov/horizons.cgi\#top}}.\\
+
+From the above page we manually extract initial positions and velcocities from all planets and the sun. These data are pasted into the file "dataProject3", which can be found in the Github-repository.\\
+
+When using the mentioned webpage from NASA, we change from \textbf{OBSERVER} to \textbf{VECTOR}. We extract velocities in units of AU per day, and then manually transform this into AU per year. All manipulations done with the initial data leading to the final datafile "dataProject3" that is used, can be found in the file "dataFileProj3calculations.ods" in the repository.
+
+\subsection{Replication information}
+Replicability is very important in science. Without this, it is hard to judge the quality of the results. Also, with a high level of replicability, it is very easy for other people to build on the work direclty. In this project, we have made a python file which can be used to reproducde every figure and result in this report. Below follows the details on how to reproduce the different figures.\\
+
+When the repository is pulled, the following commands from the terminal can be used.
+
+\begin{itemize}
+	\item  \colorbox{gray!30}{python runProject3.py --twoBodyFEuler} Figures 3, 5, 7, 9, 11, 13, 17\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --twoBodyVelocityVerlet} Figures 4, 6, 8, 10, 12, 14, 16, 18\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py 	--terminalVelocity} Figure 19\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --terminalVelocityAlternativeForce} Figures 20, 21, 22\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyFixedSun} Figure 23\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyFixedSunJupiter10} Figure 24\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyFixedSunJupiter1000} Figures 25\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyMovingSun} Figure 26\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyMovingSunJupiter10} Figure 27\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --threeBodyMovingSunJupiter1000} Figure 28\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --solarSystemMovingSun} Figure 29\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --solarSystemMovingSunInnerPlanets} Figure 30\\
+	
+	\item  \colorbox{gray!30}{python runProject3.py --perihelion} Figure 31
+\end{itemize}
+
+
 \section{Theory}
 
 \subsection{Order reduction}
