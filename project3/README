@@ -24,14 +24,16 @@ You will then get a list of argument inputs to run different cases:
     --terminalVelocity
     --terminalVelocityAlternativeForce
     --perihelion
-    --perihelionMovingSun
 
 An example would be:
 > python runProject3.py --solarSystemMovingSun
 
 If one wants to run the c++ files directly, and not visualizing, type the following in the terminal:
-c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetgeneralrelativityforce.cpp planetalternativeforce.cpp system.cpp
+
+> c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetgeneralrelativityforce.cpp planetalternativeforce.cpp system.cpp
+
 > ./project3.x outfileName, finalTime, N, solverType, initialVy, beta, scenario
+
 Here you can choose "solverType" to be:
   VelocityVerlet
   ForwardEuler
