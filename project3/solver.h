@@ -16,13 +16,15 @@ private:
     vector<double> acc, accXVec, accYVec, accXVecOld, accYVecOld;
     string solverType;
 
+    void forwardEuler(vector<Planet*> planets_, int numberOfplanets_, int iterationStart);
+    void velocityVerlet(vector<Planet *> planets_, int numberOfplanets_, int iterationStart);
+
 
 public:
     Solver(string solverType_);
 
     void solve(double step_,vector<Planet*> planets_, int numberOfplanets_, int iterationStart);
-    void forwardEuler(vector<Planet*> planets_, int numberOfplanets_, int iterationStart);
-    void velocityVerlet(vector<Planet *> planets_, int numberOfplanets_, int iterationStart);
+
 };
 
 #endif // SOLVER_H

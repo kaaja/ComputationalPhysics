@@ -33,7 +33,7 @@ vector<double> PlanetGeneralRelativityForce::getAcceleration(vector<Planet*> pla
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber]->getMass() != mass){
-            rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check the star!
+            rPlanetDistance = getRadialDistance(*planets_[planetNumber]);
             l = sqrt(pow((xPosition*yVelocity - yPosition*xVelocity), 2));
             relativisticCorrection = (3*l*l/(pow(rPlanetDistance,2)*c*c) );
             accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3)*(1.+ relativisticCorrection);

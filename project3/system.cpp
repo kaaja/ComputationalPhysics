@@ -10,7 +10,6 @@ void System:: addPlanet(Planet &planet_)
     planet = &planet_;
     planets.push_back (planet);
     numberOfPlanets += 1;
-
 }
 
 

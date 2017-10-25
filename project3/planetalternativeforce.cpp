@@ -33,7 +33,7 @@ vector<double> PlanetAlternativeForce::getAcceleration(vector<Planet*> planets_,
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber]->getMass() != mass){
-            rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check * infront of planets_!
+            rPlanetDistance = getRadialDistance(*planets_[planetNumber]);
             accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,beta);
             accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,beta);
         }
