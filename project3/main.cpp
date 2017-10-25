@@ -129,7 +129,6 @@ int main(int argc, char* argv[])
     }
     else if (scenario == "threeBodiesJupiterMassTimes10MovingSun")
     {
-        //makeSolarSystem(outfileName, solarsystem);
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");
@@ -150,7 +149,6 @@ int main(int argc, char* argv[])
 
     else if (scenario == "threeBodiesJupiterMassTimes1000MovingSun")
     {
-        //makeSolarSystem(outfileName, solarsystem);
         Planet * sun = new Planet(1., 0., 0., 0. , 0., outfileName, "Sun");
 
         Planet * earth = new Planet(0.000003, 1., 0., 0. , initialVy, outfileName, "Earth");

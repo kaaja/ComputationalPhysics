@@ -55,7 +55,6 @@ double Planet:: getKineticEnergy()
 }
 double Planet:: getPotentialEnergy()
 {
-    //return 6.67*pow(10,-11)*mass/r_;
     double pi = acos(-1.0);
     double FourPi2 = 4.*pi*pi;
     return FourPi2*mass/getRPosition();
@@ -78,7 +77,7 @@ vector<double> Planet:: getAcceleration(vector<Planet*> planets_, int numberOfPl
     for (int planetNumber = start; planetNumber < numberOfPlanets_; planetNumber++)
     {
         if (planets_[planetNumber]->getMass() != mass){
-            rPlanetDistance = getRadialDistance(*planets_[planetNumber]); // check * infront of planets_!
+            rPlanetDistance = getRadialDistance(*planets_[planetNumber]);
             accelerationX_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(xPosition - planets_[planetNumber]->getXPosition())/pow(rPlanetDistance,3);
             accelerationY_ += -FourPi2*planets_[planetNumber]->getMass()/planets_[0]->getMass()*(yPosition - planets_[planetNumber]->getYPosition())/pow(rPlanetDistance,3);
         }
