@@ -82,12 +82,12 @@
 
 
 \section*{Note to instructurs reagarding Github repository}
-If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail adress available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
+If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail addres available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
 
 
 \section*{Abstract}
-Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods is shown to involve the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet. Also the observed perihelion precession of Mercury around the sun is well reproduced by adding a relativistic correction in the gravitational force.
+Systems of 2nd order ordinary differential equations (ODEs), describing planetary motion, are scaled and reduced to 1st order ODEs. The equations are discretized using forward Euler's method and the Velocity Verlet method, and implemented in C++ by use of classes and class inheritance. The methods are shown to involve approximately the same number of FLOPS. Velocity Verlet is shown to be the only method the preserves energy and angular momentum well, and is also higher in convergence rate order compared to forward Euler. Both methods produces reasonable planetary orbits in a two body system consisting of the sun and the earth. The velocity Verlet method reproduces exact terminal velocities for the earth, under different assumptions on the gravity force, and also gives reasonable results in a three body system both with a stationary and non-stationary sun is modelled. The full solar system is well approximated with Velocity Verlet. The observed perihelion precession of Mercury around the sun is well reproduced by adding a relativistic correction in the gravitational force.
 
 
 \section{Introduction}
@@ -97,15 +97,15 @@ Often the more general a method is, the more useful it is. In this project, whic
 
 Solving large systems like these cannot be done analytically, and must be done numerically. Several methods are available for calculating derivatives that appears in the equation system. Knowledge about the properties of the different methods is crucial for getting quality solutions. There are several examples where lack of knowledge about numerical methods has led to dissasters in the real world. In this project we use the forward Euler method and Velocity Verlet method, and it is shown that the Forward Euler method do not obey basic physical properties such as energy and angular momentum preservation. Also it is shown that the speed of convergence of the Velocity Verlet method is twice that of Forward Euler.\\
 
-Working with many equations on the computer, can increase the probability of errors lik e.g. typing errors dramatically. Methods that reduces the probability of such errors are essential for efficient and correct solutions. In physical systems like we are dealing with here, coupled 1st order ODE systems, most of the equations are almost identical. A perfect programming method for dealing with such cases are classes. With classes on typically writes many equations that is almost identical only once. This reduces the probability of typing errors considerably! Classes is used extensively in this project.\\
+Working with many equations on the computer, can increase the probability of errors lik e.g. typing errors dramatically. Methods that reduces the probability of such errors are essential for efficient and correct solutions. In physical systems like we are dealing with here, coupled 1st order ODE systems, most of the equations are almost identical. A perfect programming method for dealing with such cases are classes. With classes, one typically writes many equations that is almost identical only once. This reduces the probability of typing errors considerably! Classes is used extensively in this project.\\
 
 In this project we will deal with some special situations, like introduction of a relativistic correctional term to the gravitational force on Mercury (for calculation of the periihelion precession) and other alternative gravitational forces. Introduction of such modifications can be dealt with more smoothly, compared to adding lots of if-tests inside the classes, by utlizing class inheritance. With class ineritance, one simply construct new classes that inherits all the property of the old classes and then make simple changes to new class. This method potentially increases the readability and generality of the code, the last part implying that it can be used easier with other problems.\\
 
-It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise method is implemented in this project. \\
+It is easy to lose control of where problems occours and how the different parts of the program works when solving large systems. Solving the full problem directly one quickly ends up with problems localizing errors, since it is hard to find errors in large systems. A step-wise implementation, incorporating only parts of the system at a time and checking different aspects at the different steps, increases the model users knowledge about the full program and system. This step wise approach is implemented in this project. Several tests from the step wise implementation is reported.\\
 
 First a two-body system with only the sun and the earth, where the sun is stationary, is solved. On this system several things are tested: The performance of the solvers and the escape velocity for different gravitational forces. Then a three-body system is introduced, where checking for the effects of the mass of the third planet on the orbits. Finally a real center of mass system with a moving sun is introduced in the three body system, before the full solar system is simulated. The perihelion precession of Mercury around Sun is simulated as an end test of the precission of the program.\\
 
-The next section of the report describes the equations and shows the scaling of these, in addition to describing the main idea of our class setup. The proceeding section includes all results, while the final section deals with conlcusions and discussion of limitations.
+The next sections of the report describes the data, the equations and shows the scaling of these, in addition to describing the main idea of our class setup. The results section includes all results, while the final section deals with conlcusions and discussion of limitations.
 
 
 \section{Data}
@@ -192,7 +192,7 @@ For the forward Euler method, a Taylor expansion around the point $x + h$ is don
 
 We see from (\ref{eq:fev}) and (\ref{eq:fev}) that the truncation error is of order $h^2$. However, the above is repeated $N$ times, there are $N$ time steps, to get the full solution. Since $h$ is proprtional to $N^{-1}$ ($h = T/N$), the global error goes like $\mathcal{O}(h)$. The forward Euler method is conditionally stable, meaning that is stable only for certain $\Delta t$.\\
 
-The velocity Verlet method is constructed in the same way as the forward Euler method, apllying Taylor polynomials. However, a more clever manipulation of the Taylor polynomials is applied, and one ends with
+The velocity Verlet method is constructed in the same way as the forward Euler method, applying Taylor polynomials. However, a more clever manipulation of the Taylor polynomials is applied, and one ends with
 
 \begin{subequations}
 	\begin{align}
@@ -208,7 +208,7 @@ The velocity Verlet method is constructed in the same way as the forward Euler m
 	\end{align}
 \end{subequations}
 
-In the above one must update position before velocity, since we need the acceleration on the current and next step to get the velocity. Calcuating x first, we can insert this into the equation for a, and then we calculate v. We observe that the truncation error, and hence the also the global error, is one order higher compared to forward Euler. This method is unconditionally stable, meaning it is stable for all $\Delta t$. In addition, this method conserves energy.
+In the above one must update position before velocity, since we need the acceleration on the current and next step to get the velocity. Calcuating x first, we can insert this into the equation for a, and then we calculate v. We observe that the truncation error, and hence the also the global error, is one order higher compared to forward Euler. This method is unconditionally stable, meaning it is stable for all $\Delta t$. In addition, this method conserves energy better then Forward Euler.
 
 \subsubsection{Algorithm Velocity Verlet and FLOP count}
 
@@ -236,7 +236,7 @@ for time in [0,...,T]:
 		v += v + h/2(accVecOld[planet] + accVec[planet]])			
 \end{lstlisting}
 
-Now we will count the FLOPS of the above algorithm, For reference, accelerations are calculated with the following formulae
+Now we will count the FLOPS of the above algorithm. For reference, accelerations are calculated with the following formulae
 
 \begin{lstlisting}
 rPlanetDistance = getRadialDistance(*planets_[planetNumber]); 
@@ -266,12 +266,12 @@ With P denoting the number of planets, N denoting the number of time steps, and 
 
 The above is not fully exact, as how one implements e.g. $4 \pi^2$ into the program affects the FLOP count. However, all necessary terms of the implemented algorithm should be included for the above count to give a correct order, which is $\mathcal{O}(N)\;FLOPS$. Also, in the program x and y are separated, so we get twice as many FLOPS as calculated above. Once again, this does not effect the order properties of the FLOPS, which will be analyzed.\\
 
-We will do an explicit FLOP count for Forward Euler, which is easier to count for. However, the method for counting FLOPS for Forward Euler is the same as the one applied above. From the lectures, we know that also forward Euler is $\mathcal{O}(N)$ when it comes to FLOPS, with only a few FLOPS less than Velocity Verlet.
+We will not do an explicit FLOP count for Forward Euler, which is easier to count for. However, the method for counting FLOPS for Forward Euler is the same as the one applied above. From the lectures, we know that also forward Euler is $\mathcal{O}(N)$ when it comes to FLOPS, with only a few FLOPS less than Velocity Verlet.
 
 
 
 \subsection{The solar system equations}
-We describe the solar system by Newton's 2nd law assuming circular orbits and Newton's gravitational law, which for two objects are
+We describe the solar system by Newton's 2nd law assuming circular orbits when scaling and Newton's gravitational law, which for two objects are
 
 \begin{equation}
 F_G = M_{earth}\frac{v^2}{r}\label{eq:newtonCircle}
@@ -323,19 +323,19 @@ For the x-component we get
 	\end{align}
 \end{subequations}
 
-The same type of calculation gies the y-component. \\
+The same type of calculation gives the y-component. \\
 
-The next step is to add a planet to the system. This will add a new force between earth and the new planet, in addition to the force between the sun and the planets. The force between earth and the new planet will be of the exact same kind as the force between earth and sun, given in (\ref{eq:newtonGravity}), and the x accleration term (\ref{eq:ax}) for the earth will now be
+The next step is to add a planet to the system. This will add a new force between earth and the new planet, in addition to the force between the sun and the planets. The force between earth and the new planet will be of the exact same kind as the force between earth and sun, given in (\ref{eq:newtonGravity}). The x accleration term (\ref{eq:ax}) for the earth will now be
 
 \begin{equation}\label{eq:3rdPlanet}
 a_x = -\frac{4 \pi^2}{r_{earth,sun}^3} (x_{earth}-x_{sun}) - \frac{4 \pi^2 \frac{M_{jupiter}}{M_{sun}}}{r_{earth,jupiter}^3}(x_{earth}-x_{jupiter}),
 \end{equation}
 
-where we see that the only difference between the two terms are the mass-factor, which in the earth-sun term is one. Now Jupiter will have the same kind of expression as above, only with Jupiter instead of earth in the subscripts. Note the similarity! Adding more planets happens in exactly the same way, nothing new happens! Also we note that the 2nd term will be equall for Jupiter and earth, which potentially can be taken advantage of when solving the equaions numerically. 
+where we see that the only difference between the two terms are the mass-factor, which in the earth-sun term is one. Now Jupiter will have the same kind of expression as above, only with Jupiter instead of earth in the subscripts. Note the similarity! Adding more planets happens in exactly the same way, nothing new happens! Also we note that the 2nd term will be equall for Jupiter and Earth, which potentially can be taken advantage of when solving the equaions numerically. 
 
 
 \section{Results}
-Before turning to the results, we give a short overview of our class implementation.
+Before turning to the simulation results, we give a short overview of our class implementation.
 
 \subsection{Class implementation}
 The figures below show our class herarcy and the flow-chart.
@@ -357,23 +357,23 @@ The figures below show our class herarcy and the flow-chart.
 
 The class hierarchy figure shows how the program in project3 is divided into different objects. We have a super class "Planet" which defines all properties of a planet. Then we have two subclasses of "Planet" called "planetGeneralRelativity" and "PlanetAlternativeForce".\\ 
 
-The System class contains all planet objects, and the Solver class contains algorithms for solving ODE's. The algorithms in the class is forward Euler and Velocity verlet.\\
+The System class contains all planet objects, and the Solver class contains algorithms for solving ODE's. The algorithms in the class are forward Euler and Velocity verlet.\\
 
 The subclasses inherits all the properties of planet, except that their acceleration is changed. For the PlanetGeneralRelativityForce class we have a correction term on the acceleration to get a relativistic gravitational force. In the PlanetAlternativeForce class the acceleration is changed from beeing divided by $r^3$ to $r^{\beta}$, where $\beta \in [2,3]$, to investigate it's impact on the planet system.\\  
 
-In the flow chart figure we can se the flow of the program. In the class System we have a vector containing objects of the class planets. The planets can be of the type "Planet" or of either one of the subclasses "PlanetGeneralRelativityForce" or "PlanetAlternativeForce".\\ 
+In the flow chart figure we can ses the flow of the program. In the class System we have a vector containing objects of the class planets. The planets can be of the type "Planet" or of either one of the subclasses "PlanetGeneralRelativityForce" or "PlanetAlternativeForce".\\ 
 
 Inside the Planet classes we can obtain certain values of the planet by calling on the "get methods". There is also set methods to set velues of the planets. \\
 
-Within the System class we can simulate the planetary system by using the Solver class. Calling the method "simulate" will send all the planet objects to a solver, who solves a system of ODE's for all the planets in the planetary. This is done by either using forward euler method or velocity verlet method, which is specified by the user. 
+Within the System class we can simulate the planetary system by using the Solver class. Calling the method "simulate" will send all the planet objects to a solver, that solves a system of ODE's for all the planets in the planetary. This is done by either using forward euler method or velocity verlet method, which is specified by the user. 
 
 \subsection{Forward Euler versus Velocity Verlet}
 
 \subsubsection{Positions}
-The below figures show the results for the x and y-positions as functions of time, forward Euler to the left and Velocity Verlet to the right. 
+The below figures show the results for the x and y-positions as functions of time, forward Euler to the left and Velocity Verlet to the right. We used the intial position $(x,y) = (1,0)\;Au$ and initial velocity $(v_x, v_y) = (0, 2\pi.)$ for the Earth, with the Sun fixed in the center.
 
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimesForwardEuler.png}
@@ -381,7 +381,7 @@ The below figures show the results for the x and y-positions as functions of tim
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTimesVelocityVerlet.png}
@@ -395,33 +395,33 @@ As can be seen of the figures above, both methods converges when $\Delta t$ is l
 
 The next two sets of figures shows the orbits for different $\Delta t$ for the two methods.
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000ForwardEuler.png}
-		\caption{Sun-Earth system. Forward Euler. 1 000 years \\ \textit{Non-circulat orbits when time step is large.}}
+		\caption{Sun-Earth system. Forward Euler. 1 000 years \\ \textit{Non-circular orbits when time step is large.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000VelocityVerlet.png}
-		\caption{Sun-Earth system. Velocity Verlet. 1000 years. \\ \textit{Large time step gives bad solutions also for Velocity Verlet.}}
+		\caption{Sun-Earth system. Velocity Verlet. 1 000 years. \\ \textit{Large time step gives bad solutions also for Velocity Verlet.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000000ForwardEuler.png}
-		\caption{Sun-Earth system. Forward Euler. 1 000 years. \\ \textit{For $\Delta t = 0.0001$, the forward Euler seems to give circular orbits, but we can see that the solution changes.}}
+		\caption{Sun-Earth system. Forward Euler. 1 000 years. \\ \textit{For $\Delta t = 0.0001$, the forward Euler seems to give circular orbits.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthfinalTime1000N10000000VelocityVerlet.png}
@@ -437,53 +437,55 @@ The 2 sets of figures above confirms what we found in the figures with x and y-p
 Next we analyze the evolution of energy in the numerical solutions. Since all forces in our systems are conservative, meaning that the work done by the forces is path independent, total mecahnical energy, the sum of kinetic and potential energy, should be preserved. Consearvation of energy is a crucial physical principle which we want to maintain in our numerical solutions. The below figures show the difference in total energy compared to the initial total energy, forward Euler to the left and Velocity Verlet to the right.
 
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergyForwardEuler.png}
-		\caption{Sun-Earth system. Total Energy divided by total energy first time step. Forward Euler. 10 years. \\ \textit{Energy is not preserved with the Forward Euler method}}
+		\caption{Sun-Earth system. Total Energy change from initial energy, pec centage. Forward Euler. 10 years. \\ \textit{Energy is not preserved with the Forward Euler method}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthEnergyVelocityVerlet.png}
-		\caption{Sun-Earth system. Total Energy divided by total energy first time step. Velocity Verlet. 10 years. \\ \textit{Energy is preserved in Velocity Verlet provided fine enough time step. }}
+		\caption{Sun-Earth system. Total Energy change from initial energy, pec centage. Velocity Verlet. 10 years. \\ \textit{Energy is preserved better in Velocity Verlet provided fine enough time step. }}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-The two figures above show that for forward Euler, energy can actually increase, even for smaller $\Delta t$. For Velocity Verlet, energy seems to be preserved faster compared to Forward Euler. Also, Velocity Verlet never make energy, as is the case for Forward Euler.\\
+The two figures above show that for forward Euler, energy can actually increase, even for smaller $\Delta t$. For Velocity Verlet, energy seems to be preserved better compared to Forward Euler. \\
 
-Another important physical property which we want to contain in the numerical simulations, is presevation of angular momentum conservation, $\frac{d \vec{L}}{dt} = \sum_i \vec{r}_i \times \vec{F^{ext}_i} = 0$. There is zero change in angular momentum, since the net external forces are zero. The next figure shows the same kind of figures as for energy above, but now for angular momentum. 
+Another important physical property which we want to contain in the numerical simulations, is presevation of angular momentum conservation, $\frac{d \vec{L}}{dt} = \sum_i \vec{r}_i \times \vec{F^{ext}_i} = 0$. There is zero change in angular momentum, since the net external forces are zero. The next figures show the same kind of figures as for energy above, but now for angular momentum. 
 
 
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentumForwardEuler.png}
-		\caption{Sun-Earth system. Angular momentum divided by angular momentum first time step. Forward Euler. 10 years. \\ \textit{Angular momentum seems to be conserverd for the finest time step.}}
+		\caption{Sun-Earth system. Change angular momentum from initial state, per centage. Forward Euler. 10 years. \\ \textit{Angular momentum seems to be conserverd for the finest time step.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthAngularMomentumVelocityVerlet.png}
-		\caption{Sun-Earth system. Angular momentum divided by angular momentum first time step. Velocity Verlet. 10 years. \\ \textit{Angular momentum is conserverd given suffiently fine time steps. Conservation achieved faster than with Forward Euler.}}
+		\caption{Sun-Earth system. Change angular momentum from initial state, per centage. Velocity Verlet. 10 years. \\ \textit{Angular momentum is conserverd given suffiently fine time steps. Conservation achieved faster than with Forward Euler.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-The figures above show that as $\Delta t$ gets low, angular momentum is preserved. Also, Velocity Verlet seems to give good angular momentum approximations compared to Forward Euler.\\
+The figures above show that as $\Delta t$ gets low, angular momentum is preserved. Also, Velocity Verlet seems to give better angular momentum approximations compared to Forward Euler.\\
 
-Since we know the exact solution for energy and angular momentum, or more precisely, the exact solution for the change, we have constructed a norm measure for computing convergence rates of the schemes. The error-norm is the supremum of the largest difference in energy compared to initial energy. From above we know that the global error's for $x$ and $y$ in Forward Euler should go as respectively $\mathcal{O}(\Delta t)$ and $\mathcal{O}(\Delta t^2)$, so the orders of global errors in position and velocity is always twice as high in the Velocity Verlet method compared to the forward Euler method. Since both energy and angual momentum depend on position and velocity, we expect the convergence rate of norms related to energy and norms related to angular momentum to be twice as high for the Velocity Verlet method compared to the forward Euler method. The figures below shows the convergence for energy norm and angular momentum norm for Forward Euler and Velocity Verlet.
+Since we know the exact solution for energy and angular momentum, or more precisely, the exact solution for the change, we have constructed a norm measure for computing convergence rates of the schemes. The error-norm is the supremum of the largest difference in energy compared to initial energy. From above we know that the global error's for $x$ and $y$ in Forward Euler should go as respectively $\mathcal{O}(\Delta t)$ and $\mathcal{O}(\Delta t^2)$, so the orders of global errors in position and velocity is always twice as high in the Velocity Verlet method compared to the forward Euler method. \\
 
-\begin{minipage}{.49\textwidth} 
+Since both energy and angual momentum depend on position and velocity, we expect the convergence rate of norms related to energy and norms related to angular momentum to be twice as high for the Velocity Verlet method compared to the forward Euler method. The figures below show the convergence for the energy norm and the angular momentum norm for Forward Euler and Velocity Verlet.
+
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormForwardEuler.png}
@@ -491,7 +493,7 @@ Since we know the exact solution for energy and angular momentum, or more precis
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormVelocityVerlet.png}
@@ -501,7 +503,7 @@ Since we know the exact solution for energy and angular momentum, or more precis
 \end{minipage}\hfill
 \vspace{2ex}
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumForwardEuler.png}
@@ -509,7 +511,7 @@ Since we know the exact solution for energy and angular momentum, or more precis
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthsupNormAngularMomentumVelocityVerlet.png}
@@ -524,21 +526,21 @@ The figures on the first row show that the energy norm error goes as 1st order f
 The figures on the 2nd row above show that also for the angular momentum norm, the order for Velocity Verlet is twice that of Forward Euler, as expected.
 
 \subsubsection{Algorithm efficiency}
-Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. Now we want to see that the efficiency of the algorithms replicate the behaviour we would expect based on the FLOP-count we did in the section "Algorithm Velocity Verlet and FLOP count". In the mentioned section we calculated velocity Verlet to be $\mathcal{O}(N)$ FLOPS. Computational time should be more or less proprtional to FLOPS, so we expect the computational time to be of the same order as the FLOPS. The below figures show the computation time for the methods, forard Euler to the left and Velocity Verlet to the right.
+Knowledge about a methods correctness, discussed above, is crucial, but efficiency is also important. Now we want to see that the efficiency of the algorithms replicate the behaviour we would expect based on the FLOP-count we did in the section "Algorithm Velocity Verlet and FLOP count". In the mentioned section we calculated velocity Verlet to be $\mathcal{O}(N)$ FLOPS. Computational time should be more or less proprtional to FLOPS, so we expect the computational time to be of the same order as the FLOPS. The below figures show the computation time for the methods, forward Euler to the left and Velocity Verlet to the right.
 
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthlogTimeUsedForwardEuler.png}
-		\caption{Sun-Earth system. Log time. Forward Euler \\ \textit{Forward Euler's $\mathcal{O}(N)$}.}
+		\caption{Sun-Earth system. Log time. Forward Euler \\ \textit{Forward Euler is $\mathcal{O}(N)$}.}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.49\textwidth} 
+\begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthlogTimeUsedVelocityVerlet.png}
-		\caption{Sun-Earth system. Log time. Velocity Verlet \\ \textit{Velocity Verlet's log time is of the same order as Forward Euler.}}
+		\caption{Sun-Earth system. Log time. Velocity Verlet \\ \textit{Velocity Verlet's simulation time is of the same order as Forward Euler.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -560,12 +562,12 @@ Another test to see if the solver obeys the physical laws, is to check if the es
 	\end{align}
 \end{subequations}
 
-Based on the above equation, we expect the simulations to gove escape then $v > 2\pi \sqrt{2}$. The figures below show the results.
+Based on the above equation, we expect the simulations to gove escape when $v > 2\pi \sqrt{2}$. The figures below show the results.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/sunEarthTerminalVelocityradialDistanceVelocityVerlet.png}
-	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{Escape for velocity equal to $0.1 \%$ of  $v = 2\sqrt{2}\pi$.}}
+	\caption{Sun-Earth system. Escape valocity. Radial distance earth sun. \\ \textit{Escape for velocity  $0.1 \%$ higher than $v = 2\sqrt{2}\pi$.}}
 	\label{1}
 \end{figure}
 
@@ -605,9 +607,9 @@ Another test, to see if the numerical solutions corresponds with physics, is to 
 The figures above show that the escape velocities are lowered when the gravitational forces are lowered, as expected.  
 
 \subsection{Center of mass system}
-Above we have seen that the solvers correspond well with expected behavoiur: Forward Euler does not preserve energy, while Velocity Verlet does, and basic exact results for escapce velocities, energy and angular momentum is well approximated. However, the above was only tested on a two-object system. To check whether the solver works for multibody systems, with more than two objects, a third planet, Jupiter, is added.\\
+Above we have seen that the solvers reproduce expected behavoiur: Forward Euler does not preserve energy, while Velocity Verlet does, and basic exact results for escapce velocities, energy and angular momentum is well approximated. However, the above was only tested on a two-object system. To check whether the solver works for multibody systems, with more than two objects, a third planet, Jupiter, is added.\\
 
-All the above simulations were based on the assumption that the sun was stationary. This is not the case in reality. To make the  solver more realistic, we now introduce movement in the sun by letting the sun be modelled just as the other planets, gravity affecting also the sun's movement. \\
+All the above simulations were based on the assumption that the sun was stationary. This is not the case in reality. To make the solver more realistic, we also introduce movement in the sun by letting the sun be modelled just as the other planets, gravity affecting also the sun's movement. \\
 
 To make the plots easy to interpret, we make sure that the center of mass of the system is stationary. This we do by adjusting the initial velocity of the sun, utilizing the fact that the angular momentum of the system is preserved
 
@@ -621,13 +623,13 @@ To make the plots easy to interpret, we make sure that the center of mass of the
 	\end{align}
 \end{subequations}
 
-The below figure shows the results for the three-body systems mentioned above, with fixed and with moving sun, for three different masses of Jupiter.
+The below figures show the results for the three-body systems mentioned above, with fixed and with moving sun, for three different masses of Jupiter.
 
 \begin{minipage}{.3\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesVelocityVerletT1000dt0001.png}
-		\caption{3 bodies. Fixed sun. Normal Jupiter mass. \\ \textit{Stable orbits}}
+		\caption{3 bodies. Fixed sun. Normal Jupiter mass. \\ \textit{Stable orbits.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -635,7 +637,7 @@ The below figure shows the results for the three-body systems mentioned above, w
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/threeBodiesJupiterTimes10VelocityVerletT1000dt0001.png}
-		\caption{3 bodies. Fixed sun. Jupiter mass times 10. \\ \textit{Little effect on orbits}}
+		\caption{3 bodies. Fixed sun. Jupiter mass times 10. \\ \textit{Little effect on orbits.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -675,26 +677,22 @@ The below figure shows the results for the three-body systems mentioned above, w
 \end{minipage}\hfill
 \vspace{2ex}
 
+The first row in the figures above shows that the solver works for 3 body systems, but also that the Earth escapes in the case where Jupiter's mass equals the Sun' mass.\\
 
+The 2nd row in the figures above shows the solutions for different masses of Jupiter in the case where the Sun is moving. We see that the solution for the two lowest masses of Jupiter resembles the fixed sun scenarios in the 1st row of the above figures. For the case where the mass of Jupiter equals the mass of Sun, however, the solution is quite different in the case with moving sun compared to a fixed Sun. The earth still escapes, but now the Sun moves a lot, which is natural given Jupiter's mass equals the Sun's mass. \\
 
-The first rows in the figures above shows that the solver works for 3 body systems, and that the Earth escapes in the case where Jupiter's mass equals the Sun' mass.\\
-
-The 2nd row in the figures above shows the solutions for different masses of Jupiter in the case where the Sun is moving. We see that the solution for the two lowest masses of Jupiter resembles the fixed sun scenarios on the 1st row. For the case where the mass of Jupiter equals the mass of Sun, however, the solution is quite different in the case with moving sun compared to a fixed Sun. The earth still escapes, but now the Sun moves a lot, which is natural given Jupiter's mass equals the Sun's mass. \\
-
-The movies below show that the center of mass is fixed in the moving sun system. To run the movies, simply write "animate threeBodiesMovingSunJupiter1000.mp4" for the moving Sun case, and "animate threeBodiesFixedSunJupiter1000.mp4" for the fixed Sun case.
-
-
+We have made movies where one can see that the center of mass seems fixed in the moving sun system. To run the movies, simply write "animate threeBodiesMovingSunJupiter1000.mp4" for the moving Sun case, and "animate threeBodiesFixedSunJupiter1000.mp4" for the fixed Sun case.
 
 
 \subsection{Solar system}
-The solver producing reasonable results for the three-body system, we are now ready to simulate the full solar system. Since we are using classes, going from three objects to ten objects constitutes nearly no work at all! We read in all planets from file in a loop, and use the same method as earlier for adding planets. That is all. The below figures displays the results for the full solar system, with a moving sun. \\
+Since the solver is producing reasonable results for the three-body system, we are now ready to simulate the full solar system. Since we are using classes, going from three objects to ten objects constitutes nearly no work at all! We read in all planets from file in a loop, and use the same method as earlier for adding planets. That is all. The below figures displays the results for the full solar system, with a moving sun. \\
 
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/solarSystemMovingSunVelocityVerletT1000dt0001.png}
-		\caption{Solar System. Moving sun.All planets 1000 years  \\ \textit{Orbits looks reasonable}}
+		\caption{Solar System. Moving sun. All planets 1000 years  \\ \textit{Orbits looks reasonable.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -702,22 +700,20 @@ The solver producing reasonable results for the three-body system, we are now re
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project3/resultsKeep/plots/solarSystemMovingSunVelocityVerletT100dt0001.png}
-		\caption{Solar System. Moving sun. Inner most planets. 100 years  \\ \textit{Extreme perihelion precession for Mercury}}
+		\caption{Solar System. Moving sun. Inner most planets. 100 years  \\ \textit{Large perihelion precession of Mercury.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-
-
-The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnatural movement for Mercury. This has to do with the ommission of the relativistc correction term in the graviational force. See next section for more on this.
+The above figure shows that the program nicely simulates the basic dynamics of the solar system. This is as expected, since the most significant forces are included in the program. However, the right figure shows an unnatural movement for Mercury, displaying an unaturally large perihelion precession. This has to do with the ommission of the relativistc correction term in the graviational force. See next section for more on this.
 
 \subsection{Perihelion precession}
-Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term,$\frac{GM_{Sun} M_{Mercury}}{r^2} \frac{3l^2}{r^2c^2}$, where $l = |\vec{r} \times \vec{v}|$, in Mercury's acceleration term. Over the period of a century, the position of Perhelion of Mercury is 43 arcsecconds. \\
+Perihelion is the closest point between a planet and sun during one rotation. This precession is supposed to be very small, 43 arcseconds over a century. Since the solver is working so well, we now want to try to reproduce the observed perihelion precession of Mercury by adding a relativistic gravitational term,$\frac{GM_{Sun} M_{Mercury}}{r^2} \frac{3l^2}{r^2c^2}$, where $l = |\vec{r} \times \vec{v}|$, in Mercury's acceleration term.  \\
 
-We implement the relativistic term by creating a new class, "PlanetMercury", which inherits everything from the Planet class. The acceleration function is corrected by overrideing it in the new class. The new correction term is scaled in the same way as the other terms, and we  end with an acceration equation of type $a = Uncanged(1 + ScaledCorrection)$. \\
+We implement the relativistic term by creating a new class, "PlanetGeneralRelativityForce", which inherits everything from the Planet class. The acceleration function is corrected by overrideing it in the new class. The new correction term is scaled in the same way as the other terms, and we  end with an acceration equation of type $a = Uncanged(1 + ScaledCorrection)$. \\
 
-We use only two objects for this simulation ,the sun and Mercury. We solve this problem with a stationary sun, and with a moving Sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble. However, now we are trying to identify small effects, so the effect of a moving Sun might not be imprtant anymore. \\
+We use only two objects for this simulation ,the sun and Mercury. We solve this problem with a stationary sun, and with a moving Sun. We saw that in the three body system, with larger planets than Mercury, the effect of introducing a moving sun was neglieble. However, now we are trying to identify small effects, so the effect of a moving Sun might not be unimportant anymore. \\
 
 We assume initial position of Mercury at perihelion, and localize perihelion at $(x,y) = (0.3075 Au, 0)$. Initial velocity is set to 12.44 $Au/Yr$. When doing this, we get the following results for the perihelion precession for different $\Delta t$.\\
 
@@ -737,13 +733,13 @@ The systems of 2nd order equations are reformulated to systems of 1st order equa
 
 Solving the large system of equations in C++, we take apply classes and class inheritance.\\
 
-Two numerical methods are used: the forward Euler method and the Velocity Verlet method. We show that the velocity Verlet method reproduces physical results like conservation of energy and angular momentum, while the Forward Euler method does not reproduce these results. The Velocity Verlet method converges faster to correct solutions, for preservation of energy and angular momentim, compared to the Forward Euler method. The velocity Verlet has twice the convergence rate of forward Euler when it comes to sup-norm in energy and angular momentum preservation, the velocity Verlet method being of order two and four for these quantitites respectively. Both methods gives bad results for the largest time steps. The methods are shown to involve approximatly the same amount of FLOPS.\\
+Two numerical methods are used: the forward Euler method and the Velocity Verlet method. We show that the velocity Verlet method reproduces physical results like conservation of energy and angular momentum well, while the Forward Euler method does not reproduce these results as well. The Velocity Verlet method converges twice as fast to correct solutions, for preservation of energy and angular momentim, compared to the Forward Euler method. Both methods gives bad results for the largest time steps. The methods are shown to involve approximatly the same amount of FLOPS.\\
 
-The Velocity Verlet method reproduces the exact terminal velocity of a two object sun-earth system. Exact results are reproduced by Velocity Verlet also in scenarios where the gravitational force is changed. \\
+The Velocity Verlet method reproduces the exact terminal velocity of a two object sun-earth system. Velocity Verlet also gives reasonalbe physical results in scenarios where the gravitational force is changed. \\
 
-Adding a third planet, Jupiter, to the stationary Sun earth system, gives reasonable results using Velocity Verlet: The orbits stay circular and stable. Also here the largest time steps give strange results, while the finer time steps gives convergent solutions. Making Jupiter's mass equal to the Sun's mass makes the earth escape. More realistic scenarios, that includes movement in the sun, keeping the center of mass of the system constant, produces reasonable results: When Jupiter's mass is enlarged, the sun starts to move. The center of mass is shown to be fixed.\\
+Adding a third planet, Jupiter, to the stationary Sun earth system, gives reasonable results using Velocity Verlet: the orbits stay circular and stable. Also here the largest time steps give strange results, while the finer time steps gives convergent solutions. Making Jupiter's mass equal to the Sun's mass makes the earth escape. More realistic scenarios, that includes movement in the sun, keeping the center of mass of the system constant, produces reasonable results: When Jupiter's mass is enlarged, the sun starts to move. The center of mass seems to be fixed.\\
 
-The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. The result seems reasonable, all orbits being stable.\\
+The full solar system is simulated with the Velocity Verlet solver and with movement in the sun. Except for Mercury's behaviuour, the results seems reasonable, all other orbits being stable.\\
 
 By adding a relativistic correction to the gravitational force from sun on Mercury, the perihelion precession of Mercury around the sun is not fully reproduced. Both in the cases with a fixed Sun and with a moving Sun we get a Perihelion precesion of 43 arc secconds. The results converge, meaning that the perihelion procession result stabilizes for the finest time steps. \\
 
