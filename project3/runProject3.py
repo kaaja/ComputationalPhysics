@@ -37,8 +37,7 @@ def sunEarth(solverType):
     beta = 3.0
     outfileName = 'sunEarth'
     
-    finalTimes = [10**i for i in xrange(0,4)]
-    #Ns = [10**i for i in xrange(3,8)]   
+    finalTimes = [10**i for i in xrange(0,4)]  
     dts = [10.**(-i) for i in xrange(1, 5)]
     
     
@@ -77,7 +76,6 @@ def sunEarth(solverType):
     ax4.set_title(outfileName + ' ' + solverType + 'sup Norm')
     ax4.set_xlabel("$\Delta t$")
     ax4.set_ylabel('sup norm Energy')
-    #ax2.set_ylim(0.)
 
     # supNorm Angular Momentum
     fig5, ax5 = plt.subplots()
@@ -85,7 +83,6 @@ def sunEarth(solverType):
     ax5.set_title(outfileName + ' ' + solverType + ' sup-norm Angular momentum')
     ax5.set_xlabel("$\Delta t$")
     ax5.set_ylabel('sup-norm angular momentum')
-    #ax2.set_ylim(0.)
     
     # Times
     fig6, ax6 = plt.subplots()
@@ -99,7 +96,7 @@ def sunEarth(solverType):
         for dt in dts:
             N = finalTime/dt
             print 'N = %d, final time = %.2g ' %(N, finalTime)  
-            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))#.replace(".", "")
+            outfileName2 = outfileName + 'finalTime%s' %str(finalTime).replace(".", "") + 'N%s' %str(int(round(N)))
             
             runCpp(outfileName2, finalTime, N, solverType, initialVy, beta, scenario)
             
@@ -114,9 +111,6 @@ def sunEarth(solverType):
                 ax3.plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], angularMomentumChange)
                 ax[0].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], sunEarth['FinalTime %f' %finalTime]['N %f' %N].x[:-1])
                 ax[1].plot(sunEarth['FinalTime %f' %finalTime]['N %f' %N].time[:-1], sunEarth['FinalTime %f' %finalTime]['N %f' %N].y[:-1])
-                #fig.savefig('results/' + outfileName + 'times.png') 
-                #plt.show()
-                #plt.close()
                 legends.append('dt %.2g' %dt)
             
             if finalTime == finalTimes[-1]:
@@ -169,25 +163,8 @@ def plotSunEarth(sunEarth, outfileName, solverType, N, finalTime, setAxis=True):
         ax.set_xlim(-2., 2.)
         ax.set_ylim(-2., 2.)
     fig.savefig('results/' + outfileName + solverType + '.png') 
-    #plt.show()
     plt.close()
     
-
-def plotSunEarthTimes(sunEarth, outfileName, solverType, N, finalTime):
-    dt = finalTime/N
-    fig, ax = plt.subplots(2, sharex=True)
-    fig.hold('on')
-    ax[0].plot(sunEarth.time[:-1], sunEarth.x[:-1])
-    ax[1].plot(sunEarth.time[:-1], sunEarth.y[:-1])
-    fig.title(outfileName + ' ' + solverType + '\n N %d, dt %.2g' %(N, dt))
-    ax[0].set_xlabel('t [Au]')
-    ax[0].set_ylabel('x [Au]')
-    ax[1].set_ylabel('y [Au]')
-    #ax.set_xlim(-2., 2.)
-    #fig.ylim(-1.1, 1.1)
-    #fig.savefig('results/' + outfileName + 'times.png') 
-    #plt.show()
-    plt.close()
 
 #%% 2, run 
 
@@ -202,7 +179,6 @@ def sunEarthTerminalVelocity():
     solverType = 'VelocityVerlet'
     beta = 2.0
     finalTime = 10.**3
-    #Ns = [10**i for i in xrange(3,8)]
     dt = 0.001
     N = finalTime/dt
     numberOfSimulations = 3
@@ -234,7 +210,7 @@ def sunEarthTerminalVelocity():
         legends.append('initialVy $2 \sqrt{2} \pi ( 1 + 0.001(%d) )$' %counter)
         counter += 1
     
-    ax.legend(legends, loc=0) #bbox_to_anchor=(1.1, 0.7), ncol=1
+    ax.legend(legends, loc=0) 
     #ax.set_xlim(-2., 2.)
     #ax.set_ylim(0.9, 1.1)
     fig.savefig('results/'+ outfileName + 'radialDistance' + solverType + '.png')
@@ -253,7 +229,6 @@ def sunEarthAlternativeGravitationalForce():
     solverType = 'VelocityVerlet'
     betaValues = [3.5, 3.9,4.0]# 
     finalTime = 10.**3
-    #Ns = [10**i for i in xrange(3,8)]
     dt = 0.001
     N = finalTime/dt
     numberOfSimulations = 5
@@ -285,7 +260,7 @@ def sunEarthAlternativeGravitationalForce():
             ax.plot(sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].time[:-1], sunEarth['beta %f' %beta]['initialVy%fpi' %(initialVelocityY/np.pi)].r[:-1])
             legends.append('initialVy %fpi' %(initialVelocityY/np.pi))
         
-        ax.legend(legends, loc = 0) #bbox_to_anchor=(1.1, 0.7), ncol=1
+        ax.legend(legends, loc = 0)
         #ax.set_xlim(-2., 2.)
         #ax.set_ylim(0.9, 1.1)
         fig.savefig('results/'+ outfileName + 'radialDistance' + solverType + 'beta' + str(beta).replace(".", "")+'.png')
@@ -321,28 +296,6 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
         precessions = []
         planets = ['Mercury']
 
-
-#    if not threePlanetsMovingSun and not solar!=SystemMovingSun: 
-#        if scenario != 'perihelion' or scenario !=  'perihelionMovingSun':
-#            print scenario
-#            planets = ['Earth', 'Jupiter']
-#    
-#    elif threePlanetsMovingSun:
-#        planets = ['Sun','Earth', 'Jupiter']
-#        
-#    elif not solarSystemMovingSun:
-#        planets = [ 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
-#    
-#    elif solarSystemMovingSun:
-#        planets = ['Sun', 'Earth', 'Jupiter', 'Mars', 'Venus', 'Saturn', 'Mercury', 'Uranus', 'Neptune', 'Pluto']
-#        if scenario == 'solarSystemMovingSunInnerPlanets':
-#            planets = ['Sun', 'Earth', 'Mars', 'Venus', 'Mercury']
-#            scenario = 'solarSystemMovingSun'
-#    
-#    elif scenario == 'perihelion':
-#        planets = ['Mercury']
-#    elif scenario == 'perihelionMovingSun':
-#        planets = ['sun', 'Mercury']
     
     print planets
     initialVy = 2*np.pi
@@ -388,20 +341,13 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
                     numberOfPlots = int(round(numberOfObservations/saveInterval))
                     fig2, ax2 = plt.subplots()
                     plt.hold('on')
-                    #ax2.set_title(solverType + '\n T %d, $\Delta$ t %.2g Time between frames %.1g' %(finalTime, dt, dt*saveInterval))
                     ax2.set_xlabel('x [Au]')
                     ax2.set_ylabel('y [Au]')
                     plt.axis('equal')
                     ax2.set_xlim(-100., 100.)
                     ax2.set_ylim(-100., 100.)
     
-                    colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']#, 'coral', 'cornsilk']
-                    #colors = ['black', 'red', 'green']#, 'palegreen', 'blue', 'mediumturquoise', 'deeppink', 'purple', 'yellow']
-                    #color=iter(cm.rainbow(np.linspace(0,1,9)))
-                    """for i in range(n):
-                       c=next(color)
-                       ax1.plot(x, y,c=c)"""
-                    #colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 'tab:olive']
+                    colors = ['b', 'g', 'y', 'r', 'm' ,'b' , 'y', 'm', 'r']
                     for counter in xrange(numberOfPlots):
                         for planet,color in zip(planets, colors):
                             ax2.plot(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x[counter*saveInterval], multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y[counter*saveInterval], 'o%s'%color, ms=5)#  
@@ -425,10 +371,6 @@ def multiBodyStationarySun(threePlanetsMovingSun, solarSystemMovingSun, scenario
                         
             # Perillion precession
             if scenario == 'perihelion' or scenario == 'perihelionMovingSun':
-                #relevantTime= np.where(np.abs(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].time.values- 99.75) < 1E-6)
-                #rPerrilion = np.min(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
-                #indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values[relevantTime:])
-                indexRPerrilion = np.argmin(multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].r.values)#[relevantTime:])
                 xPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].x.values[indexRPerrilion]
                 yPerrilion = multiBodies['FinalTime %f' %finalTime]['dt %f' %dt]['Planet %s' %planet].y.values[indexRPerrilion]
                 theta = np.arctan(float(yPerrilion)/xPerrilion)

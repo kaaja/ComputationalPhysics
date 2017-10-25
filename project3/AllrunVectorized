@@ -1,6 +1,6 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
-# to make executable: chmod u+x Allrun
+# to make executable: chmod u+x AllrunVectorized
 
 c++  -O3 -o project3.x main.cpp planet.cpp solver.cpp planetgeneralrelativityforce.cpp planetalternativeforce.cpp system.cpp
 #g++ -o main.exe main.cpp lib.cpp
