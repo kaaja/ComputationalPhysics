@@ -30,7 +30,7 @@ class Project4:
         return None
         
     def runCpp(self, outfileName, n_spins,  mcs, initial_temp,
-         final_temp, temp_step):
+         final_temp, temp_step, orderingFixed):
         """
         Compiles and runs cpp program from the command line and
         makes sure the mesh size is not too big.
@@ -41,22 +41,23 @@ class Project4:
         final_temp = str(final_temp) 
         temp_step = str(temp_step)
         call(["./AllrunVectorized", outfileName, n_spins,  mcs, initial_temp,
-         final_temp, temp_step])
+         final_temp, temp_step, orderingFixed])
     
     def project4b(self):
         #results4b =  OrderedDict()
-        N = 11 # Number of different sizes for the MC experiments
+        N = 8 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
         outfileName = 'Out4b.csv'
         n_spins = 2
         initial_temp = 1.
         final_temp = 1.
         temp_step = 0.1
+        orderingFixed = 'orderingFixed'
         
         for mcs in MCSamples:
             outfileName2 = os.getcwd() + '/results/' + outfileName
             self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
-             final_temp, temp_step)
+             final_temp, temp_step, orderingFixed)
         results4b = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
         results4b.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
         #results4b.to_csv(outfileName2 + '4Rport', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
@@ -78,11 +79,47 @@ class Project4:
         #results4b2.to_csv(outfileName2 + '4RportDev', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
         results4b2.to_latex(outfileName2 + '4RportDev', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
         return results4b, results4b2
+    
+    def project4c(self):
+        #results4b =  OrderedDict()
+        N = 7 # Number of different sizes for the MC experiments
+        MCSamples = [10**i for i in xrange(2,N)]
+        outfileName = 'Out4c.csv'
+        n_spins = 20
+        initial_temp = 1.
+        final_temp = 2.4
+        temp_step = 1.4
+        orderingTypes = ['orderingFixed', 'nonfixed']
+        
+        for orderingType in orderingTypes:
+            for mcs in MCSamples:
+                outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
+                self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+                 final_temp, temp_step, orderingType)
+            if orderingType == 'orderingFixed':
+                results4cFixed = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
+                results4cFixed.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                results4cFixed.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+            else:
+                results4cRandom = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
+                results4cRandom.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                results4cRandom.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+
+        return results4cFixed, results4cRandom
+
 
         
         
 #%%
-project4b = Project4()
-results4b, results4b2 = project4b.project4b()
+scenario = '4c'
+
+if scenario == '4b':
+    project4b = Project4()
+    results4b, results4b2 = project4b.project4b()
+elif scenario == '4c':
+    project4c = Project4()
+    results4cFixed, results4cRandom = project4c.project4c()
+
+
 
 

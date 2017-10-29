@@ -6,7 +6,7 @@
 using namespace std;
 
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
-                 double& final_temp, double& temp_step, int argc, char** argv);
+                 double& final_temp, double& temp_step, bool &orderingFixed, int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
@@ -15,9 +15,10 @@ int main(int argc, char* argv[])
   long idum;
   int **spin_matrix, n_spins, mcs;
   double w[17], average[5], initial_temp, final_temp, E, M, temp_step;
+  bool orderingFixed;
 
   // Read in initial values such as size of lattice, temp and cycles
-  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, argc, argv);
+  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed, argc, argv);
   IsingModel project4b(outfileName);
   spin_matrix = (int**) matrix(n_spins, n_spins, sizeof(int));
   idum = -1; // random starting point
@@ -29,10 +30,10 @@ int main(int argc, char* argv[])
     for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
     // initialise array for expectation values
     for( int i = 0; i < 5; i++) average[i] = 0.;
-    project4b.initialize(n_spins, temperature, spin_matrix, E, M);
+    project4b.initialize(n_spins, temperature, spin_matrix, E, M, orderingFixed, idum);
     // start Monte Carlo computation
     for (int cycles = 1; cycles <= mcs; cycles++){
-      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w);
+      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature);
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M);
@@ -46,7 +47,7 @@ int main(int argc, char* argv[])
 
 // read in input data
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
-                 double& final_temp, double& temp_step, int argc, char** argv)
+                 double& final_temp, double& temp_step, bool &orderingFixed, int argc, char** argv)
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -60,4 +61,9 @@ void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_te
     initial_temp = atof(argv[4]);
     final_temp = atof(argv[5]);
     temp_step = atof(argv[6]);
+    string tempInput = argv[7];
+    if (tempInput == "orderingFixed"){
+        orderingFixed = true;
+    }
+    else orderingFixed = false;
 }

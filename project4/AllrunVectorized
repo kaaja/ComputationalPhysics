@@ -4,7 +4,7 @@ cd ${0%/*} || exit 1    # run from this directory
 cd code
 c++  -O3 -o project4.x main.cpp lib.cpp isingmodel.cpp
 #g++ -o main.exe main.cpp lib.cpp
-./project4.x $1 $2 $3 $4 $5 $6
+./project4.x $1 $2 $3 $4 $5 $6 $7
 #cd ../results
 #mv ../code/*.txt .
 
