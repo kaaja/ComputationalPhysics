@@ -9,12 +9,19 @@ IsingModel::IsingModel(string fileName_)
 }
 // function to initialise energy, spin matrix and magnetization
 void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
-        double& E, double& M)
+        double& E, double& M, bool orderingFixed, long& idum)
 {
   // setup spin matrix and intial magnetization
   for(int y =0; y < n_spins; y++) {
     for (int x= 0; x < n_spins; x++){
-      spin_matrix[y][x] = 1; // spin orientation for the ground state
+      if(orderingFixed)
+        spin_matrix[y][x] = 1; // spin orientation for the ground state
+      else
+      {
+          int spin = (int) (ran1(&idum));
+          if (spin == 0) spin = -1;
+          spin_matrix[y][x] = spin; // spin orientation for the ground state
+      }
       M +=  (double) spin_matrix[y][x];
     }
   }
@@ -28,7 +35,7 @@ void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
   }
 }// end function initialise
 
-void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double *w)
+void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double *w, double temperature)
 {
   // loop over all spins
   for(int y =0; y < n_spins; y++) {
@@ -40,10 +47,13 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
      spin_matrix[periodic(iy,n_spins,-1)][ix] +
      spin_matrix[iy][periodic(ix,n_spins,1)] +
      spin_matrix[periodic(iy,n_spins,1)][ix]);
-      if ( ran1(&idum) <= w[deltaE+8] ) {
-    spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
-        M += (double) 2*spin_matrix[iy][ix];
-        E += (double) deltaE;
+      if (fabs(deltaE) > 0)
+      {
+          if (ran1(&idum) <= exp(-deltaE/temperature)){//( ran1(&idum) <= w[deltaE+8] ) {
+            spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
+            M += (double) 2*spin_matrix[iy][ix];
+            E += (double) deltaE;
+          }
       }
     }
   }
