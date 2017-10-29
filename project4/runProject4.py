@@ -9,7 +9,7 @@ from collections import OrderedDict
 
 
 #%% clean results and movie directory
-#call(["./Allclean"]) 
+call(["./Allclean"]) 
 try:
     import seaborn
     seaborn.set(style="white", context="notebook", font_scale=1.5,
@@ -27,7 +27,7 @@ if not os.path.isdir('results'):
 class Project4:
     
     def __init__(self):
-        return 0
+        return None
         
     def runCpp(self, outfileName, n_spins,  mcs, initial_temp,
          final_temp, temp_step):
@@ -45,7 +45,7 @@ class Project4:
         
 #%%
 project4b = Project4()
-outfileName = 'OutPythonTest'
+outfileName = 'OutPythonTest.csv'
 n_spins = 4
 mcs = 10000
 initial_temp = 1.
