@@ -42,18 +42,47 @@ class Project4:
         temp_step = str(temp_step)
         call(["./AllrunVectorized", outfileName, n_spins,  mcs, initial_temp,
          final_temp, temp_step])
+    
+    def project4b(self):
+        #results4b =  OrderedDict()
+        N = 11 # Number of different sizes for the MC experiments
+        MCSamples = [10**i for i in xrange(2,N)]
+        outfileName = 'Out4b.csv'
+        n_spins = 2
+        initial_temp = 1.
+        final_temp = 1.
+        temp_step = 0.1
+        
+        for mcs in MCSamples:
+            outfileName2 = os.getcwd() + '/results/' + outfileName
+            self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+             final_temp, temp_step)
+        results4b = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
+        results4b.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+        #results4b.to_csv(outfileName2 + '4Rport', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        results4b.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+
+        results4b2 = results4b.copy()
+        
+        Z = 4.*(3.+np.cosh(8.))
+        EavgExact = -32.*np.sinh(8.)/Z/n_spins/n_spins
+        absMavgExact = 8.*(np.exp(8.)+2.)/Z/n_spins/n_spins
+        CvExact = (256.*np.cosh(8.)-32.**2*(np.sinh(8.))**2./Z)/Z/n_spins/n_spins
+        chiExact = 32.*(np.exp(8.)+1.-2.*(np.exp(8.)+2.)**2./Z)/(Z*initial_temp)/n_spins/n_spins
+        
+        results4b2.Eavg = (results4b2.Eavg/EavgExact-1.)*100
+        results4b2.absMavg = (results4b2.absMavg/absMavgExact-1.)*100
+        results4b2.Cv = (results4b2.Cv/CvExact-1.)*100
+        results4b2.chi = (results4b2.chi/chiExact-1.)*100
+        
+        #results4b2.to_csv(outfileName2 + '4RportDev', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        results4b2.to_latex(outfileName2 + '4RportDev', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        return results4b, results4b2
+
+        
         
 #%%
 project4b = Project4()
-outfileName = 'OutPythonTest.csv'
-n_spins = 4
-mcs = 10000
-initial_temp = 1.
-final_temp = 1.1
-temp_step = 0.1
-
-
-project4b.runCpp(outfileName=outfileName, n_spins=n_spins,  mcs=mcs, initial_temp=initial_temp,
-         final_temp=final_temp, temp_step=temp_step)
+results4b, results4b2 = project4b.project4b()
 
 
