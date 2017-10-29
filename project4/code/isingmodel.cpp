@@ -6,7 +6,6 @@ ofstream ofile;
 IsingModel::IsingModel(string fileName_)
 {
     outfileName = fileName_;
-    //ofile.open(outfileName);
 }
 // function to initialise energy, spin matrix and magnetization
 void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
@@ -61,13 +60,18 @@ void IsingModel:: output(int n_spins, int mcs, double temperature, double *avera
   // all expectation values are per spin, divide by 1/n_spins/n_spins
   double Evariance = (E2average- Eaverage*Eaverage)/n_spins/n_spins;
   double Mvariance = (M2average - Mabsaverage*Mabsaverage)/n_spins/n_spins;
+  double Cv = Evariance/(1.*temperature*temperature);
+  double chi = Mvariance/(1.*temperature);
   ofile.open(outfileName, ios::out | ios::app);
   ofile << setiosflags(ios::showpoint | ios::uppercase);
+  ofile << setw(15) << setprecision(8) << mcs;
   ofile << setw(15) << setprecision(8) << temperature;
   ofile << setw(15) << setprecision(8) << Eaverage/n_spins/n_spins;
-  ofile << setw(15) << setprecision(8) << Evariance/temperature/temperature;
+  ofile << setw(15) << setprecision(8) << Evariance;
   ofile << setw(15) << setprecision(8) << Maverage/n_spins/n_spins;
-  ofile << setw(15) << setprecision(8) << Mvariance/temperature;
-  ofile << setw(15) << setprecision(8) << Mabsaverage/n_spins/n_spins << endl;
+  ofile << setw(15) << setprecision(8) << Mvariance;///temperature;
+  ofile << setw(15) << setprecision(8) << Mabsaverage/n_spins/n_spins;
+  ofile << setw(15) << setprecision(8) << Cv;
+  ofile << setw(15) << setprecision(8) << chi << endl;
   ofile.close();
 } // end output function
