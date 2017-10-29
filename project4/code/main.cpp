@@ -5,7 +5,8 @@
 
 using namespace std;
 
-void read_input(int&, int&, double&, double&, double&);
+void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
+                 double& final_temp, double& temp_step, int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
@@ -15,19 +16,9 @@ int main(int argc, char* argv[])
   int **spin_matrix, n_spins, mcs;
   double w[17], average[5], initial_temp, final_temp, E, M, temp_step;
 
-  // Read in output file, abort if there are too few command-line arguments
-  if( argc <= 1 ){
-    cout << "Bad Usage: " << argv[0] <<
-      " read also output file on same line" << endl;
-    exit(1);
-  }
-  else{
-    outfileName=argv[1];
-  }
+  // Read in initial values such as size of lattice, temp and cycles
+  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, argc, argv);
   IsingModel project4b(outfileName);
-  //ofile.open(outfilename);
-  //    Read in initial values such as size of lattice, temp and cycles
-  read_input(n_spins, mcs, initial_temp, final_temp, temp_step);
   spin_matrix = (int**) matrix(n_spins, n_spins, sizeof(int));
   idum = -1; // random starting point
   for ( double temperature = initial_temp; temperature <= final_temp; temperature+=temp_step){
@@ -54,17 +45,19 @@ int main(int argc, char* argv[])
 }
 
 // read in input data
-void read_input(int& n_spins, int& mcs, double& initial_temp,
-        double& final_temp, double& temp_step)
+void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
+                 double& final_temp, double& temp_step, int argc, char** argv)
 {
-  cout << "Number of Monte Carlo trials =";
-  cin >> mcs;
-  cout << "Lattice size or number of spins (x and y equal) =";
-  cin >> n_spins;
-  cout << "Initial temperature with dimension energy=";
-  cin >> initial_temp;
-  cout << "Final temperature with dimension energy=";
-  cin >> final_temp;
-  cout << "Temperature step with dimension energy=";
-  cin >> temp_step;
-} // end of function read_input
+    if( argc<= 1){
+      cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
+      exit(1);
+    }
+    else{
+      outfileName=argv[1];
+    }
+    n_spins = atoi(argv[2]);
+    mcs = atoi(argv[3]);
+    initial_temp = atof(argv[4]);
+    final_temp = atof(argv[5]);
+    temp_step = atof(argv[6]);
+}
