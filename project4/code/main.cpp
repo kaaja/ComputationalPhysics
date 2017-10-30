@@ -32,9 +32,8 @@ int main(int argc, char* argv[])
     for( int i = 0; i < 5; i++) average[i] = 0.;
     project4b.initialize(n_spins, temperature, spin_matrix, E, M, orderingFixed, idum);
     // start Monte Carlo computation
-    int acceptedMoves;
+    int acceptedMoves = 0;
     for (int cycles = 1; cycles <= mcs; cycles++){
-      acceptedMoves = 0;
       project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
       // update expectation values
       average[0] += E;    average[1] += E*E;

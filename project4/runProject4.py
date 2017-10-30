@@ -117,7 +117,7 @@ class Project4:
         fig4, ax4 = plt.subplots()
         ax4.hold('on')
         ax4.set_xlabel(r'$\log_{2} MCS$')
-        ax4.set_ylabel(r"Share of accepted moves. $\%$")
+        ax4.set_ylabel(r"$\frac{Accepted moves}{mcs /cdotl^2} \cdot 100.$")
         legends4 = []
         
         for temperature in temperatures:
@@ -137,8 +137,8 @@ class Project4:
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].absMavg)
             
             
-            acceptedMovesShareFixed = (results4cFixed['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 )*100
-            acceptedMovesShareRandom = (results4cRandom['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 )*100
+            acceptedMovesShareFixed = results4cFixed['temperature %f' % temperature].acceptedMoves/(results4cFixed['temperature %f' % temperature].mcs * float(n_spins)**2 )*100
+            acceptedMovesShareRandom = results4cRandom['temperature %f' % temperature].acceptedMoves/(results4cRandom['temperature %f' % temperature].mcs * float(n_spins)**2 )*100
             ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), acceptedMovesShareFixed , 
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), acceptedMovesShareRandom )
             legends4.append('Initial fixed,  temp = %.2f' %temperature)
