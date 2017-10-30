@@ -35,7 +35,7 @@ void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
   }
 }// end function initialise
 
-void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double *w, double temperature)
+void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double *w, double temperature, int &acceptedMoves)
 {
   // loop over all spins
   for(int y =0; y < n_spins; y++) {
@@ -47,17 +47,23 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
      spin_matrix[periodic(iy,n_spins,-1)][ix] +
      spin_matrix[iy][periodic(ix,n_spins,1)] +
      spin_matrix[periodic(iy,n_spins,1)][ix]);
-      if (ran1(&idum) <= exp(-deltaE/temperature)){//( ran1(&idum) <= w[deltaE+8] ) {
+     if ( ran1(&idum) <= w[deltaE+8] ) {
         spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
         M += (double) 2*spin_matrix[iy][ix];
         E += (double) deltaE;
+        acceptedMoves += 1;
       }
     }
   }
 } // end of Metropolis sampling over spins
 
-void IsingModel:: output(int n_spins, int mcs, double temperature, double *average)
+void IsingModel:: output(int n_spins, int mcs, double temperature, double *average, int acceptedMoves)
 {
+  string outfileName2;
+  outfileName2 = "Temp" + to_string(temperature);
+  boost::erase_all(outfileName2, ".");
+  boost::erase_all(outfileName2, "0");
+  outfileName2 = outfileName + outfileName2 + ".csv";
   double norm = 1/((double) (mcs));  // divided by total number of cycles
   double Eaverage = average[0]*norm;
   double E2average = average[1]*norm;
@@ -69,8 +75,9 @@ void IsingModel:: output(int n_spins, int mcs, double temperature, double *avera
   double Mvariance = (M2average - Mabsaverage*Mabsaverage)/n_spins/n_spins;
   double Cv = Evariance/(1.*temperature*temperature);
   double chi = Mvariance/(1.*temperature);
-  ofile.open(outfileName, ios::out | ios::app);
+  ofile.open(outfileName2, ios::out | ios::app);
   ofile << setiosflags(ios::showpoint | ios::uppercase);
+  ofile << setw(15) << setprecision(8) << acceptedMoves;
   ofile << setw(15) << setprecision(8) << mcs;
   ofile << setw(15) << setprecision(8) << temperature;
   ofile << setw(15) << setprecision(8) << Eaverage/n_spins/n_spins;

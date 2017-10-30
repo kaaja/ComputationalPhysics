@@ -47,21 +47,22 @@ class Project4:
         #results4b =  OrderedDict()
         N = 8 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
-        outfileName = 'Out4b.csv'
+        outfileName = 'Out4b'
         n_spins = 2
-        initial_temp = 1.
+        initial_temp = 1.0
         final_temp = 1.
         temp_step = 0.1
         orderingFixed = 'orderingFixed'
         
         for mcs in MCSamples:
             outfileName2 = os.getcwd() + '/results/' + outfileName
+            outfileName3 = outfileName2 + 'Temp' + str(initial_temp).replace(".", "").replace("0", "") + '.csv'
             self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
              final_temp, temp_step, orderingFixed)
-        results4b = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
-        results4b.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+        results4b = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+        results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
         #results4b.to_csv(outfileName2 + '4Rport', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
-        results4b.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        results4b.to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
 
         results4b2 = results4b.copy()
         
@@ -77,19 +78,23 @@ class Project4:
         results4b2.chi = (results4b2.chi/chiExact-1.)*100
         
         #results4b2.to_csv(outfileName2 + '4RportDev', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
-        results4b2.to_latex(outfileName2 + '4RportDev', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        results4b2.to_latex(outfileName2 + '4RportDev.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
         return results4b, results4b2
     
     def project4c(self):
-        #results4b =  OrderedDict()
-        N = 7 # Number of different sizes for the MC experiments
+        results4cFixed=  OrderedDict()
+        results4cRandom  = OrderedDict()
+        N = 5 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
-        outfileName = 'Out4c.csv'
+        outfileName = 'Out4c'
         n_spins = 20
         initial_temp = 1.
         final_temp = 2.4
         temp_step = 1.4
+        numberOfTemperatures = 2
         orderingTypes = ['orderingFixed', 'nonfixed']
+        temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
+        
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
@@ -97,13 +102,65 @@ class Project4:
                 self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
                  final_temp, temp_step, orderingType)
             if orderingType == 'orderingFixed':
-                results4cFixed = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
-                results4cFixed.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-                results4cFixed.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+                for temperature in temperatures:
+                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    results4cFixed['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+                    results4cFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                    results4cFixed['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
             else:
-                results4cRandom = pd.read_csv(outfileName2, delim_whitespace=True, header=None)
-                results4cRandom.columns = ["mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-                results4cRandom.to_latex(outfileName2 + '4Rport', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+                for temperature in temperatures:
+                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    results4cRandom['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+                    results4cRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                    results4cRandom['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+
+        fig4, ax4 = plt.subplots()
+        ax4.hold('on')
+        ax4.set_xlabel(r'$\log_{2} MCS$')
+        ax4.set_ylabel(r"Share of accepted moves. $\%$")
+        legends4 = []
+        
+        for temperature in temperatures:
+            fig2, ax2 = plt.subplots()
+            fig3, ax3 = plt.subplots()
+
+            ax2.set_xlabel(r'$\log_{2} MCS$')
+            ax2.set_ylabel(r"$\frac{<E>}{l^2}$")
+            ax3.set_xlabel(r'$\log_{2} MCS$')
+            ax3.set_ylabel(r"$\frac{<|M|>}{l^2}$")
+            
+            legends = ['Fixed', 'Random']
+            
+            ax2.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].Eavg, 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].Eavg)
+            ax3.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].absMavg, 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].absMavg)
+            
+            
+            acceptedMovesShareFixed = (results4cFixed['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 )*100
+            acceptedMovesShareRandom = (results4cRandom['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 )*100
+            ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), acceptedMovesShareFixed , 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), acceptedMovesShareRandom )
+            legends4.append('Initial fixed,  temp = %.2f' %temperature)
+            legends4.append('Initial random, temp = %.2f' %temperature)
+            
+            ax2.legend(legends, loc=0)
+            ax3.legend(legends, loc=0)
+            ax2.set_title('Temperature = %.2f' %temperature)
+            ax3.set_title('Temperature = %.2f' %temperature)
+            ax2.get_yaxis().get_major_formatter().set_useOffset(False)
+            ax3.get_yaxis().get_major_formatter().set_useOffset(False)
+            fig2.tight_layout()
+            fig3.tight_layout()
+            fig2.savefig('results/4cEnergy' + str(temperature).replace(".", "").replace("0", "") + '.png') 
+            fig3.savefig('results/4cMoment'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
+        
+        ax4.legend(legends4, loc=0)
+        ax4.get_yaxis().get_major_formatter().set_useOffset(False)
+        fig4.tight_layout()
+        fig4.savefig('results/4cAcceptedMoves.png') 
+        plt.close()
+        
 
         return results4cFixed, results4cRandom
 

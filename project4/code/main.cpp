@@ -32,14 +32,16 @@ int main(int argc, char* argv[])
     for( int i = 0; i < 5; i++) average[i] = 0.;
     project4b.initialize(n_spins, temperature, spin_matrix, E, M, orderingFixed, idum);
     // start Monte Carlo computation
+    int acceptedMoves;
     for (int cycles = 1; cycles <= mcs; cycles++){
-      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature);
+      acceptedMoves = 0;
+      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M);
     }
     // print results
-    project4b.output(n_spins, mcs, temperature, average);
+    project4b.output(n_spins, mcs, temperature, average, acceptedMoves);
   }
   free_matrix((void **) spin_matrix); // free memory
   return 0;
