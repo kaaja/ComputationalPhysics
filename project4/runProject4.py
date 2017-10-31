@@ -6,6 +6,7 @@ import argparse
 from subprocess import call
 import os
 from collections import OrderedDict
+import matplotlib.mlab as mlab
 
 
 #%% clean results and movie directory
@@ -84,7 +85,7 @@ class Project4:
     def project4c(self):
         results4cFixed=  OrderedDict()
         results4cRandom  = OrderedDict()
-        N = 17 # Number of different sizes for the MC experiments
+        N = 10 # Number of different sizes for the MC experiments
         MCSamples = [100*2**i for i in xrange(0,N)]
         outfileName = 'Out4c'
         n_spins = 20
@@ -179,11 +180,101 @@ class Project4:
 
         return results4cFixed, results4cRandom
 
+    def project4d(self):
+        results4dFixed=  OrderedDict()
+        results4dRandom  = OrderedDict()
+        results4dFixedEnergyArray = OrderedDict()
+        results4dRandomEnergyArray = OrderedDict()
+        N = 16 # Number of different sizes for the MC experiments
+        MCSamples = [2**N]
+        outfileName = 'Out4d'
+        n_spins = 20
+        initial_temp = 1.
+        final_temp = 2.4
+        temp_step = 1.4
+        numberOfTemperatures = 2
+        orderingTypes = ['orderingFixed', 'nonfixed']
+        temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
+        
+        
+        for orderingType in orderingTypes:
+            for mcs in MCSamples:
+                outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
+                self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+                 final_temp, temp_step, orderingType)
+            if orderingType == 'orderingFixed':
+                for temperature in temperatures:
+                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") +"Mcs%d" %mcs + '.csv'    
+                    results4dFixedEnergyArray['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+                    results4dFixedEnergyArray['temperature %f' % temperature].columns = ["energy"]
+                    
+                    outfileName4 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    results4dFixed['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
+                    results4dFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                    
+            else:
+                for temperature in temperatures:
+                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + "Mcs%d" %mcs +'.csv'    
+                    results4dRandomEnergyArray['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+                    results4dRandomEnergyArray['temperature %f' % temperature].columns = ["energy"]
+                    
+                    outfileName4 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    results4dRandom['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
+                    results4dRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+
+
+        
+
+        
+        
+        for temperature in temperatures:
+            fig6, ax6 = plt.subplots()
+            #ax6.hold('on')
+            ax6.set_xlabel(r'$Energy$')
+            ax6.set_ylabel(r"$Probability$")
+            
+            fig2, ax2 = plt.subplots()
+            #ax6.hold('on')
+            ax2.set_xlabel(r'$Energy$')
+            ax2.set_ylabel(r"$Probability$")
+
+#            ax6.hist(results4dFixed['temperature %f' % temperature].energy.values)#, density=True, stacked=True)
+#            ax2.hist(results4dRandom['temperature %f' % temperature].energy.values)#, density=True, stacked=True)
+                    
+            weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
+            ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
+            weights = np.ones_like(results4dRandomEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dRandomEnergyArray['temperature %f' % temperature].energy.values))
+            #ax2.hist(results4dRandom['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
+            #ax2 = seaborn.distplot(results4dRandom['temperature %f' % temperature].energy.values, hist_kws=dict(edgecolor="k", linewidth=2), norm_hist=True)
+            num_bins = 25
+            n, bins, patches = ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values, num_bins, normed=1,  edgecolor='k')#, weights = weights)
+            mu = results4dRandom['temperature 2.400000'].Eavg.values*n_spins**2
+            sigma = np.sqrt(results4dRandom['temperature 2.400000'].sigmaE.values*n_spins**2)
+            y = mlab.normpdf(bins, mu, sigma)
+            ax2.plot(bins, y, '--')
+
+            ax6.set_title('Fixed initial config \n Temperature = %.2f' %temperature)
+            ax6.get_yaxis().get_major_formatter().set_useOffset(False)
+            fig6.tight_layout()
+            
+            ax2.set_title(r'Random initial config' '\n' r'Temperature = %.2f' ' \n' r'$\mu = %.2f' ' ' r'  \sigma = %.2f$' %(temperature, mu, sigma))
+            ax2.get_yaxis().get_major_formatter().set_useOffset(False)
+            fig2.tight_layout()
+
+            fig6.savefig('results/4dHistogramFixed'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
+            fig2.savefig('results/4dHistogramRandom'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
+
+            #plt.close()
+        plt.close()
+        
+
+        return results4dFixed, results4dRandom
+
 
         
         
 #%%
-scenario = '4c'
+scenario = '4d'
 
 if scenario == '4b':
     project4b = Project4()
@@ -191,6 +282,9 @@ if scenario == '4b':
 elif scenario == '4c':
     project4c = Project4()
     results4cFixed, results4cRandom = project4c.project4c()
+elif scenario == '4d':
+    project4d = Project4()
+    results4dFixed, results4dRandom = project4d.project4d()
 
 
 
