@@ -45,7 +45,7 @@ class Project4:
     
     def project4b(self):
         #results4b =  OrderedDict()
-        N = 8 # Number of different sizes for the MC experiments
+        N = 5 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
         outfileName = 'Out4b'
         n_spins = 2
@@ -84,8 +84,8 @@ class Project4:
     def project4c(self):
         results4cFixed=  OrderedDict()
         results4cRandom  = OrderedDict()
-        N = 5 # Number of different sizes for the MC experiments
-        MCSamples = [10**i for i in xrange(2,N)]
+        N = 17 # Number of different sizes for the MC experiments
+        MCSamples = [100*2**i for i in xrange(0,N)]
         outfileName = 'Out4c'
         n_spins = 20
         initial_temp = 1.
@@ -117,43 +117,58 @@ class Project4:
         fig4, ax4 = plt.subplots()
         ax4.hold('on')
         ax4.set_xlabel(r'$\log_{2} MCS$')
-        ax4.set_ylabel(r"$\frac{Accepted moves}{mcs /cdotl^2} \cdot 100.$")
+        ax4.set_ylabel(r"$\log_{2}\frac{Accepted moves}{L^2}$")
         legends4 = []
         
         for temperature in temperatures:
             fig2, ax2 = plt.subplots()
             fig3, ax3 = plt.subplots()
+            
+            fig5, ax5 = plt.subplots()
 
             ax2.set_xlabel(r'$\log_{2} MCS$')
             ax2.set_ylabel(r"$\frac{<E>}{l^2}$")
             ax3.set_xlabel(r'$\log_{2} MCS$')
             ax3.set_ylabel(r"$\frac{<|M|>}{l^2}$")
             
+            ax5.set_xlabel(r'$\log_{2} MCS$')
+            ax5.set_ylabel(r"$\log_{2}\frac{Accepted moves}{L^2}$")
+
             legends = ['Fixed', 'Random']
+            
+            acceptedMovesShareFixed = results4cFixed['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 
+            acceptedMovesShareRandom = results4cRandom['temperature %f' % temperature].acceptedMoves/float(n_spins)**2
             
             ax2.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].Eavg, 
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].Eavg)
             ax3.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].absMavg, 
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].absMavg)
             
+            ax5.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareFixed) , 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareRandom))
             
-            acceptedMovesShareFixed = results4cFixed['temperature %f' % temperature].acceptedMoves/(results4cFixed['temperature %f' % temperature].mcs * float(n_spins)**2 )*100
-            acceptedMovesShareRandom = results4cRandom['temperature %f' % temperature].acceptedMoves/(results4cRandom['temperature %f' % temperature].mcs * float(n_spins)**2 )*100
-            ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), acceptedMovesShareFixed , 
-                    np.log2(results4cRandom['temperature %f' % temperature].mcs), acceptedMovesShareRandom )
+            
+            ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareFixed) , 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareRandom))
             legends4.append('Initial fixed,  temp = %.2f' %temperature)
             legends4.append('Initial random, temp = %.2f' %temperature)
             
             ax2.legend(legends, loc=0)
             ax3.legend(legends, loc=0)
+            ax5.legend(legends, loc=0)
+            
             ax2.set_title('Temperature = %.2f' %temperature)
             ax3.set_title('Temperature = %.2f' %temperature)
+            ax5.set_title('Temperature = %.2f' %temperature)
             ax2.get_yaxis().get_major_formatter().set_useOffset(False)
             ax3.get_yaxis().get_major_formatter().set_useOffset(False)
+            ax5.get_yaxis().get_major_formatter().set_useOffset(False)
             fig2.tight_layout()
             fig3.tight_layout()
+            fig5.tight_layout()
             fig2.savefig('results/4cEnergy' + str(temperature).replace(".", "").replace("0", "") + '.png') 
             fig3.savefig('results/4cMoment'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
+            fig5.savefig('results/4cAcceptedMoves'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
         
         ax4.legend(legends4, loc=0)
         ax4.get_yaxis().get_major_formatter().set_useOffset(False)
