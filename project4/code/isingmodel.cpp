@@ -1,5 +1,6 @@
 #include "isingmodel.h"
 
+
 ofstream ofile;
 
 
@@ -35,7 +36,8 @@ void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
   }
 }// end function initialise
 
-void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double *w, double temperature, int &acceptedMoves)
+void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M,
+                             double *w, double temperature, int &acceptedMoves, colvec &energyArray)
 {
   // loop over all spins
   for(int y =0; y < n_spins; y++) {
@@ -43,10 +45,10 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
       int ix = (int) (ran1(&idum)*(double)n_spins);
       int iy = (int) (ran1(&idum)*(double)n_spins);
       int deltaE =  2*spin_matrix[iy][ix]*
-    (spin_matrix[iy][periodic(ix,n_spins,-1)]+
-     spin_matrix[periodic(iy,n_spins,-1)][ix] +
-     spin_matrix[iy][periodic(ix,n_spins,1)] +
-     spin_matrix[periodic(iy,n_spins,1)][ix]);
+            (spin_matrix[iy][periodic(ix,n_spins,-1)]+
+            spin_matrix[periodic(iy,n_spins,-1)][ix] +
+            spin_matrix[iy][periodic(ix,n_spins,1)] +
+            spin_matrix[periodic(iy,n_spins,1)][ix]);
      if ( ran1(&idum) <= w[deltaE+8] ) {
         spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
         M += (double) 2*spin_matrix[iy][ix];

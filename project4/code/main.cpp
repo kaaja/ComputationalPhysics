@@ -16,15 +16,18 @@ int main(int argc, char* argv[])
   int **spin_matrix, n_spins, mcs;
   double w[17], average[5], initial_temp, final_temp, E, M, temp_step;
   bool orderingFixed;
+  colvec energyArray;
 
   // Read in initial values such as size of lattice, temp and cycles
   read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed, argc, argv);
   IsingModel project4b(outfileName);
   spin_matrix = (int**) matrix(n_spins, n_spins, sizeof(int));
+  energyArray = zeros<colvec>(mcs);
   idum = -1; // random starting point
   for ( double temperature = initial_temp; temperature <= final_temp; temperature+=temp_step){
     //    initialise energy and magnetization
     E = M = 0.;
+
     // setup array for possible energy changes
     for( int de =-8; de <= 8; de++) w[de+8] = 0;
     for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
@@ -34,13 +37,22 @@ int main(int argc, char* argv[])
     // start Monte Carlo computation
     int acceptedMoves = 0;
     for (int cycles = 1; cycles <= mcs; cycles++){
-      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
+      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves, energyArray);
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M);
+      energyArray(cycles -1) = E;
     }
+    energyArray = energyArray;
+    string outfileNameEnergyArray;
+    outfileNameEnergyArray = "Temp" + to_string(temperature);
+    boost::erase_all(outfileNameEnergyArray, ".");
+    boost::erase_all(outfileNameEnergyArray, "0");
+    outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
+    energyArray.save(outfileNameEnergyArray, csv_ascii);
     // print results
     project4b.output(n_spins, mcs, temperature, average, acceptedMoves);
+
   }
   free_matrix((void **) spin_matrix); // free memory
   return 0;
