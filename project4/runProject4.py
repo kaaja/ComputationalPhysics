@@ -7,6 +7,8 @@ from subprocess import call
 import os
 from collections import OrderedDict
 import matplotlib.mlab as mlab
+from scipy.stats import norm
+
 
 
 #%% clean results and movie directory
@@ -226,7 +228,9 @@ class Project4:
         
 
         
-        
+        tableDict = OrderedDict()
+        tableDict['Fixed'] = {}
+        tableDict['Random'] = {}
         for temperature in temperatures:
             fig6, ax6 = plt.subplots()
             #ax6.hold('on')
@@ -238,21 +242,48 @@ class Project4:
             ax2.set_xlabel(r'$Energy$')
             ax2.set_ylabel(r"$Probability$")
 
-#            ax6.hist(results4dFixed['temperature %f' % temperature].energy.values)#, density=True, stacked=True)
-#            ax2.hist(results4dRandom['temperature %f' % temperature].energy.values)#, density=True, stacked=True)
                     
-            weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
-            ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
-            weights = np.ones_like(results4dRandomEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dRandomEnergyArray['temperature %f' % temperature].energy.values))
+#            weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
+            
+#           weights = np.ones_like(results4dRandomEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dRandomEnergyArray['temperature %f' % temperature].energy.values))
             #ax2.hist(results4dRandom['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
             #ax2 = seaborn.distplot(results4dRandom['temperature %f' % temperature].energy.values, hist_kws=dict(edgecolor="k", linewidth=2), norm_hist=True)
             num_bins = 25
             n, bins, patches = ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values, num_bins, normed=1,  edgecolor='k')#, weights = weights)
-            mu = results4dRandom['temperature 2.400000'].Eavg.values*n_spins**2
-            sigma = np.sqrt(results4dRandom['temperature 2.400000'].sigmaE.values*n_spins**2)
-            y = mlab.normpdf(bins, mu, sigma)
-            ax2.plot(bins, y, '--')
+            muCpp = np.asscalar(results4dRandom['temperature %f' %temperature].Eavg.values*n_spins**2)
+            sigmaCpp = np.asscalar(np.sqrt(results4dRandom['temperature %f' %temperature].sigmaE.values*n_spins**2))
+            data = results4dRandomEnergyArray['temperature %f' % temperature].energy.values            
+            mu, sigma = norm.fit(data)            
+            if temperature != 1.00:
+                y = mlab.normpdf(bins, mu, sigma)
+                ax2.plot(bins, y, '--')
+                
+            muDiff = np.asscalar((muCpp/mu-1.)*100)
+            sigDiff = np.asscalar((sigmaCpp/sigma - 1.)*100)
+            
+#            tableInput = pd.Series([mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff])
+#            tableInput.columns = ["Mu MCS","Mu Cpp", "Percentage difference mu", "Sigma MCS", "sigma Cpp", "Percentage difference sigma"]
+#            tableDict.update({"Mu MCS":mu, "Mu Cpp":muCpp, "Percentage difference mu":muDiff, "Sigma MCS":sigma, "Percentage difference sigma":sigmaCpp, "something":sigDiff} )
+            tableDict['Random']['temperature %f' %temperature] = [mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff]
 
+            
+            
+            #ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
+            num_bins = 25
+            n, bins, patches = ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values, num_bins, normed=1,  edgecolor='k')#, weights = weights)
+            muCpp = np.asscalar(results4dFixed['temperature %f' %temperature].Eavg.values*n_spins**2)
+            sigmaCpp = np.asscalar(np.sqrt(results4dFixed['temperature %f' %temperature].sigmaE.values*n_spins**2))
+            data = results4dFixedEnergyArray['temperature %f' % temperature].energy.values            
+            mu, sigma = norm.fit(data)            
+            if temperature != 1.00:
+                y = mlab.normpdf(bins, mu, sigma)
+                ax6.plot(bins, y, '--')
+                
+            muDiff = np.asscalar((muCpp/mu-1.)*100)
+            sigDiff = np.asscalar((sigmaCpp/sigma - 1.)*100)
+            
+            tableDict['Fixed']['temperature %f' %temperature] = [mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff]
+            
             ax6.set_title('Fixed initial config \n Temperature = %.2f' %temperature)
             ax6.get_yaxis().get_major_formatter().set_useOffset(False)
             fig6.tight_layout()
@@ -266,9 +297,19 @@ class Project4:
 
             #plt.close()
         plt.close()
-        
+        #tableFrame.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+        dfFixed =pd.DataFrame.from_dict(tableDict['Fixed'],orient='index')
+        outfileName = os.getcwd() + '/results/' + '4dTableFixed.txt'
+        dfFixed.columns = ["Mu manually"," <E>", "Mu percentage difference", "Sigma manually", "Sigma from <E>", "Sigma percentage difference"]
+        dfFixed.to_latex(outfileName, index=False)
 
-        return results4dFixed, results4dRandom
+        dfRandom =pd.DataFrame.from_dict(tableDict['Random'],orient='index')
+        outfileName = os.getcwd() + '/results/' + '4dTableRandom.txt'
+        dfRandom.columns = ["Mu manually"," <E>", "Mu percentage difference", "Sigma manually", "Sigma from <E>", "Sigma percentage difference"]
+        dfRandom.to_latex(outfileName, index=False)
+
+
+        return results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict, df
 
 
         
@@ -284,7 +325,7 @@ elif scenario == '4c':
     results4cFixed, results4cRandom = project4c.project4c()
 elif scenario == '4d':
     project4d = Project4()
-    results4dFixed, results4dRandom = project4d.project4d()
+    results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict, df = project4d.project4d()
 
 
 
