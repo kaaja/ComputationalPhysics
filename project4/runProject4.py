@@ -309,7 +309,7 @@ class Project4:
         dfRandom.to_latex(outfileName, index=False)
 
 
-        return results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict, df
+        return results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict
 
 
         
@@ -325,7 +325,7 @@ elif scenario == '4c':
     results4cFixed, results4cRandom = project4c.project4c()
 elif scenario == '4d':
     project4d = Project4()
-    results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict, df = project4d.project4d()
+    results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d()
 
 
 
