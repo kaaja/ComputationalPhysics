@@ -71,6 +71,8 @@
 \usepackage{multimedia}
 \usepackage{media9}
 
+\usepackage{booktabs}
+
 \title{Fys4150\\Project 4 Figures and stuff\\ }
 \author{Peter Killingstad and Karl Jacobsen\\
 \\
@@ -176,14 +178,20 @@
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{rrrrrr}
-		\hline
-		0 &          1 &             2 &          3 &          4 &             5 \\
-		\hline
-		-496.476196 & -496.47620 &  7.474553e-07 &  57.425689 &  57.425689 & -8.062906e-09 \\
-		-798.870239 & -798.87024 &  9.290464e-08 &   3.043629 &   3.043629 & -6.903949e-07 \\
-		\hline
-	\end{tabular}
+	\input{/home/karl/doc/subj/att/fys4150/project4/results/4dTableFixed.txt}%
+	\caption{Statistics. Fixed initial config. 1st row $T=1$. \\ \textit{.}}
+	\label{1}
 \end{table}
+
+\begin{table}[H]
+	\centering
+	\input{/home/karl/doc/subj/att/fys4150/project4/results/4dTableRandom.txt}%
+	\caption{Statistics. Random initial config. 1st row $T=1$. \\ \textit{.}}
+	\label{1}
+\end{table}
+
+
+
+
 
 \end{document}
