@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
       average[2] += M;    average[3] += M*M; average[4] += fabs(M);
       energyArray(cycles -1) = E;
     }
-    energyArray = energyArray;
+    //energyArray = energyArray/pow(n_spins,2);
     string outfileNameEnergyArray;
     outfileNameEnergyArray = "Temp" + to_string(temperature);
     boost::erase_all(outfileNameEnergyArray, ".");

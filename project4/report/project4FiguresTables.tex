@@ -72,6 +72,7 @@
 \usepackage{media9}
 
 \usepackage{booktabs}
+\usepackage{adjustbox}
 
 \title{Fys4150\\Project 4 Figures and stuff\\ }
 \author{Peter Killingstad and Karl Jacobsen\\
@@ -176,21 +177,69 @@
 
 \section{4d}
 
+
 \begin{table}[H]
 	\centering
-	\input{/home/karl/doc/subj/att/fys4150/project4/results/4dTableFixed.txt}%
-	\caption{Statistics. Fixed initial config. 1st row $T=1$. \\ \textit{.}}
+	\begin{adjustbox}{width=1\textwidth}
+		\input{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dTableFixed.txt}%
+	\end{adjustbox}
+	\caption{Statistics. Fixed initial config. \\ \textit{.}}
 	\label{1}
 \end{table}
 
 \begin{table}[H]
 	\centering
-	\input{/home/karl/doc/subj/att/fys4150/project4/results/4dTableRandom.txt}%
-	\caption{Statistics. Random initial config. 1st row $T=1$. \\ \textit{.}}
+	\begin{adjustbox}{width=1\textwidth}
+		\input{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dTableRandom.txt}%
+	\end{adjustbox}
+	\caption{Statistics. Random initial config. \\ \textit{.}}
 	\label{1}
 \end{table}
 
 
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dHistogramFixed1.png}
+		\caption{Probability distribution. Fixed intital $T = 1$. \\ \textit{}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dHistogramFixed24.png}
+		\caption{Probability distribution. Fixed intital $T = 2.4$.. \\ \textit{}.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dHistogramRandom1.png}
+		\caption{Probability distribution. Random intital $T = 1$. \\ \textit{}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4dHistogramRandom24.png}
+		\caption{Probability distribution. Random intital $T = 2.4$.  \\ \textit{}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project4/resultsKeep/4cAcceptedMoves.png}
+	\caption{Accepted moved divided by $L^2$. \\ \textit{}}
+	\label{1}
+\end{figure}
 
 
 
