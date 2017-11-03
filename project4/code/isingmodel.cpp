@@ -37,7 +37,7 @@ void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
 }// end function initialise
 
 void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M,
-                             double *w, double temperature, int &acceptedMoves, colvec &energyArray)
+                             double *w, double temperature, int &acceptedMoves)
 {
   // loop over all spins
   for(int y =0; y < n_spins; y++) {
