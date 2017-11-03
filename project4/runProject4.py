@@ -252,6 +252,10 @@ class Project4:
             #n, bins, patches = ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, num_bins, normed=1,  edgecolor='k')#, weights = weights)
             muCpp = np.asscalar(results4dRandom['temperature %f' %temperature].Eavg.values)
             sigmaCpp = np.asscalar(results4dRandom['temperature %f' %temperature].sigmaE.values)
+            absMAvg = np.asscalar(results4dRandom['temperature %f' %temperature].absMavg.values)
+            sigmaM = np.asscalar(results4dRandom['temperature %f' %temperature].sigmaM.values)
+            Cv = np.asscalar(results4dRandom['temperature %f' %temperature].Cv.values)
+            chi = np.asscalar(results4dRandom['temperature %f' %temperature].chi.values)
             data = results4dRandomEnergyArray['temperature %f' % temperature].energy.values            
             mu, sigma = norm.fit(data/n_spins**2)            
 #            if temperature != 1.00:
@@ -264,10 +268,11 @@ class Project4:
             muDiff = np.asscalar((mu/muCpp-1.)*100)
             sigDiff = np.asscalar((sigma/sigmaCpp - 1.)*100)
             
+            
 #            tableInput = pd.Series([mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff])
 #            tableInput.columns = ["Mu MCS","Mu Cpp", "Percentage difference mu", "Sigma MCS", "sigma Cpp", "Percentage difference sigma"]
 #            tableDict.update({"Mu MCS":mu, "Mu Cpp":muCpp, "Percentage difference mu":muDiff, "Sigma MCS":sigma, "Percentage difference sigma":sigmaCpp, "something":sigDiff} )
-            tableDict['Random']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff]
+            tableDict['Random']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
 
             
             weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
@@ -277,6 +282,10 @@ class Project4:
 #            n, bins, patches = ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, num_bins, normed=1,  edgecolor='k')#, weights = weights)
             muCpp = np.asscalar(results4dFixed['temperature %f' %temperature].Eavg.values)
             sigmaCpp = np.asscalar(results4dFixed['temperature %f' %temperature].sigmaE.values)
+            absMAvg = np.asscalar(results4dFixed['temperature %f' %temperature].absMavg.values)
+            sigmaM = np.asscalar(results4dFixed['temperature %f' %temperature].sigmaM.values)
+            Cv = np.asscalar(results4dFixed['temperature %f' %temperature].Cv.values)
+            chi = np.asscalar(results4dFixed['temperature %f' %temperature].chi.values)
             data = results4dFixedEnergyArray['temperature %f' % temperature].energy.values            
             mu, sigma = norm.fit(data/n_spins**2)            
 #            if temperature != 1.00:
@@ -289,7 +298,7 @@ class Project4:
             muDiff = np.asscalar((mu/muCpp-1.)*100)
             sigDiff = np.asscalar((sigma/sigmaCpp - 1.)*100)
             
-            tableDict['Fixed']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff]
+            tableDict['Fixed']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
             
             ax6.set_title('Fixed initial config \n Temperature = %.2f' %temperature)
             ax6.get_yaxis().get_major_formatter().set_useOffset(False)
@@ -307,14 +316,15 @@ class Project4:
         dfFixed =pd.DataFrame.from_dict(tableDict['Fixed'],orient='index')#, index=tableDict['Fixed'])#.T
         #dfFixed =pd.DataFrame(tableDict['Fixed'], index=tableDict['Fixed'])
         outfileName = os.getcwd() + '/results/' + '4dTableFixed.txt'
-        dfFixed.columns = ["Temerpature", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$"]
+        dfFixed.columns = ["T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>$", r"$\frac{<|M|^2> - <|M|>^2}{L^2}$", "Cv", "chi"]
+
         dfFixed.to_latex(outfileName, index=False, escape=False)
 
         dfRandom =pd.DataFrame.from_dict(tableDict['Random'],orient='index')#, index=tableDict['Random'])#.T
         #dfRandom =pd.DataFrame(tableDict['Random'], index=tableDict['Random'])
 
         outfileName = os.getcwd() + '/results/' + '4dTableRandom.txt'
-        dfRandom.columns = ["Temerpature", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$"]
+        dfRandom.columns = ["T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>$", r"$\frac{<|M|^2> - <|M|>^2}{L^2}$", "Cv", "chi"]
         dfRandom.to_latex(outfileName, index=False, escape=False)
 
 
