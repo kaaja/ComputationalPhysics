@@ -2,6 +2,7 @@
 
 
 ofstream ofile;
+ofstream ofile2;
 
 
 IsingModel::IsingModel(string fileName_)
@@ -9,7 +10,7 @@ IsingModel::IsingModel(string fileName_)
     outfileName = fileName_;
 }
 // function to initialise energy, spin matrix and magnetization
-void IsingModel:: initialize(int n_spins, double temperature, int **spin_matrix,
+void IsingModel:: initialize(int n_spins, int **spin_matrix,
         double& E, double& M, bool orderingFixed, long& idum)
 {
   // setup spin matrix and intial magnetization
@@ -62,9 +63,9 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
 void IsingModel:: output(int n_spins, int mcs, double temperature, double *average, int acceptedMoves)
 {
   string outfileName2;
-  outfileName2 = "Temp" + to_string(temperature);
-  boost::erase_all(outfileName2, ".");
-  boost::erase_all(outfileName2, "0");
+  outfileName2 = "TempNumber" + to_string(temperatureNumber);
+  //boost::erase_all(outfileName2, ".");
+  //boost::erase_all(outfileName2, "0");
   outfileName2 = outfileName + outfileName2 + ".csv";
   double norm = 1/((double) (mcs));  // divided by total number of cycles
   double Eaverage = average[0]*norm;
@@ -90,4 +91,19 @@ void IsingModel:: output(int n_spins, int mcs, double temperature, double *avera
   ofile << setw(15) << setprecision(8) << Cv;
   ofile << setw(15) << setprecision(8) << chi << endl;
   ofile.close();
+  temperatureNumber += 1;
 } // end output function
+
+void IsingModel:: outputMPI(int n_spins, int mcs, int numprocs, double TotalTime )
+{
+  string outfileName2;
+  outfileName2 = outfileName + "NumProcs" + to_string(numprocs) + ".csv";
+  ofile2.open(outfileName2, ios::out | ios::app);
+  ofile2 << "n_spins mcs numprocs totalTime" << endl;
+  ofile2 << setiosflags(ios::showpoint | ios::uppercase);
+  ofile2 << setw(15) << setprecision(8) << n_spins;
+  ofile2 << setw(15) << setprecision(8) << mcs;
+  ofile2 << setw(15) << setprecision(8) << numprocs;
+  ofile2 << setw(15) << setprecision(8) << TotalTime;
+  ofile2.close();
+}

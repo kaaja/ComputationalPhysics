@@ -60,9 +60,11 @@ int main(int argc, char* argv[])
   double  TimeStart, TimeEnd, TotalTime;
   TimeStart = MPI_Wtime();
 
+  //    initialise energy and magnetization
+  E = M = 0.;
+  project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+
   for ( double temperature = initial_temp; temperature <= final_temp; temperature+=temp_step){
-    //    initialise energy and magnetization
-    E = M = 0.;
 
     // setup array for possible energy changes
     for( int de =-8; de <= 8; de++) w[de+8] = 0;
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
     // initialise array for expectation values
     for( int i = 0; i < 5; i++) average[i] = 0.;
     for( int i = 0; i < 5; i++) total_average[i] = 0.;
-    project4b.initialize(n_spins, temperature, spin_matrix, E, M, orderingFixed, idum);
+
     // start Monte Carlo computation
     int acceptedMoves = 0;
     //for (int cycles = 1; cycles <= mcs; cycles++){
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M);
-      energyArray(cycles -1) = E;
+      energyArray(cycles -1) = E; // Remember to uncomment
     }
 
     // Find total average
@@ -87,7 +89,8 @@ int main(int argc, char* argv[])
       MPI_Reduce(&average[i], &total_average[i], 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     }
 
-    MPI_Reduce(energyArray.memptr(), total_energyArray.memptr(), mcs, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    //MPI_Reduce(energyArray.memptr(), total_energyArray.memptr(), mcs, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
     if ( my_rank == 0) {
       //output(n_spins, mcs, temperature, total_average);
       string outfileNameEnergyArray;
@@ -95,21 +98,22 @@ int main(int argc, char* argv[])
       boost::erase_all(outfileNameEnergyArray, ".");
       boost::erase_all(outfileNameEnergyArray, "0");
       outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
-      total_energyArray.save(outfileNameEnergyArray, csv_ascii);
+      total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
       // print results
       project4b.output(n_spins, mcs, temperature, total_average, acceptedMoves);
     }
   }
   free_matrix((void **) spin_matrix); // free memory
 
-    TimeEnd = MPI_Wtime();
-    TotalTime = TimeEnd-TimeStart;
-    if ( my_rank == 0) {
+  TimeEnd = MPI_Wtime();
+  TotalTime = TimeEnd-TimeStart;
+  if ( my_rank == 0) {
       cout << "Time = " <<  TotalTime  << " on number of processors: "  << numprocs  << endl;
-    }
+      project4b.outputMPI(n_spins, mcs, numprocs, TotalTime);
+  }
 
-    // End MPI
-    MPI_Finalize ();
+  // End MPI
+  MPI_Finalize ();
 
   return 0;
 }
