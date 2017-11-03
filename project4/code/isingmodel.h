@@ -21,12 +21,13 @@ class IsingModel
 {
 private:
     string outfileName;
+    int temperatureNumber = 0;
 public:
     IsingModel();
     IsingModel(string fileName_);
 
     // Function to initialise energy and magnetization
-    void initialize(int, double, int **, double&, double&, bool orderingFixed, long& idum);
+    void initialize(int, int **, double&, double&, bool orderingFixed, long& idum);
     // The metropolis algorithm
     void Metropolis(int, long&, int **, double&, double&, double *, double temperature,
                     int &acceptedMoves);
@@ -36,6 +37,7 @@ public:
     inline int periodic(int i, int limit, int add) {
       return (i+limit+add) % (limit);
     }
+    void outputMPI(int n_spins, int mcs, int numprocs, double TotalTime );
 
 };
 

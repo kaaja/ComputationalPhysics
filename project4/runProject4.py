@@ -32,7 +32,7 @@ class Project4:
     def __init__(self):
         return None
         
-    def runCpp(self, outfileName, n_spins,  mcs, initial_temp,
+    def runCpp(self,  numprocs, outfileName, n_spins,  mcs, initial_temp,
          final_temp, temp_step, orderingFixed):
         """
         Compiles and runs cpp program from the command line and
@@ -43,7 +43,8 @@ class Project4:
         initial_temp = str(initial_temp )
         final_temp = str(final_temp) 
         temp_step = str(temp_step)
-        call(["./AllrunVectorized", outfileName, n_spins,  mcs, initial_temp,
+        numprocs = str(numprocs)
+        call(["./AllrunVectorized", numprocs, outfileName, n_spins,  mcs, initial_temp,
          final_temp, temp_step, orderingFixed])
     
     def project4b(self):
@@ -56,11 +57,14 @@ class Project4:
         final_temp = 1.
         temp_step = 0.1
         orderingFixed = 'orderingFixed'
+        numprocs = 1
+        
+        counter = 0
         
         for mcs in MCSamples:
             outfileName2 = os.getcwd() + '/results/' + outfileName
-            outfileName3 = outfileName2 + 'Temp' + str(initial_temp).replace(".", "").replace("0", "") + '.csv'
-            self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+            outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'
+            self.runCpp(numprocs,outfileName2, n_spins,  mcs, initial_temp,
              final_temp, temp_step, orderingFixed)
         results4b = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
         results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
@@ -97,22 +101,24 @@ class Project4:
         numberOfTemperatures = 2
         orderingTypes = ['orderingFixed', 'nonfixed']
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
+        numprocs = 1
         
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
                 outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
-                self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+                self.runCpp(numprocs,outfileName2, n_spins,  mcs, initial_temp,
                  final_temp, temp_step, orderingType)
+            counter = 0
             if orderingType == 'orderingFixed':
                 for temperature in temperatures:
-                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    outfileName3 = outfileName2 + 'TempNumber' + str(counter) + '.csv'    
                     results4cFixed['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4cFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     results4cFixed['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
             else:
                 for temperature in temperatures:
-                    outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    outfileName3 = outfileName2 + 'TempNumber' + str(counter) + '.csv'    
                     results4cRandom['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4cRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     results4cRandom['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
@@ -197,20 +203,22 @@ class Project4:
         numberOfTemperatures = 2
         orderingTypes = ['orderingFixed', 'nonfixed']
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
+        numprocs = 1
         
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
                 outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
-                self.runCpp(outfileName2, n_spins,  mcs, initial_temp,
+                self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
                  final_temp, temp_step, orderingType)
+            counter = 0
             if orderingType == 'orderingFixed':
                 for temperature in temperatures:
                     outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") +"Mcs%d" %mcs + '.csv'    
                     results4dFixedEnergyArray['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4dFixedEnergyArray['temperature %f' % temperature].columns = ["energy"]
                     
-                    outfileName4 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    outfileName4 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    
                     results4dFixed['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
                     results4dFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     
@@ -220,7 +228,7 @@ class Project4:
                     results4dRandomEnergyArray['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4dRandomEnergyArray['temperature %f' % temperature].columns = ["energy"]
                     
-                    outfileName4 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + '.csv'    
+                    outfileName4 = outfileName2 + 'TempNumber' + str(counter)+ '.csv'    
                     results4dRandom['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
                     results4dRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
 
@@ -329,12 +337,43 @@ class Project4:
 
 
         return results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict
+    
+    def project4e(self):
+        results4e=  OrderedDict()
+        N = 11 # Number of different sizes for the MC experiments
+        MCSamples = [2**N]
+        mcs = MCSamples[0]
+        outfileName = 'Out4e'
+        n_spins_list = [40,60]#,80,100]
+        initial_temp = 2.
+        final_temp = 2.15#2.3
+        temp_step = .05
+        numprocs = 4
+        orderingType = 'random'
+        numberOfTemperatures = int(round(1 + (final_temp - initial_temp)/temp_step))
+        temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
 
+        
+        
+        for n_spins in n_spins_list: 
+            results4e['n_spins %d' % n_spins] = OrderedDict()
+            outfileName2 = os.getcwd() + '/results/' + outfileName + str(n_spins)
+            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
+                 final_temp, temp_step, orderingType)
+            counter = 0
+            for temperature in temperatures:
+                outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    #.replace("0", "")
+                results4e['n_spins %d' % n_spins]['temperature %f' %temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
+                results4e['n_spins %d' % n_spins]['temperature %f' %temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                    
+
+
+        return results4e
 
         
         
 #%%
-scenario = '4d'
+scenario = '4c'
 
 if scenario == '4b':
     project4b = Project4()
@@ -345,7 +384,9 @@ elif scenario == '4c':
 elif scenario == '4d':
     project4d = Project4()
     results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d()
-
+elif scenario == '4e':
+    project4e = Project4()
+    results4e = project4e.project4e()
 
 
 
