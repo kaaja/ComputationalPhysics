@@ -187,7 +187,7 @@ class Project4:
         results4dRandom  = OrderedDict()
         results4dFixedEnergyArray = OrderedDict()
         results4dRandomEnergyArray = OrderedDict()
-        N = 21 # Number of different sizes for the MC experiments
+        N = 11 # Number of different sizes for the MC experiments
         MCSamples = [2**N]
         outfileName = 'Out4d'
         n_spins = 20
@@ -272,7 +272,7 @@ class Project4:
 #            tableInput = pd.Series([mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff])
 #            tableInput.columns = ["Mu MCS","Mu Cpp", "Percentage difference mu", "Sigma MCS", "sigma Cpp", "Percentage difference sigma"]
 #            tableDict.update({"Mu MCS":mu, "Mu Cpp":muCpp, "Percentage difference mu":muDiff, "Sigma MCS":sigma, "Percentage difference sigma":sigmaCpp, "something":sigDiff} )
-            tableDict['Random']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
+            tableDict['Random']['temperature %f' %temperature] = [np.log2(MCSamples[0]), temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
 
             
             weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
@@ -298,7 +298,7 @@ class Project4:
             muDiff = np.asscalar((mu/muCpp-1.)*100)
             sigDiff = np.asscalar((sigma/sigmaCpp - 1.)*100)
             
-            tableDict['Fixed']['temperature %f' %temperature] = [temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
+            tableDict['Fixed']['temperature %f' %temperature] = [np.log2(MCSamples[0]), temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
             
             ax6.set_title('Fixed initial config \n Temperature = %.2f' %temperature)
             ax6.get_yaxis().get_major_formatter().set_useOffset(False)
@@ -316,7 +316,7 @@ class Project4:
         dfFixed =pd.DataFrame.from_dict(tableDict['Fixed'],orient='index')#, index=tableDict['Fixed'])#.T
         #dfFixed =pd.DataFrame(tableDict['Fixed'], index=tableDict['Fixed'])
         outfileName = os.getcwd() + '/results/' + '4dTableFixed.txt'
-        dfFixed.columns = ["T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>$", r"$\frac{<|M|^2> - <|M|>^2}{L^2}$", "Cv", "chi"]
+        dfFixed.columns = [r"$\log_2 MCs$", "T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", "Cv/L^2", "chi/L^2"]
 
         dfFixed.to_latex(outfileName, index=False, escape=False)
 
@@ -324,7 +324,7 @@ class Project4:
         #dfRandom =pd.DataFrame(tableDict['Random'], index=tableDict['Random'])
 
         outfileName = os.getcwd() + '/results/' + '4dTableRandom.txt'
-        dfRandom.columns = ["T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>$", r"$\frac{<|M|^2> - <|M|>^2}{L^2}$", "Cv", "chi"]
+        dfRandom.columns = [r"$\log_2 MCs$", "T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", "Cv/L^2", "chi/L^2"]
         dfRandom.to_latex(outfileName, index=False, escape=False)
 
 
