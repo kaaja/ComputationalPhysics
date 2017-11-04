@@ -50,7 +50,7 @@ class Project4:
     
     def project4b(self):
         #results4b =  OrderedDict()
-        N = 5 # Number of different sizes for the MC experiments
+        N = 8 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
         outfileName = 'Out4b'
         n_spins = 2
@@ -58,7 +58,7 @@ class Project4:
         final_temp = 1.
         temp_step = 0.1
         orderingFixed = 'orderingFixed'
-        numprocs = 1
+        numprocs = 4
         
         counter = 0
         
@@ -92,7 +92,7 @@ class Project4:
     def project4c(self):
         results4cFixed=  OrderedDict()
         results4cRandom  = OrderedDict()
-        N = 23 # Number of different sizes for the MC experiments
+        N = 21 # Number of different sizes for the MC experiments
         MCSamples = [2**i for i in xrange(7,N)]
         outfileName = 'Out4c'
         n_spins = 20
@@ -117,13 +117,15 @@ class Project4:
                     results4cFixed['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4cFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     results4cFixed['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+                    counter += 1
             else:
                 for temperature in temperatures:
                     outfileName3 = outfileName2 + 'TempNumber' + str(counter) + '.csv'    
                     results4cRandom['temperature %f' % temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                     results4cRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     results4cRandom['temperature %f' % temperature].to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
-
+                    counter += 1
+                    
         fig4, ax4 = plt.subplots()
         ax4.hold('on')
         ax4.set_xlabel(r'$\log_{2} MCS$')
@@ -194,7 +196,7 @@ class Project4:
         results4dRandom  = OrderedDict()
         results4dFixedEnergyArray = OrderedDict()
         results4dRandomEnergyArray = OrderedDict()
-        N = 11 # Number of different sizes for the MC experiments
+        N = 20 # Number of different sizes for the MC experiments
         MCSamples = [2**N]
         outfileName = 'Out4d'
         n_spins = 20
@@ -437,7 +439,7 @@ class Project4:
         
         
 #%%
-scenario = '4e'
+scenario = '4d'
 
 if scenario == '4b':
     project4b = Project4()
