@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   string outfileName;
   long idum;
   int **spin_matrix, n_spins, mcs,  my_rank, numprocs;
-  double w[17], average[5], initial_temp, final_temp, E, M, temp_step, total_average[5];
+  double w[17], average[6], initial_temp, final_temp, E, M, temp_step, total_average[6];
   bool orderingFixed;
   colvec energyArray, total_energyArray;
 
@@ -64,14 +64,13 @@ int main(int argc, char* argv[])
   E = M = 0.;
   project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
 
-  for ( double temperature = initial_temp; temperature <= final_temp; temperature+=temp_step){
-
+  for ( double temperature = initial_temp; temperature <= final_temp+temp_step; temperature+=temp_step){
     // setup array for possible energy changes
     for( int de =-8; de <= 8; de++) w[de+8] = 0;
     for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
     // initialise array for expectation values
-    for( int i = 0; i < 5; i++) average[i] = 0.;
-    for( int i = 0; i < 5; i++) total_average[i] = 0.;
+    for( int i = 0; i < 6; i++) average[i] = 0.;
+    for( int i = 0; i < 6; i++) total_average[i] = 0.;
 
     // start Monte Carlo computation
     int acceptedMoves = 0;
@@ -80,16 +79,16 @@ int main(int argc, char* argv[])
       project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
       // update expectation values
       average[0] += E;    average[1] += E*E;
-      average[2] += M;    average[3] += M*M; average[4] += fabs(M);
+      average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);
       energyArray(cycles -1) = E; // Remember to uncomment
     }
 
     // Find total average
-    for( int i =0; i < 5; i++){
+    for( int i =0; i < 6; i++){
       MPI_Reduce(&average[i], &total_average[i], 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     }
 
-    //MPI_Reduce(energyArray.memptr(), total_energyArray.memptr(), mcs, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(energyArray.memptr(), total_energyArray.memptr(), mcs, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     if ( my_rank == 0) {
       //output(n_spins, mcs, temperature, total_average);

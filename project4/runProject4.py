@@ -8,6 +8,7 @@ import os
 from collections import OrderedDict
 import matplotlib.mlab as mlab
 from scipy.stats import norm
+from scipy.misc import comb
 
 
 
@@ -91,8 +92,8 @@ class Project4:
     def project4c(self):
         results4cFixed=  OrderedDict()
         results4cRandom  = OrderedDict()
-        N = 10 # Number of different sizes for the MC experiments
-        MCSamples = [100*2**i for i in xrange(0,N)]
+        N = 23 # Number of different sizes for the MC experiments
+        MCSamples = [2**i for i in xrange(7,N)]
         outfileName = 'Out4c'
         n_spins = 20
         initial_temp = 1.
@@ -101,7 +102,7 @@ class Project4:
         numberOfTemperatures = 2
         orderingTypes = ['orderingFixed', 'nonfixed']
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
-        numprocs = 1
+        numprocs = 4
         
         
         for orderingType in orderingTypes:
@@ -203,7 +204,7 @@ class Project4:
         numberOfTemperatures = 2
         orderingTypes = ['orderingFixed', 'nonfixed']
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
-        numprocs = 1
+        numprocs = 4
         
         
         for orderingType in orderingTypes:
@@ -324,7 +325,7 @@ class Project4:
         dfFixed =pd.DataFrame.from_dict(tableDict['Fixed'],orient='index')#, index=tableDict['Fixed'])#.T
         #dfFixed =pd.DataFrame(tableDict['Fixed'], index=tableDict['Fixed'])
         outfileName = os.getcwd() + '/results/' + '4dTableFixed.txt'
-        dfFixed.columns = [r"$\log_2 MCs$", "T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", "Cv/L^2", "chi/L^2"]
+        dfFixed.columns = [r"$\log_2 MCs$", "T", r"$\mu_E/L^2$", r"$<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", r"$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", r"$Cv/L^2$", r"$\chi/L^2$"]
 
         dfFixed.to_latex(outfileName, index=False, escape=False)
 
@@ -332,7 +333,7 @@ class Project4:
         #dfRandom =pd.DataFrame(tableDict['Random'], index=tableDict['Random'])
 
         outfileName = os.getcwd() + '/results/' + '4dTableRandom.txt'
-        dfRandom.columns = [r"$\log_2 MCs$", "T", "$\mu_E/L^2$"," $<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", "$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", "Cv/L^2", "chi/L^2"]
+        dfRandom.columns = [r"$\log_2 MCs$", "T", r"$\mu_E/L^2$", r"$<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", r"$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", r"$Cv/L^2$", r"$\chi/L^2$"]
         dfRandom.to_latex(outfileName, index=False, escape=False)
 
 
@@ -340,17 +341,17 @@ class Project4:
     
     def project4e(self):
         results4e=  OrderedDict()
-        N = 11 # Number of different sizes for the MC experiments
-        MCSamples = [2**N]
+        N = 1 # Number of different sizes for the MC experiments
+        MCSamples = [int(round(10E3))]#[int(round(10E6))]
         mcs = MCSamples[0]
         outfileName = 'Out4e'
-        n_spins_list = [40,60]#,80,100]
-        initial_temp = 2.
-        final_temp = 2.15#2.3
-        temp_step = .05
+        n_spins_list = [40,60, 80, 100]#, 140]
+        initial_temp = 2.2
+        final_temp = 2.3
+        temp_step = .025
         numprocs = 4
         orderingType = 'random'
-        numberOfTemperatures = int(round(1 + (final_temp - initial_temp)/temp_step))
+        numberOfTemperatures = 1 + int(round((final_temp - initial_temp)/temp_step))
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
 
         
@@ -365,15 +366,78 @@ class Project4:
                 outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    #.replace("0", "")
                 results4e['n_spins %d' % n_spins]['temperature %f' %temperature] = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
                 results4e['n_spins %d' % n_spins]['temperature %f' %temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-                    
+                counter += 1 # Kja: This was mising...So I guess the dict would not be correct.  
+                
+        # Plotting
+        plotVariables = ['Eavg', 'absMavg', 'Cv', 'chi']
+        titles = ["$<E>/L^2$", "$<|M|>/L^2$", r"$C_v/L^2$", r"$\chi/L^2$"]
+        variableNumber = 0
+        for plotvariable in plotVariables:
+            fig1, ax1 = plt.subplots()
+            legends1 = []
+            for n_spins in n_spins_list:
+                data = []
+                for temperature in temperatures:
+                    if plotvariable == 'Eavg':
+                        data.append(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].Eavg)
+                    elif plotvariable == 'absMavg':
+                        data.append(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].absMavg)
+                    elif plotvariable == 'Cv':
+                        data.append(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].Cv)
+                    elif plotvariable == 'chi':
+                        data.append(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].chi)
 
-
+                ax1.plot(temperatures, data, '-o')
+                legends1.append('L %d' %n_spins)
+            ax1.set_xlabel(r'$Temperature$')
+            ax1.set_ylabel(titles[variableNumber])
+            ax1.set_title(titles[variableNumber])
+            variableNumber += 1
+            ax1.legend(legends1, loc=0)
+            fig1.tight_layout()
+            fig1.savefig('results/4e'  + plotvariable + '.png') 
+            plt.close()
+            
+        # Critical temperature
+        TCritical = []
+        for n_spins in n_spins_list:
+            CvMax = [np.asscalar(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].Cv.values) for temperature in temperatures]
+            TCriticalIndex = np.argmax(CvMax)
+            TCritical.append(temperatures[TCriticalIndex])
+        
+        
+        numberOfSpins = len(n_spins_list)
+        TCriticalInfList = []
+        for numberOfSpinsCriticalTemperature in xrange(2, numberOfSpins+1):
+            numberOfCombinations = int(round(comb(numberOfSpinsCriticalTemperature, 2)))
+            TCriticalInf = 0
+            for i in xrange(numberOfSpinsCriticalTemperature-1):
+                j = i+1
+                while  j < numberOfSpinsCriticalTemperature:
+                    aOverL = (TCritical[i] - TCritical[j])/(1. - n_spins_list[i]/n_spins_list[j])
+                    TCriticalInf += TCritical[i] - aOverL
+                    j += 1
+            
+            TCriticalInf = TCriticalInf/numberOfCombinations
+            print 'TCriticalInf = %f' %TCriticalInf 
+            TCriticalInfList.append(TCriticalInf)
+            
+            
+        outfileName2 = os.getcwd() + '/results/' + outfileName + 'TcCritical.txt'
+        TOnsager = 2./np.log(1 + np.sqrt(2))
+        diffFromOnsager = (np.asarray(TCriticalInfList)/TOnsager - 1.)*100
+        spinCombos = np.asarray([r'$[40, 60]$', r'$[40, 60, 100]$', r'$[40, 60, 100, 140]$'])
+        
+        tableForTcCritical = np.transpose(np.array((spinCombos, np.asarray(TCriticalInfList),diffFromOnsager)))
+        tableForTcCriticalToLatex  = pd.DataFrame(tableForTcCritical, columns=['Spin combos', r'$T_c^{Estimate}(L=\infty)$',r'$(\frac{T_c^{Estimate}(L=\infty)}{T_{c,exact}}-1) \cdot 100$' ] )
+        tableForTcCriticalToLatex.to_latex(outfileName2, index=False, escape=False)
+        
         return results4e
 
         
         
 #%%
-scenario = '4c'
+scenario = '4e'
 
 if scenario == '4b':
     project4b = Project4()
@@ -388,5 +452,7 @@ elif scenario == '4e':
     project4e = Project4()
     results4e = project4e.project4e()
 
+
+#%%
 
 

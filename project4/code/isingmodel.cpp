@@ -20,7 +20,7 @@ void IsingModel:: initialize(int n_spins, int **spin_matrix,
         spin_matrix[y][x] = 1; // spin orientation for the ground state
       else
       {
-          int spin = (int) (ran1(&idum));
+          int spin = (int) round(ran1(&idum));
           if (spin == 0) spin = -1;
           spin_matrix[y][x] = spin; // spin orientation for the ground state
       }
@@ -73,9 +73,10 @@ void IsingModel:: output(int n_spins, int mcs, double temperature, double *avera
   double Maverage = average[2]*norm;
   double M2average = average[3]*norm;
   double Mabsaverage = average[4]*norm;
+  double Mabsaverage2 = average[5]*norm;
   // all expectation values are per spin, divide by 1/n_spins/n_spins
   double Evariance = (E2average- Eaverage*Eaverage)/n_spins/n_spins;
-  double Mvariance = (M2average - Mabsaverage*Mabsaverage)/n_spins/n_spins;
+  double Mvariance = (Mabsaverage2 - Mabsaverage*Mabsaverage)/n_spins/n_spins;
   double Cv = Evariance/(1.*temperature*temperature);
   double chi = Mvariance/(1.*temperature);
   ofile.open(outfileName2, ios::out | ios::app);
