@@ -1,0 +1,7 @@
+n_spins mcs numprocs totalTime
+              2            100              4  0.00017174468n_spins mcs numprocs totalTime
+              2           1000              4  0.00025725976n_spins mcs numprocs totalTime
+              2          10000              4   0.0011997707n_spins mcs numprocs totalTime
+              2         100000              4   0.0084782430n_spins mcs numprocs totalTime
+              2        1000000              4    0.073393690n_spins mcs numprocs totalTime
+              2       10000000              4     0.72607111
