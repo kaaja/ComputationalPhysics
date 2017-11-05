@@ -94,7 +94,7 @@ class Project4:
     def project4c(self):
         results4cFixed=  OrderedDict()
         results4cRandom  = OrderedDict()
-        N = 21 # Number of different sizes for the MC experiments
+        N = 22 # Number of different sizes for the MC experiments
         MCSamples = [2**i for i in xrange(7,N)]
         outfileName = 'Out4c'
         n_spins = 20
@@ -132,7 +132,7 @@ class Project4:
         fig4, ax4 = plt.subplots()
         ax4.hold('on')
         ax4.set_xlabel(r'$\log_{2} MCS$')
-        ax4.set_ylabel(r"$\log_{2}\frac{Accepted moves}{L^2}$")
+        ax4.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2}$")
         legends4 = []
         
         for temperature in temperatures:
@@ -147,24 +147,26 @@ class Project4:
             ax3.set_ylabel(r"$\frac{<|M|>}{l^2}$")
             
             ax5.set_xlabel(r'$\log_{2} MCS$')
-            ax5.set_ylabel(r"$\log_{2}\frac{Accepted moves}{L^2}$")
+            ax5.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2}$")
 
             legends = ['Fixed', 'Random']
             
-            acceptedMovesShareFixed = results4cFixed['temperature %f' % temperature].acceptedMoves/float(n_spins)**2 
-            acceptedMovesShareRandom = results4cRandom['temperature %f' % temperature].acceptedMoves/float(n_spins)**2
+            data = results4cFixed['temperature %f' % temperature]
+            acceptedMovesShareFixed = [data.acceptedMoves[i]/(float(n_spins)**2*data.mcs[i])*100 for i in  xrange(len(MCSamples))]
+            data = results4cRandom['temperature %f' % temperature]
+            acceptedMovesShareRandom = [data.acceptedMoves[i]/(float(n_spins)**2*data.mcs[i])*100 for i in  xrange(len(MCSamples))]
             
             ax2.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].Eavg, 
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].Eavg)
             ax3.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), results4cFixed['temperature %f' % temperature].absMavg, 
                     np.log2(results4cRandom['temperature %f' % temperature].mcs), results4cRandom['temperature %f' % temperature].absMavg)
             
-            ax5.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareFixed) , 
-                    np.log2(results4cRandom['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareRandom))
+            ax5.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), acceptedMovesShareFixed , 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), acceptedMovesShareRandom)
             
             
-            ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareFixed) , 
-                    np.log2(results4cRandom['temperature %f' % temperature].mcs), np.log2(acceptedMovesShareRandom))
+            ax4.plot(np.log2(results4cFixed['temperature %f' % temperature].mcs), acceptedMovesShareFixed , 
+                    np.log2(results4cRandom['temperature %f' % temperature].mcs), acceptedMovesShareRandom)
             legends4.append('Initial fixed,  temp = %.2f' %temperature)
             legends4.append('Initial random, temp = %.2f' %temperature)
             
@@ -445,7 +447,7 @@ class Project4:
         
         
 #%%
-scenario = '4d'
+scenario = '4c'
 
 if scenario == '4b':
     project4b = Project4()
