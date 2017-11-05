@@ -8,7 +8,8 @@
 using namespace std;
 
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
-                 double& final_temp, double& temp_step, bool &orderingFixed, int argc, char** argv);
+                 double& final_temp, double& temp_step, bool &orderingFixed, bool &initializationNewTempereture,
+                 int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +18,7 @@ int main(int argc, char* argv[])
   long idum;
   int **spin_matrix, n_spins, mcs,  my_rank, numprocs;
   double w[17], average[6], initial_temp, final_temp, E, M, temp_step, total_average[6];
-  bool orderingFixed;
+  bool orderingFixed, initializationNewTempereture;
   colvec energyArray, total_energyArray;
 
   //  MPI initializations
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
     */
 
   // Read in initial values such as size of lattice, temp and cycles
-  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed, argc, argv);
+  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed,initializationNewTempereture, argc, argv);
 
     int no_intervalls = mcs/numprocs;
     int myloop_begin = my_rank*no_intervalls + 1;
@@ -61,8 +62,10 @@ int main(int argc, char* argv[])
   TimeStart = MPI_Wtime();
 
   //    initialise energy and magnetization
-  E = M = 0.;
-  project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+  if (!initializationNewTempereture){
+    E = M = 0.;
+    project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+  }
 
   for ( double temperature = initial_temp; temperature <= final_temp+temp_step; temperature+=temp_step){
     // setup array for possible energy changes
@@ -71,6 +74,12 @@ int main(int argc, char* argv[])
     // initialise array for expectation values
     for( int i = 0; i < 6; i++) average[i] = 0.;
     for( int i = 0; i < 6; i++) total_average[i] = 0.;
+
+    if (initializationNewTempereture){
+        E = M = 0.;
+        project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+    }
+
 
     // start Monte Carlo computation
     int acceptedMoves = 0;
@@ -119,7 +128,8 @@ int main(int argc, char* argv[])
 
 // read in input data
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
-                 double& final_temp, double& temp_step, bool &orderingFixed, int argc, char** argv)
+                 double& final_temp, double& temp_step, bool &orderingFixed,bool &initializationNewTempereture,
+                 int argc, char** argv)
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -133,9 +143,14 @@ void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_te
     initial_temp = atof(argv[4]);
     final_temp = atof(argv[5]);
     temp_step = atof(argv[6]);
-    string tempInput = argv[7];
-    if (tempInput == "orderingFixed"){
+    string orderingFixedInput = argv[7];
+    if (orderingFixedInput == "orderingFixed"){
         orderingFixed = true;
     }
     else orderingFixed = false;
+    string initializeForEachTemperature = argv[8];
+    if (initializeForEachTemperature == "initializeForEachTemperature")
+        initializationNewTempereture = true;
+    else
+        initializationNewTempereture = false;
 }
