@@ -39,6 +39,7 @@ public:
       return (i+limit+add) % (limit);
     }
     void outputMPI(int n_spins, int mcs, int numprocs, double TotalTime );
+    void outputEnergyArray(colvec energyArray, int mcs, double temperature);
 
 };
 

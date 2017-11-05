@@ -126,3 +126,14 @@ void IsingModel:: outputMPI(int n_spins, int mcs, int numprocs, double TotalTime
   ofile2 << setw(15) << setprecision(8) << TotalTime;
   ofile2.close();
 }
+void IsingModel:: outputEnergyArray(colvec energyArray, int mcs, double temperature)
+{
+    //output(n_spins, mcs, temperature, total_average);
+    string outfileNameEnergyArray;
+    outfileNameEnergyArray = "Temp" + to_string(temperature);
+    boost::erase_all(outfileNameEnergyArray, ".");
+    boost::erase_all(outfileNameEnergyArray, "0");
+    outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
+    energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
+
+}

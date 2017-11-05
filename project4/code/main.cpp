@@ -103,13 +103,16 @@ int main(int argc, char* argv[])
 
     if ( my_rank == 0) {
       //output(n_spins, mcs, temperature, total_average);
-      string outfileNameEnergyArray;
+      /*string outfileNameEnergyArray;
       outfileNameEnergyArray = "Temp" + to_string(temperature);
       boost::erase_all(outfileNameEnergyArray, ".");
       boost::erase_all(outfileNameEnergyArray, "0");
       outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
-      if (printEnergyArray)
-        total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
+      */
+      if (printEnergyArray){
+        //total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
+          project4b.outputEnergyArray(total_energyArray, mcs, temperature);
+      }
       // print results
       project4b.output(n_spins, mcs, temperature, total_average, acceptedMoves);
     }
