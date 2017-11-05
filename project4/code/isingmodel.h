@@ -22,6 +22,7 @@ class IsingModel
 private:
     string outfileName;
     int temperatureNumber = 0;
+    void energyDifference(double *w, double temperature);
 public:
     IsingModel();
     IsingModel(string fileName_);

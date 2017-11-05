@@ -69,8 +69,8 @@ int main(int argc, char* argv[])
 
   for ( double temperature = initial_temp; temperature <= final_temp+temp_step; temperature+=temp_step){
     // setup array for possible energy changes
-    for( int de =-8; de <= 8; de++) w[de+8] = 0;
-    for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
+    //for( int de =-8; de <= 8; de++) w[de+8] = 0;
+    //for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
     // initialise array for expectation values
     for( int i = 0; i < 6; i++) average[i] = 0.;
     for( int i = 0; i < 6; i++) total_average[i] = 0.;
@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
     int acceptedMoves = 0;
     //for (int cycles = 1; cycles <= mcs; cycles++){
     for (int cycles = myloop_begin; cycles <= myloop_end; cycles++){
+    //for (int cycles = 1; cycles <= mcs; cycles++){
       project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
       // update expectation values
       average[0] += E;    average[1] += E*E;

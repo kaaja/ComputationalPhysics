@@ -36,11 +36,22 @@ void IsingModel:: initialize(int n_spins, int **spin_matrix,
     }
   }
 }// end function initialise
+void IsingModel:: energyDifference(double *w, double temperature)
+{
+    //for( int de =-8; de <= 8; de+=4) w(de+8) = exp(-de/Temperature);
+    for( int de =-8; de <= 8; de++) w[de+8] = 0;
+    for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
+}
 
 void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M,
                              double *w, double temperature, int &acceptedMoves)
 {
+  //colvec w;
+  //w = zeros<colvec>(17);
+    //double w[17];
+  energyDifference(w, temperature);
   // loop over all spins
+
   int allSpins = pow(n_spins, 2);
   for(int y =0; y < allSpins; y++) {
       int ix = (int) (ran1(&idum)*(double)n_spins);
