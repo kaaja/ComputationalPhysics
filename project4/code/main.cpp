@@ -62,10 +62,10 @@ int main(int argc, char* argv[])
   TimeStart = MPI_Wtime();
 
   //    initialise energy and magnetization
-  E = M = 0.;
-
-  //if (!initializationNewTempereture)
-    //project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+  if (!initializationNewTempereture){
+    E = M = 0.;
+    project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+  }
 
   for ( double temperature = initial_temp; temperature <= final_temp+temp_step; temperature+=temp_step){
     // setup array for possible energy changes
@@ -75,8 +75,10 @@ int main(int argc, char* argv[])
     for( int i = 0; i < 6; i++) average[i] = 0.;
     for( int i = 0; i < 6; i++) total_average[i] = 0.;
 
-    //if (initializationNewTempereture)
+    if (initializationNewTempereture){
+        E = M = 0.;
         project4b.initialize(n_spins, spin_matrix, E, M, orderingFixed, idum);
+    }
 
 
     // start Monte Carlo computation
