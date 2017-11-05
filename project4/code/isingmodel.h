@@ -35,14 +35,15 @@ public:
     IsingModel(string fileName_);
 
     // Initialise energy and magnetization
-    void initialize(int, int **, double&, double&, bool orderingFixed, long& idum);
+    void initialize(int n_spins, int **spin_matrix,
+            double& E, double& M, bool orderingFixed, long& idum);
 
     // Metropolis algorithm
-    void Metropolis(int, long&, int **, double&, double&, double temperature,
-                    int &acceptedMoves, int myloop_begin, int myloop_end, double *average, colvec &energyArray);
+    void Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double temperature, int &acceptedMoves,
+                                 int myloop_begin, int myloop_end, double *average, colvec &energyArray);
 
     // Write to file
-    void output(int, int, double, double *, int acceptedMoves);
+    void output(int n_spins, int mcs, double temperature, double *average, int acceptedMoves);
 
     // Write to file timing results
     void outputMPI(int n_spins, int mcs, int numprocs, double TotalTime );
