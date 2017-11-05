@@ -10,23 +10,6 @@ import matplotlib.mlab as mlab
 from scipy.stats import norm
 from scipy.misc import comb
 
-
-
-#%% clean results and movie directory
-call(["./Allclean"]) 
-try:
-    import seaborn
-    seaborn.set(style="white", context="notebook", font_scale=1.5,
-                    rc={"axes.grid": True, "legend.frameon": False,
-                        "lines.markeredgewidth": 1.4, "lines.markersize": 10})
-except ImportError:
-    print("Could not import seaborn for plot styling. Try")
-    print("\n    conda install seaborn\n\nor")
-    print("\n    pip install seaborn\n")
-
-if not os.path.isdir('results'):
-    os.mkdir('results')
-
 #%% Run 
 class Project4:
     
@@ -52,7 +35,6 @@ class Project4:
          printEnergyArray])
     
     def project4b(self):
-        #results4b =  OrderedDict()
         N = 8 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
         outfileName = 'Out4b'
@@ -75,7 +57,6 @@ class Project4:
              printEnergyArray)
         results4b = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
         results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-        #results4b.to_csv(outfileName2 + '4Rport', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
         results4b.to_latex(outfileName2 + '4Rport.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
 
         results4b2 = results4b.copy()
@@ -91,8 +72,8 @@ class Project4:
         results4b2.Cv = (results4b2.Cv/CvExact-1.)*100
         results4b2.chi = (results4b2.chi/chiExact-1.)*100
         
-        #results4b2.to_csv(outfileName2 + '4RportDev', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
         results4b2.to_latex(outfileName2 + '4RportDev.txt', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
+        
         return results4b, results4b2
     
     def project4c(self):
@@ -111,7 +92,6 @@ class Project4:
         numprocs = 4
         initializeForEachTemperature = 'initializeForEachTemperature'
         printEnergyArray = 'NotprintEnergyArray'
-        
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
@@ -137,7 +117,7 @@ class Project4:
         fig4, ax4 = plt.subplots()
         ax4.hold('on')
         ax4.set_xlabel(r'$\log_{2} MCS$')
-        ax4.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2}$")
+        ax4.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2} \cdot 100$")
         legends4 = []
         
         for temperature in temperatures:
@@ -152,7 +132,7 @@ class Project4:
             ax3.set_ylabel(r"$\frac{<|M|>}{l^2}$")
             
             ax5.set_xlabel(r'$\log_{2} MCS$')
-            ax5.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2}$")
+            ax5.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2} \cdot 100$")
 
             legends = ['Fixed', 'Random']
             
@@ -219,8 +199,6 @@ class Project4:
         numprocs = 4
         initializeForEachTemperature = 'initializeForEachTemperature'
         printEnergyArray = 'printEnergyArray'
-
-        
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
@@ -251,25 +229,20 @@ class Project4:
                     results4dRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
                     counter += 1
 
-        
-
-        
         tableDict = OrderedDict()
         tableDict['Fixed'] = OrderedDict()
         tableDict['Random'] = OrderedDict()
         for temperature in temperatures:
             fig6, ax6 = plt.subplots()
-            #ax6.hold('on')
             ax6.set_xlabel(r'$Energy/L^2$')
             ax6.set_ylabel(r"$Probability$")
             
             fig2, ax2 = plt.subplots()
-            #ax6.hold('on')
             ax2.set_xlabel(r'$Energy/L^2$')
             ax2.set_ylabel(r"$Probability$")
 
                     
-#            weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
+
             
             weights = np.ones_like(results4dRandomEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dRandomEnergyArray['temperature %f' % temperature].energy.values))
             ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 25, weights=weights, edgecolor='k')
@@ -294,18 +267,11 @@ class Project4:
             muDiff = np.asscalar((mu/muCpp-1.)*100)
             sigDiff = np.asscalar((sigma/sigmaCpp - 1.)*100)
             
-            
-#            tableInput = pd.Series([mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff])
-#            tableInput.columns = ["Mu MCS","Mu Cpp", "Percentage difference mu", "Sigma MCS", "sigma Cpp", "Percentage difference sigma"]
-#            tableDict.update({"Mu MCS":mu, "Mu Cpp":muCpp, "Percentage difference mu":muDiff, "Sigma MCS":sigma, "Percentage difference sigma":sigmaCpp, "something":sigDiff} )
             tableDict['Random']['temperature %f' %temperature] = [np.log2(MCSamples[0]), temperature, mu, muCpp, muDiff, sigma, sigmaCpp, sigDiff, absMAvg, sigmaM, Cv, chi ]
 
             
             weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
             ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 25, weights=weights, edgecolor='k')
-            #ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values, bins = 25, weights=weights, edgecolor='k')
-#            num_bins = 25
-#            n, bins, patches = ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, num_bins, normed=1,  edgecolor='k')#, weights = weights)
             muCpp = np.asscalar(results4dFixed['temperature %f' %temperature].Eavg.values)
             sigmaCpp = np.asscalar(results4dFixed['temperature %f' %temperature].sigmaE.values)
             absMAvg = np.asscalar(results4dFixed['temperature %f' %temperature].absMavg.values)
@@ -314,11 +280,7 @@ class Project4:
             chi = np.asscalar(results4dFixed['temperature %f' %temperature].chi.values)
             data = results4dFixedEnergyArray['temperature %f' % temperature].energy.values            
             mu, sigma = norm.fit(data/n_spins**2)            
-#            if temperature != 1.00:
-#                y = mlab.normpdf(bins, mu, sigma)
-#                ax6.plot(bins, y, '--')
-                
-            #sigma = sigma**2/n_spins**2
+
             mu = np.average(data)/n_spins**2
             sigma = np.var(data)/n_spins**2
             muDiff = np.asscalar((mu/muCpp-1.)*100)
@@ -337,22 +299,17 @@ class Project4:
             fig6.savefig('results/4dHistogramFixed'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
             fig2.savefig('results/4dHistogramRandom'  + str(temperature).replace(".", "").replace("0", "") + '.png') 
 
-            #plt.close()
         plt.close()
         dfFixed =pd.DataFrame.from_dict(tableDict['Fixed'],orient='index')#, index=tableDict['Fixed'])#.T
-        #dfFixed =pd.DataFrame(tableDict['Fixed'], index=tableDict['Fixed'])
         outfileName = os.getcwd() + '/results/' + '4dTableFixed.txt'
         dfFixed.columns = [r"$\log_2 MCs$", "T", r"$\mu_E/L^2$", r"$<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", r"$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", r"$Cv/L^2$", r"$\chi/L^2$"]
-
         dfFixed.to_latex(outfileName, index=False, escape=False)
 
         dfRandom =pd.DataFrame.from_dict(tableDict['Random'],orient='index')#, index=tableDict['Random'])#.T
-        #dfRandom =pd.DataFrame(tableDict['Random'], index=tableDict['Random'])
-
+        
         outfileName = os.getcwd() + '/results/' + '4dTableRandom.txt'
         dfRandom.columns = [r"$\log_2 MCs$", "T", r"$\mu_E/L^2$", r"$<E>/L^2$", r"$(\frac{\mu_E/L^2}{<E>/L^2} - 1) \cdot 100$", r"$\sigma_E^2/L^2$", r"$\frac{<E^2> - <E>^2}{L^2}$", r"$(\frac{\sigma_E/L^2}{1/L^2(<E^2> - <E>^2)} - 1)\cdot 100$", r"$<|M|>/L^2$", r"$\frac{<|M|^2>/L^2 - <|M|>^2}{L^2}$", r"$Cv/L^2$", r"$\chi/L^2$"]
         dfRandom.to_latex(outfileName, index=False, escape=False)
-
 
         return results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict
     
@@ -373,8 +330,6 @@ class Project4:
         initializeForEachTemperature = 'notInitializeForEachTemperature'
         printEnergyArray = 'notPrintEnergyArray'
 
-        
-        
         for n_spins in n_spins_list: 
             results4e['n_spins %d' % n_spins] = OrderedDict()
             outfileName2 = os.getcwd() + '/results/' + outfileName + str(n_spins)
@@ -426,7 +381,6 @@ class Project4:
             TCriticalIndex = np.argmax(CvMax)
             TCritical.append(temperatures[TCriticalIndex])
         
-        
         numberOfSpins = len(n_spins_list)
         TCriticalInfList = []
         for numberOfSpinsCriticalTemperature in xrange(2, numberOfSpins+1):
@@ -440,8 +394,7 @@ class Project4:
                     j += 1
             
             TCriticalInf = TCriticalInf/numberOfCombinations
-            TCriticalInfList.append(TCriticalInf)
-            
+            TCriticalInfList.append(TCriticalInf)            
             
         outfileName2 = os.getcwd() + '/results/' + outfileName + 'TcCritical.txt'
         TOnsager = 2./np.log(1 + np.sqrt(2))
@@ -452,27 +405,40 @@ class Project4:
         tableForTcCriticalToLatex  = pd.DataFrame(tableForTcCritical, columns=['Spin combos', r'$T_c^{Estimate}(L=\infty)$',r'$(\frac{T_c^{Estimate}(L=\infty)}{T_{c,exact}}-1) \cdot 100$' ] )
         tableForTcCriticalToLatex.to_latex(outfileName2, index=False, escape=False)
         
-        return results4e
-
-        
-        
+        return results4e      
 #%%
-scenario = '4d'
-
-if scenario == '4b':
-    project4b = Project4()
-    results4b, results4b2 = project4b.project4b()
-elif scenario == '4c':
-    project4c = Project4()
-    results4cFixed, results4cRandom = project4c.project4c()
-elif scenario == '4d':
-    project4d = Project4()
-    results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d()
-elif scenario == '4e':
-    project4e = Project4()
-    results4e = project4e.project4e()
-
-
+if __name__ == "__main__":
+    # Clean results and movie directory
+    call(["./Allclean"]) 
+    try:
+        import seaborn
+        seaborn.set(style="white", context="notebook", font_scale=1.5,
+                        rc={"axes.grid": True, "legend.frameon": False,
+                            "lines.markeredgewidth": 1.4, "lines.markersize": 10})
+    except ImportError:
+        print("Could not import seaborn for plot styling. Try")
+        print("\n    conda install seaborn\n\nor")
+        print("\n    pip install seaborn\n")
+    
+    if not os.path.isdir('results'):
+        os.mkdir('results')
+    
+    parser = argparse.ArgumentParser(description="starts a c++ program simulating phase transitions with 2D Ising model, generatsplots. \n Alternatives: 4b, 4c, 4d, 4e")
+    parser.add_argument("task", type=str, default='4b', help="press 4b, 4c, 4d, or 4e")
+    args = parser.parse_args()
+     
+    if args.task  == '4b':
+       project4b = Project4()
+       results4b, results4b2 = project4b.project4b()
+    elif args.task == '4c':
+       project4c = Project4()
+       results4cFixed, results4cRandom = project4c.project4c()
+    elif args.task  == '4d':
+       project4d = Project4()
+       results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d()
+    elif args.task == '4e':
+       project4e = Project4()
+       results4e = project4e.project4e()
 #%%
 
 
