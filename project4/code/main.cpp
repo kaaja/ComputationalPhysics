@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
   string outfileName;
   long idum;
   int **spin_matrix, n_spins, mcs,  my_rank, numprocs;
-  double w[17], average[6], initial_temp, final_temp, E, M, temp_step, total_average[6];
+  double  average[6], initial_temp, final_temp, E, M, temp_step, total_average[6]; //double w[17]
   bool orderingFixed, initializationNewTempereture, printEnergyArray;
   colvec energyArray, total_energyArray;
 
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     //for (int cycles = 1; cycles <= mcs; cycles++){
     //for (int cycles = myloop_begin; cycles <= myloop_end; cycles++){
     //for (int cycles = 1; cycles <= mcs; cycles++){
-    project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves, myloop_begin,myloop_end, average, energyArray);
+    project4b.Metropolis(n_spins, idum, spin_matrix, E, M, temperature, acceptedMoves, myloop_begin,myloop_end, average, energyArray);
       // update expectation values
       /*average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);

@@ -43,8 +43,7 @@ void IsingModel:: energyDifference(double *w, double temperature)
     for( int de =-8; de <= 8; de+=4) w[de+8] = exp(-de/temperature);
 }
 
-void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M,
-                             double *w, double temperature, int &acceptedMoves,
+void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double temperature, int &acceptedMoves,
                              int myloop_begin, int myloop_end, double *average, colvec &energyArray)
 {
   //colvec w;
