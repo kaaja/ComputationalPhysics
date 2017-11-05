@@ -344,13 +344,13 @@ class Project4:
     def project4e(self):
         results4e=  OrderedDict()
         N = 1 # Number of different sizes for the MC experiments
-        MCSamples = [int(round(10E3))]#[int(round(10E6))]
+        MCSamples = [int(round(10E6))]#[int(round(10E6))]
         mcs = MCSamples[0]
         outfileName = 'Out4e'
-        n_spins_list = [40,60, 80, 100]#, 140]
+        n_spins_list = [40,60,80,100,140]#, 80]#,100]#, 140]
         initial_temp = 2.2
         final_temp = 2.3
-        temp_step = .025
+        temp_step = .0125
         numprocs = 4
         orderingType = 'random'
         numberOfTemperatures = 1 + int(round((final_temp - initial_temp)/temp_step))
@@ -401,6 +401,7 @@ class Project4:
             plt.close()
             
         # Critical temperature
+        n_spins_list = [40, 60,100, 140] # new for table only
         TCritical = []
         for n_spins in n_spins_list:
             CvMax = [np.asscalar(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].Cv.values) for temperature in temperatures]
@@ -421,7 +422,6 @@ class Project4:
                     j += 1
             
             TCriticalInf = TCriticalInf/numberOfCombinations
-            print 'TCriticalInf = %f' %TCriticalInf 
             TCriticalInfList.append(TCriticalInf)
             
             
@@ -439,7 +439,7 @@ class Project4:
         
         
 #%%
-scenario = '4d'
+scenario = '4e'
 
 if scenario == '4b':
     project4b = Project4()

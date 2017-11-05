@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);
-      energyArray(cycles -1) = E; // Remember to uncomment
+      //energyArray(cycles -1) = E; // Remember to uncomment
     }
 
     // Find total average
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
       boost::erase_all(outfileNameEnergyArray, ".");
       boost::erase_all(outfileNameEnergyArray, "0");
       outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
-      total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
+      //total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
       // print results
       project4b.output(n_spins, mcs, temperature, total_average, acceptedMoves);
     }
