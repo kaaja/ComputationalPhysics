@@ -224,7 +224,7 @@ class Project4:
                     outfileName4 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    
                     results4dFixed['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
                     results4dFixed['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-                    
+                    counter += 1
             else:
                 for temperature in temperatures:
                     outfileName3 = outfileName2 + 'Temp' + str(temperature).replace(".", "").replace("0", "") + "Mcs%d" %mcs +'.csv'    
@@ -234,7 +234,7 @@ class Project4:
                     outfileName4 = outfileName2 + 'TempNumber' + str(counter)+ '.csv'    
                     results4dRandom['temperature %f' % temperature] = pd.read_csv(outfileName4, delim_whitespace=True, header=None)
                     results4dRandom['temperature %f' % temperature].columns = ["acceptedMoves", "mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-
+                    counter += 1
 
         
 
@@ -439,7 +439,7 @@ class Project4:
         
         
 #%%
-scenario = '4e'
+scenario = '4d'
 
 if scenario == '4b':
     project4b = Project4()
