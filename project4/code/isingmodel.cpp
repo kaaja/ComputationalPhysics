@@ -41,8 +41,8 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
                              double *w, double temperature, int &acceptedMoves)
 {
   // loop over all spins
-  for(int y =0; y < n_spins; y++) {
-    for (int x= 0; x < n_spins; x++){
+  int allSpins = pow(n_spins, 2);
+  for(int y =0; y < allSpins; y++) {
       int ix = (int) (ran1(&idum)*(double)n_spins);
       int iy = (int) (ran1(&idum)*(double)n_spins);
       int deltaE =  2*spin_matrix[iy][ix]*
@@ -56,7 +56,6 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
         E += (double) deltaE;
         acceptedMoves += 1;
       }
-    }
   }
 } // end of Metropolis sampling over spins
 
