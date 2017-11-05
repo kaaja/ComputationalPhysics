@@ -34,7 +34,8 @@ class Project4:
         return None
         
     def runCpp(self,  numprocs, outfileName, n_spins,  mcs, initial_temp,
-         final_temp, temp_step, orderingFixed, initializeForEachTemperature):
+         final_temp, temp_step, orderingFixed, initializeForEachTemperature, 
+         printEnergyArray):
         """
         Compiles and runs cpp program from the command line and
         makes sure the mesh size is not too big.
@@ -47,7 +48,8 @@ class Project4:
         numprocs = str(numprocs)
         initializeForEachTemperature = str(initializeForEachTemperature)
         call(["./AllrunVectorized", numprocs, outfileName, n_spins,  mcs, initial_temp,
-         final_temp, temp_step, orderingFixed, initializeForEachTemperature])
+         final_temp, temp_step, orderingFixed, initializeForEachTemperature, 
+         printEnergyArray])
     
     def project4b(self):
         #results4b =  OrderedDict()
@@ -61,6 +63,7 @@ class Project4:
         orderingFixed = 'orderingFixed'
         numprocs = 4
         initializeForEachTemperature = 'notInitializeForEachTemperature'
+        printEnergyArray = 'NotprintEnergyArray'
         
         counter = 0
         
@@ -68,7 +71,8 @@ class Project4:
             outfileName2 = os.getcwd() + '/results/' + outfileName
             outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'
             self.runCpp(numprocs,outfileName2, n_spins,  mcs, initial_temp,
-             final_temp, temp_step, orderingFixed, initializeForEachTemperature)
+             final_temp, temp_step, orderingFixed, initializeForEachTemperature,
+             printEnergyArray)
         results4b = pd.read_csv(outfileName3, delim_whitespace=True, header=None)
         results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
         #results4b.to_csv(outfileName2 + '4Rport', sep='\t', columns = ['mcs','Eavg', 'absMavg', 'Cv', 'chi'], index=False)
@@ -106,13 +110,14 @@ class Project4:
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
         numprocs = 4
         initializeForEachTemperature = 'initializeForEachTemperature'
+        printEnergyArray = 'NotprintEnergyArray'
         
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
                 outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
                 self.runCpp(numprocs,outfileName2, n_spins,  mcs, initial_temp,
-                 final_temp, temp_step, orderingType, initializeForEachTemperature)
+                 final_temp, temp_step, orderingType, initializeForEachTemperature, printEnergyArray)
             counter = 0
             if orderingType == 'orderingFixed':
                 for temperature in temperatures:
@@ -213,13 +218,16 @@ class Project4:
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
         numprocs = 4
         initializeForEachTemperature = 'initializeForEachTemperature'
+        printEnergyArray = 'printEnergyArray'
+
         
         
         for orderingType in orderingTypes:
             for mcs in MCSamples:
                 outfileName2 = os.getcwd() + '/results/' + orderingType + outfileName 
                 self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
-                 final_temp, temp_step, orderingType, initializeForEachTemperature)
+                 final_temp, temp_step, orderingType, initializeForEachTemperature,
+                 printEnergyArray)
             counter = 0
             if orderingType == 'orderingFixed':
                 for temperature in temperatures:
@@ -363,6 +371,7 @@ class Project4:
         numberOfTemperatures = 1 + int(round((final_temp - initial_temp)/temp_step))
         temperatures = [initial_temp + i*temp_step for i in xrange(numberOfTemperatures)]
         initializeForEachTemperature = 'notInitializeForEachTemperature'
+        printEnergyArray = 'notPrintEnergyArray'
 
         
         
@@ -370,7 +379,8 @@ class Project4:
             results4e['n_spins %d' % n_spins] = OrderedDict()
             outfileName2 = os.getcwd() + '/results/' + outfileName + str(n_spins)
             self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
-                 final_temp, temp_step, orderingType, initializeForEachTemperature)
+                 final_temp, temp_step, orderingType, initializeForEachTemperature,
+                 printEnergyArray)
             counter = 0
             for temperature in temperatures:
                 outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    #.replace("0", "")

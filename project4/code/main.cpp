@@ -8,7 +8,7 @@
 using namespace std;
 
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
-                 double& final_temp, double& temp_step, bool &orderingFixed, bool &initializationNewTempereture,
+                 double& final_temp, double& temp_step, bool &orderingFixed, bool &initializationNewTempereture, bool &printEnergyArray,
                  int argc, char** argv);
 
 int main(int argc, char* argv[])
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
   long idum;
   int **spin_matrix, n_spins, mcs,  my_rank, numprocs;
   double w[17], average[6], initial_temp, final_temp, E, M, temp_step, total_average[6];
-  bool orderingFixed, initializationNewTempereture;
+  bool orderingFixed, initializationNewTempereture, printEnergyArray;
   colvec energyArray, total_energyArray;
 
   //  MPI initializations
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     */
 
   // Read in initial values such as size of lattice, temp and cycles
-  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed,initializationNewTempereture, argc, argv);
+  read_input(outfileName, n_spins, mcs, initial_temp, final_temp, temp_step, orderingFixed,initializationNewTempereture, printEnergyArray, argc, argv);
 
     int no_intervalls = mcs/numprocs;
     int myloop_begin = my_rank*no_intervalls + 1;
@@ -89,7 +89,8 @@ int main(int argc, char* argv[])
       // update expectation values
       average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);
-      energyArray(cycles -1) = E; // Remember to uncomment
+      if (printEnergyArray)
+        energyArray(cycles -1) = E; // Remember to uncomment
     }
 
     // Find total average
@@ -106,7 +107,8 @@ int main(int argc, char* argv[])
       boost::erase_all(outfileNameEnergyArray, ".");
       boost::erase_all(outfileNameEnergyArray, "0");
       outfileNameEnergyArray = outfileName + outfileNameEnergyArray + "Mcs" + to_string(mcs) + ".csv";
-      total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
+      if (printEnergyArray)
+        total_energyArray.save(outfileNameEnergyArray, csv_ascii); // remember to outcomment
       // print results
       project4b.output(n_spins, mcs, temperature, total_average, acceptedMoves);
     }
@@ -129,6 +131,7 @@ int main(int argc, char* argv[])
 // read in input data
 void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_temp,
                  double& final_temp, double& temp_step, bool &orderingFixed,bool &initializationNewTempereture,
+                 bool &printEnergyArray,
                  int argc, char** argv)
 {
     if( argc<= 1){
@@ -153,4 +156,10 @@ void read_input (string& outfileName, int& n_spins, int& mcs, double& initial_te
         initializationNewTempereture = true;
     else
         initializationNewTempereture = false;
+
+    string printEnergyArrayYes = argv[9];
+    if (printEnergyArrayYes == "printEnergyArray")
+        printEnergyArray = true;
+    else
+        printEnergyArray = false;
 }
