@@ -1,0 +1,9 @@
+\begin{tabular}{lll}
+\toprule
+          Spin combos & $T_c^{Estimate}(L=\infty)$ & $(\frac{T_c^{Estimate}(L=\infty)}{T_{c,exact}}-1) \cdot 100$ \\
+\midrule
+           $[40, 60]$ &                     2.2875 &                                      0.80710401536 \\
+      $[40, 60, 100]$ &              2.27916666667 &                                     0.439865020769 \\
+ $[40, 60, 100, 140]$ &              2.27708333333 &                                     0.348055272121 \\
+\bottomrule
+\end{tabular}
