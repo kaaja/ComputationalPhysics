@@ -84,16 +84,16 @@ int main(int argc, char* argv[])
     // start Monte Carlo computation
     int acceptedMoves = 0;
     //for (int cycles = 1; cycles <= mcs; cycles++){
-    for (int cycles = myloop_begin; cycles <= myloop_end; cycles++){
+    //for (int cycles = myloop_begin; cycles <= myloop_end; cycles++){
     //for (int cycles = 1; cycles <= mcs; cycles++){
-      project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves);
+    project4b.Metropolis(n_spins, idum, spin_matrix, E, M, w, temperature, acceptedMoves, myloop_begin,myloop_end, average, energyArray);
       // update expectation values
-      average[0] += E;    average[1] += E*E;
+      /*average[0] += E;    average[1] += E*E;
       average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);
       if (printEnergyArray)
         energyArray(cycles -1) = E; // Remember to uncomment
     }
-
+    */
     // Find total average
     for( int i =0; i < 6; i++){
       MPI_Reduce(&average[i], &total_average[i], 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);

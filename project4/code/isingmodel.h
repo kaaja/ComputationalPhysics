@@ -31,7 +31,7 @@ public:
     void initialize(int, int **, double&, double&, bool orderingFixed, long& idum);
     // The metropolis algorithm
     void Metropolis(int, long&, int **, double&, double&, double *, double temperature,
-                    int &acceptedMoves);
+                    int &acceptedMoves, int myloop_begin, int myloop_end, double *average, colvec &energyArray);
     // prints to file the results of the calculations
     void output(int, int, double, double *, int acceptedMoves);
     // inline function for periodic boundary conditions

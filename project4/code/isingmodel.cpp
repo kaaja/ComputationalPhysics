@@ -44,30 +44,38 @@ void IsingModel:: energyDifference(double *w, double temperature)
 }
 
 void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M,
-                             double *w, double temperature, int &acceptedMoves)
+                             double *w, double temperature, int &acceptedMoves,
+                             int myloop_begin, int myloop_end, double *average, colvec &energyArray)
 {
   //colvec w;
   //w = zeros<colvec>(17);
     //double w[17];
   energyDifference(w, temperature);
   // loop over all spins
-
-  int allSpins = pow(n_spins, 2);
-  for(int y =0; y < allSpins; y++) {
-      int ix = (int) (ran1(&idum)*(double)n_spins);
-      int iy = (int) (ran1(&idum)*(double)n_spins);
-      int deltaE =  2*spin_matrix[iy][ix]*
-            (spin_matrix[iy][periodic(ix,n_spins,-1)]+
-            spin_matrix[periodic(iy,n_spins,-1)][ix] +
-            spin_matrix[iy][periodic(ix,n_spins,1)] +
-            spin_matrix[periodic(iy,n_spins,1)][ix]);
-     if ( ran1(&idum) <= w[deltaE+8] ) {
-        spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
-        M += (double) 2*spin_matrix[iy][ix];
-        E += (double) deltaE;
-        acceptedMoves += 1;
+  for (int cycles = myloop_begin; cycles <= myloop_end; cycles++){
+      int allSpins = pow(n_spins, 2);
+      for(int y =0; y < allSpins; y++) {
+          int ix = (int) (ran1(&idum)*(double)n_spins);
+          int iy = (int) (ran1(&idum)*(double)n_spins);
+          int deltaE =  2*spin_matrix[iy][ix]*
+                (spin_matrix[iy][periodic(ix,n_spins,-1)]+
+                spin_matrix[periodic(iy,n_spins,-1)][ix] +
+                spin_matrix[iy][periodic(ix,n_spins,1)] +
+                spin_matrix[periodic(iy,n_spins,1)][ix]);
+         if ( ran1(&idum) <= w[deltaE+8] ) {
+            spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
+            M += (double) 2*spin_matrix[iy][ix];
+            E += (double) deltaE;
+            acceptedMoves += 1;
+          }
       }
+      // update expectation values
+      average[0] += E;    average[1] += E*E;
+      average[2] += M;    average[3] += M*M; average[4] += fabs(M); average[5] += pow(fabs(M),2);
+      //if (printEnergyArray)
+        energyArray(cycles -1) = E; // Remember to uncomment
   }
+
 } // end of Metropolis sampling over spins
 
 void IsingModel:: output(int n_spins, int mcs, double temperature, double *average, int acceptedMoves)
