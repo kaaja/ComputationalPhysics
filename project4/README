@@ -20,8 +20,7 @@ If one wants to run the c++ files directly, and not visualizing, type the follow
 
 > mpic++ -O3 -o project4.x main.cpp lib.cpp isingmodel.cpp -larmadillo -llapack -lblas
 
-> mpirun -n numberOfProcessorsForMPI ./project4.x outfileName numberOfSpins numberOfMCCycles InitialTemperature
-         finalTemperature temperatureStep orderingFixed initializeForEachTemperature printEnergyArray
+> mpirun -n numberOfProcessorsForMPI ./project4.x outfileName numberOfSpins numberOfMCCycles InitialTemperature finalTemperature temperatureStep orderingFixed initializeForEachTemperature printEnergyArray
  
 Of the above command line inputs, the three last need extra mentioning.
 
@@ -30,12 +29,9 @@ Type "orderingFixed" for keeping all initial spin configuration fixed to give mi
 Type something else than "orderingFixed" to get a random initial spin configuration.
 
 "initializeForEachTemperature": 
-Type "initializeForEachTemperature" if the spin configuration is to be initialized
-again for every new temperature.
-Type somehting else than "initializeForEachTemperature" to make the intial spin configuration for a new
-temperature equal the last spin configuration from the previous temperature.
+Type "initializeForEachTemperature" if the spin configuration is to be initialized again for every new temperature.
+Type somehting else than "initializeForEachTemperature" to make the intial spin configuration for a new temperature equal the last spin configuration from the previous temperature.
 
 "printEnergyArray":
 Type "printEnergyArray" if you run "4d". This is necessary to get the histograms in 4d. 
-If you run something else than "4d", and do not want histogram data, type something else than 
-"printEnergyArray".
+If you run something else than "4d", and do not want histogram data, type something else than "printEnergyArray".
