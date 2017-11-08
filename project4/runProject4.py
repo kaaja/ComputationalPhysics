@@ -35,7 +35,7 @@ class Project4:
          printEnergyArray])
     
     def project4b(self):
-        N = 8 # Number of different sizes for the MC experiments
+        N =9 # Number of different sizes for the MC experiments
         MCSamples = [10**i for i in xrange(2,N)]
         outfileName = 'Out4b'
         n_spins = 2
