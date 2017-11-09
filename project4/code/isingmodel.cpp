@@ -25,8 +25,8 @@ void IsingModel:: initialize(int n_spins, int **spin_matrix,
         spin_matrix[y][x] = 1; // spin orientation for the ground state
       else
       {
-          //int spin= (int) round(RandomNumberGenerator(gen));
-          int spin = (int) round(ran1(&idum));
+          int spin= (int) round(RandomNumberGenerator(gen));
+          //int spin = (int) round(ran1(&idum));
           if (spin == 0) spin = -1;
           spin_matrix[y][x] = spin; // spin orientation for the ground state
       }
