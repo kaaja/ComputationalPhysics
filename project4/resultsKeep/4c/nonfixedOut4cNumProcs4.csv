@@ -1,16 +1,16 @@
 n_spins mcs numprocs totalTime
-             20            128              4   0.0019720809n_spins mcs numprocs totalTime
-             20            256              4   0.0022294076n_spins mcs numprocs totalTime
-             20            512              4   0.0063858306n_spins mcs numprocs totalTime
-             20           1024              4   0.0092244788n_spins mcs numprocs totalTime
-             20           2048              4    0.024810039n_spins mcs numprocs totalTime
-             20           4096              4    0.049099171n_spins mcs numprocs totalTime
-             20           8192              4    0.071264582n_spins mcs numprocs totalTime
-             20          16384              4     0.14354988n_spins mcs numprocs totalTime
-             20          32768              4     0.34251544n_spins mcs numprocs totalTime
-             20          65536              4     0.61706281n_spins mcs numprocs totalTime
-             20         131072              4      1.0625078n_spins mcs numprocs totalTime
-             20         262144              4      2.9783679n_spins mcs numprocs totalTime
-             20         524288              4      4.2309050n_spins mcs numprocs totalTime
-             20        1048576              4      8.1508871n_spins mcs numprocs totalTime
-             20        2097152              4      17.340543
+             20            128              4   0.0028505967n_spins mcs numprocs totalTime
+             20            256              4   0.0052276255n_spins mcs numprocs totalTime
+             20            512              4   0.0061905455n_spins mcs numprocs totalTime
+             20           1024              4    0.017629106n_spins mcs numprocs totalTime
+             20           2048              4    0.025978324n_spins mcs numprocs totalTime
+             20           4096              4    0.061018984n_spins mcs numprocs totalTime
+             20           8192              4    0.093636312n_spins mcs numprocs totalTime
+             20          16384              4     0.20034263n_spins mcs numprocs totalTime
+             20          32768              4     0.34172235n_spins mcs numprocs totalTime
+             20          65536              4     0.70949911n_spins mcs numprocs totalTime
+             20         131072              4      1.4435488n_spins mcs numprocs totalTime
+             20         262144              4      3.2577834n_spins mcs numprocs totalTime
+             20         524288              4      6.7601472n_spins mcs numprocs totalTime
+             20        1048576              4      14.536890n_spins mcs numprocs totalTime
+             20        2097152              4      25.784532

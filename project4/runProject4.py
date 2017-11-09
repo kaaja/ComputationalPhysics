@@ -127,9 +127,9 @@ class Project4:
             fig5, ax5 = plt.subplots()
 
             ax2.set_xlabel(r'$\log_{2} MCS$')
-            ax2.set_ylabel(r"$\frac{<E>}{l^2}$")
+            ax2.set_ylabel(r"$\frac{<E>}{L^2}$")
             ax3.set_xlabel(r'$\log_{2} MCS$')
-            ax3.set_ylabel(r"$\frac{<|M|>}{l^2}$")
+            ax3.set_ylabel(r"$\frac{<|M|>}{L^2}$")
             
             ax5.set_xlabel(r'$\log_{2} MCS$')
             ax5.set_ylabel(r"$\frac{Accepted moves}{MC cycles \cdot L^2} \cdot 100$")
