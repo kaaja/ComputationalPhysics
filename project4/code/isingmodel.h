@@ -12,19 +12,11 @@
 #include <cmath>
 #include <boost/algorithm/string.hpp>
 #include <armadillo>
-//#include <random>
+#include <random>
 
 using std::vector;
 using namespace std;
 using namespace arma;
-
-// Initialize the seed and call the Mersienne algo
-//random_device rd;
-//mt19937_64 gen(rd());
-// Set up the uniform distribution for x \in [[0, 1]
-//uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
-
-
 
 class IsingModel
 {

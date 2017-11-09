@@ -7,17 +7,17 @@ ofstream ofile2;
 IsingModel::IsingModel(string fileName_)
 {
     outfileName = fileName_;
-    // Initialize the seed and call the Mersienne algo
-    //random_device rd;
-    //mt19937_64 gen(rd());
-    // Set up the uniform distribution for x \in [[0, 1]
-    //uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
 }
 
 // Initialization: energy, spin matrix and magnetization
 void IsingModel:: initialize(int n_spins, int **spin_matrix,
         double& E, double& M, bool orderingFixed, long& idum)
 {
+  // Initialize the seed and call the Mersienne algo
+  random_device rd;
+  mt19937_64 gen(rd());
+  // Set up the uniform distribution for x \in [[0, 1]
+  uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
   // Spin matrix and intial magnetization
   for(int y =0; y < n_spins; y++) {
     for (int x= 0; x < n_spins; x++){
@@ -54,6 +54,10 @@ void IsingModel:: energyDifference(double *w, double temperature)
 void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double& E, double&M, double temperature, int &acceptedMoves,
                              int myloop_begin, int myloop_end, double *average, colvec &energyArray)
 {
+  random_device rd;
+  mt19937_64 gen(rd());
+  // Set up the uniform distribution for x \in [[0, 1]
+  uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
   energyDifference(w, temperature);
 
   // Monte Carlo
@@ -62,14 +66,16 @@ void IsingModel:: Metropolis(int n_spins, long& idum, int **spin_matrix, double&
 
       // Sweep throug lattice
       for(int y =0; y < allSpins; y++) {
-          int ix = (int) (ran1(&idum)*(double)n_spins);
-          int iy = (int) (ran1(&idum)*(double)n_spins);
+          //int ix = (int) (ran1(&idum)*(double)n_spins);
+          //int iy = (int) (ran1(&idum)*(double)n_spins);
+          int ix= (int) (RandomNumberGenerator(gen)*n_spins);
+          int iy= (int) (RandomNumberGenerator(gen)*n_spins);
           int deltaE =  2*spin_matrix[iy][ix]*
                 (spin_matrix[iy][periodic(ix,n_spins,-1)]+
                 spin_matrix[periodic(iy,n_spins,-1)][ix] +
                 spin_matrix[iy][periodic(ix,n_spins,1)] +
                 spin_matrix[periodic(iy,n_spins,1)][ix]);
-         if ( ran1(&idum) <= w[deltaE+8] ) {
+         if ( RandomNumberGenerator(gen) <= w[deltaE+8] ) { // ran1(&idum)
             spin_matrix[iy][ix] *= -1;  // flip one spin and accept new spin config
             M += (double) 2*spin_matrix[iy][ix];
             E += (double) deltaE;
