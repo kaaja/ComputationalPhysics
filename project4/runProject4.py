@@ -241,12 +241,11 @@ class Project4:
             ax2.set_xlabel(r'$Energy/L^2$')
             ax2.set_ylabel(r"$Probability$")
 
-                    
 
             
             weights = np.ones_like(results4dRandomEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dRandomEnergyArray['temperature %f' % temperature].energy.values))
-            ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 25, weights=weights, edgecolor='k')
             #ax2 = seaborn.distplot(results4dRandom['temperature %f' % temperature].energy.values, hist_kws=dict(edgecolor="k", linewidth=2), norm_hist=True)
+            ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 200, range = (-2, -0.5), weights=weights, edgecolor='k') #bins = 25
             #num_bins = 25
             #n, bins, patches = ax2.hist(results4dRandomEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, num_bins, normed=1,  edgecolor='k')#, weights = weights)
             muCpp = np.asscalar(results4dRandom['temperature %f' %temperature].Eavg.values)
@@ -271,7 +270,8 @@ class Project4:
 
             
             weights = np.ones_like(results4dFixedEnergyArray['temperature %f' % temperature].energy.values)/float(len(results4dFixedEnergyArray['temperature %f' % temperature].energy.values))
-            ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 25, weights=weights, edgecolor='k')
+            ax6.hist(results4dFixedEnergyArray['temperature %f' % temperature].energy.values/n_spins**2, bins = 200, range = (-2, -0.5), weights=weights, edgecolor='k') #bins = 'auto', 
+            
             muCpp = np.asscalar(results4dFixed['temperature %f' %temperature].Eavg.values)
             sigmaCpp = np.asscalar(results4dFixed['temperature %f' %temperature].sigmaE.values)
             absMAvg = np.asscalar(results4dFixed['temperature %f' %temperature].absMavg.values)
