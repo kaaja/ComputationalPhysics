@@ -8,10 +8,10 @@ IsingModel::IsingModel(string fileName_)
 {
     outfileName = fileName_;
     // Initialize the seed and call the Mersienne algo
-    random_device rd;
-    mt19937_64 gen(rd());
+    //random_device rd;
+    //mt19937_64 gen(rd());
     // Set up the uniform distribution for x \in [[0, 1]
-    uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
+    //uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
 }
 
 // Initialization: energy, spin matrix and magnetization
@@ -25,8 +25,8 @@ void IsingModel:: initialize(int n_spins, int **spin_matrix,
         spin_matrix[y][x] = 1; // spin orientation for the ground state
       else
       {
-          int spin= (int) round(RandomNumberGenerator(gen));
-          //int spin = (int) round(ran1(&idum));
+          //int spin= (int) round(RandomNumberGenerator(gen));
+          int spin = (int) round(ran1(&idum));
           if (spin == 0) spin = -1;
           spin_matrix[y][x] = spin; // spin orientation for the ground state
       }
