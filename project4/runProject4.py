@@ -181,7 +181,7 @@ class Project4:
 
         return results4cFixed, results4cRandom
 
-    def project4d(self):
+    def project4d(self, numprocs):
         results4dFixed=  OrderedDict()
         results4dRandom  = OrderedDict()
         results4dFixedEnergyArray = OrderedDict()
@@ -406,6 +406,53 @@ class Project4:
         tableForTcCriticalToLatex.to_latex(outfileName2, index=False, escape=False)
         
         return results4e      
+    
+    def projectMPITiming(self):
+        results4e=  OrderedDict()
+        N = 20 # Number of different sizes for the MC experiments
+        MCSamples = [2**N]
+        
+        mcs = MCSamples[0]
+        outfileName = 'Time'
+        
+        n_spins = 20
+        numProcsList = [1,2,3,4]
+        initial_temp = 1.0
+        final_temp = 1.0
+        temp_step = .0125
+        #numprocs = 4
+        orderingType = 'random'
+        initializeForEachTemperature = 'notInitializeForEachTemperature'
+        printEnergyArray = 'notPrintEnergyArray'
+
+        for numprocs in numProcsList: 
+            #results4e['numprocs  %d' % numprocs ] = OrderedDict()
+            outfileName2 = os.getcwd() + '/results/' + outfileName 
+            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
+                 final_temp, temp_step, orderingType, initializeForEachTemperature,
+                 printEnergyArray)
+            
+            outfileName3 = outfileName2 + 'NumProcs' + str(numprocs)+'.csv'    #.replace("0", "")
+            results4e['numprocs %d' % numprocs]= pd.read_csv(outfileName3, delim_whitespace=True)
+
+        fig, ax = plt.subplots()
+        data = []
+        for i in xrange(1,5):
+            data.append(np.asscalar(results4e['numprocs %d' %i].totalTime.values))
+        ax.plot(np.log2(numProcsList), data, '-o')
+        ax.set_xlabel(r'$\log_2$ Number of processors')
+        ax.set_ylabel(r"Time [s]")
+        fig.tight_layout()
+        fig.savefig('results/Timing.png') 
+        plt.close()
+            
+        
+        
+#        tableForTcCritical = np.transpose(np.array((spinCombos, np.asarray(TCriticalInfList),diffFromOnsager)))
+#        tableForTcCriticalToLatex  = pd.DataFrame(tableForTcCritical, columns=['Spin combos', r'$T_c^{Estimate}(L=\infty)$',r'$(\frac{T_c^{Estimate}(L=\infty)}{T_{c,exact}}-1) \cdot 100$' ] )
+#        tableForTcCriticalToLatex.to_latex(outfileName2, index=False, escape=False)
+        
+        return results4e      
 #%%
 if __name__ == "__main__":
     # Clean results and movie directory
@@ -434,11 +481,16 @@ if __name__ == "__main__":
        project4c = Project4()
        results4cFixed, results4cRandom = project4c.project4c()
     elif args.task  == '4d':
+       numprocs = 4
        project4d = Project4()
-       results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d()
+       results4dFixed, results4dRandom, results4dFixedEnergyArray, results4dRandomEnergyArray, tableDict= project4d.project4d(numprocs)
     elif args.task == '4e':
        project4e = Project4()
        results4e = project4e.project4e()
+    elif args.task == 'mpiTiming':
+       project4mpiTiming = Project4()
+       results4e = project4mpiTiming.projectMPITiming()
+       
 #%%
 
 
