@@ -320,9 +320,9 @@ class Project4:
         mcs = MCSamples[0]
         outfileName = 'Out4e'
         n_spins_list = [40,60,80,100]#, 80]#,100]#, 140]
-        initial_temp = 2.2
-        final_temp = 2.3
-        temp_step = .0125
+        initial_temp = 2.35
+        final_temp = 2.45
+        temp_step = .05
         numprocs = 4
         orderingType = 'random'
         numberOfTemperatures = 1 + int(round((final_temp - initial_temp)/temp_step))
@@ -333,9 +333,9 @@ class Project4:
         for n_spins in n_spins_list: 
             results4e['n_spins %d' % n_spins] = OrderedDict()
             outfileName2 = os.getcwd() + '/results/' + outfileName + str(n_spins)
-#            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
-#                 final_temp, temp_step, orderingType, initializeForEachTemperature,
-#                 printEnergyArray)
+            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
+                 final_temp, temp_step, orderingType, initializeForEachTemperature,
+                 printEnergyArray)
             counter = 0
             for temperature in temperatures:
                 outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    #.replace("0", "")
