@@ -319,7 +319,7 @@ class Project4:
         MCSamples = [int(round(10E6))]#[int(round(10E6))]
         mcs = MCSamples[0]
         outfileName = 'Out4e'
-        n_spins_list = [40,60,80,100,140]#, 80]#,100]#, 140]
+        n_spins_list = [40,60,80,100]#, 80]#,100]#, 140]
         initial_temp = 2.2
         final_temp = 2.3
         temp_step = .0125
@@ -333,9 +333,9 @@ class Project4:
         for n_spins in n_spins_list: 
             results4e['n_spins %d' % n_spins] = OrderedDict()
             outfileName2 = os.getcwd() + '/results/' + outfileName + str(n_spins)
-            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
-                 final_temp, temp_step, orderingType, initializeForEachTemperature,
-                 printEnergyArray)
+#            self.runCpp(numprocs, outfileName2, n_spins,  mcs, initial_temp,
+#                 final_temp, temp_step, orderingType, initializeForEachTemperature,
+#                 printEnergyArray)
             counter = 0
             for temperature in temperatures:
                 outfileName3 = outfileName2 + 'TempNumber' + str(counter)+'.csv'    #.replace("0", "")
@@ -374,7 +374,7 @@ class Project4:
             plt.close()
             
         # Critical temperature
-        n_spins_list = [40, 60,100, 140] # new for table only
+        n_spins_list = [40, 60, 80, 100] # new for table only
         TCritical = []
         for n_spins in n_spins_list:
             CvMax = [np.asscalar(results4e['n_spins %d' %n_spins]['temperature %f' %temperature].Cv.values) for temperature in temperatures]
@@ -399,7 +399,7 @@ class Project4:
         outfileName2 = os.getcwd() + '/results/' + outfileName + 'TcCritical.txt'
         TOnsager = 2./np.log(1 + np.sqrt(2))
         diffFromOnsager = (np.asarray(TCriticalInfList)/TOnsager - 1.)*100
-        spinCombos = np.asarray([r'$[40, 60]$', r'$[40, 60, 100]$', r'$[40, 60, 100, 140]$'])
+        spinCombos = np.asarray([r'$[40, 60]$', r'$[40, 60, 80]$', r'$[40, 60, 80, 100]$'])
         
         tableForTcCritical = np.transpose(np.array((spinCombos, np.asarray(TCriticalInfList),diffFromOnsager)))
         tableForTcCriticalToLatex  = pd.DataFrame(tableForTcCritical, columns=['Spin combos', r'$T_c^{Estimate}(L=\infty)$',r'$(\frac{T_c^{Estimate}(L=\infty)}{T_{c,exact}}-1) \cdot 100$' ] )
