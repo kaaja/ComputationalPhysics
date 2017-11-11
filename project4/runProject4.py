@@ -320,8 +320,8 @@ class Project4:
         mcs = MCSamples[0]
         outfileName = 'Out4e'
         n_spins_list = [40,60,80,100]#, 80]#,100]#, 140]
-        initial_temp = 2.35
-        final_temp = 2.45
+        initial_temp = 2.1
+        final_temp = 2.15
         temp_step = .05
         numprocs = 4
         orderingType = 'random'
