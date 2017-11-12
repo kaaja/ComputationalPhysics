@@ -106,7 +106,7 @@ void IsingModel:: output(int n_spins, int mcs, double temperature, double *avera
 
   // Expectation values are per spin, divide by 1/n_spins/n_spins
   double Evariance = (E2average- Eaverage*Eaverage)/n_spins/n_spins;
-  double Mvariance = (Mabsaverage2 - Mabsaverage*Mabsaverage)/n_spins/n_spins;
+  double Mvariance = (M2average - Mabsaverage*Mabsaverage)/n_spins/n_spins;
   double Cv = Evariance/(1.*temperature*temperature);
   double chi = Mvariance/(1.*temperature);
 

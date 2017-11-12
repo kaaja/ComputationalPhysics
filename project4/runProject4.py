@@ -320,9 +320,9 @@ class Project4:
         mcs = MCSamples[0]
         outfileName = 'Out4e'
         n_spins_list = [40,60,80,100]#, 80]#,100]#, 140]
-        initial_temp = 2.1
-        final_temp = 2.15
-        temp_step = .05
+        initial_temp = 2.2125
+        final_temp = 2.3125
+        temp_step = .0125
         numprocs = 4
         orderingType = 'random'
         numberOfTemperatures = 1 + int(round((final_temp - initial_temp)/temp_step))
