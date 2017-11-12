@@ -7,3 +7,5 @@ rm *.csv
 rm *.png
 rm *.txt
 
+cd ../movie
+rm *.png

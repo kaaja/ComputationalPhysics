@@ -54,20 +54,22 @@ void read_input (string& outfileName, double &dt, double &dx, double &theta, dou
 
 mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
 {
-   mat analyticalMatrixU = zeros<mat>(Nx,Nt);
+   mat analyticalMatrixU = zeros<mat>(Nx+1,Nt+1);
    string outfileNameAnalytical;
    double uANalytical;
    for (int t = 1; t < Nt; t++){
         for(int xj = 0; xj < Nx; xj++){
             uANalytical = 0.;
-            for (int k = 1; k < Nx*100; k++){
-                uANalytical += exp(-pow(k*M_PI, 2)*(dt*t))/M_PI*pow((-1.), k)*sin(k*M_PI*dx*xj);
+            for (int k = 1; k < Nx; k++){
+                uANalytical += exp(-pow(k*M_PI, 2)*(dt*t))*2./(k*M_PI)*pow((-1.), k)*sin(k*M_PI*dx*xj);
             }
             uANalytical += dx*xj;
-            analyticalMatrixU(xj, t) = uANalytical;
+            analyticalMatrixU(0, t+1) = t*dt;
+            analyticalMatrixU(xj+1, 0) = xj*dx;
+            analyticalMatrixU(xj+1, t+1) = uANalytical;
         }
    }
-    outfileNameAnalytical = outfileName + "AnalyticalMatrix";
+    outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU.txt";
     analyticalMatrixU.save(outfileNameAnalytical , raw_ascii);
     return analyticalMatrixU;
 

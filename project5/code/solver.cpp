@@ -13,7 +13,7 @@ Solver::Solver(double dt_, double dx_, double theta_, double T_, int Nx_, int Nt
 void Solver::solve(string outfileName_)
 {
     outfileName = outfileName_;
-    mat solutionMatrixU = zeros<mat>(Nx,Nt);
+    mat solutionMatrixU = zeros<mat>(Nx+1,Nt+1);
 
     alpha = dt/pow(dx,2);
     offDiagonalLhs = -2.*alpha*theta;
@@ -43,18 +43,12 @@ void Solver::solve(string outfileName_)
         double uANalytical;
         for(int i = 0; i < Nx; i++){
             u[i] += dx*i;
-            solutionMatrixU(i,t) = u[i];
-            //analyticalMatrixU(i,t) = anayticalSolver(t,x,)
-            uANalytical = 0.;
-
-            for (int j = 0; j < Nx*1000; j++){
-                uANalytical += exp(-pow(j*M_PI, 2)*(dt*t))/M_PI*pow((-1.), (j+1))*sin(j*M_PI*dx*i);
-            }
-            uANalytical += dx*i;
-            //cout << u[i] << " analytic " << uANalytical << endl;
+            solutionMatrixU(0,t+1) = t*dt;
+            solutionMatrixU(i+1,0) = i*dx;
+            solutionMatrixU(i+1,t+1) = u[i];
         }
     }
-    solutionMatrixU.save(outfileName + "solutionMatrixU.txt", raw_ascii);
+    solutionMatrixU.save(outfileName + "SolutionMatrixU.txt", raw_ascii);
     delete [] computed_right_hand_side;
     delete [] u;
     delete [] uOld;
