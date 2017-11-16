@@ -16,7 +16,9 @@ class Solver
 {
 public:
     Solver( double dt_, double dx_, double theta_, double T_, int Nx_, int Nt_);
-    void solve(string outfileName_);
+    mat solve(string outfileName_);
+    void calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_);
+
 private:
     string outfileName;
     double dt, dx, theta, T;

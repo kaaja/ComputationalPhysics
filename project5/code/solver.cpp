@@ -10,7 +10,7 @@ Solver::Solver(double dt_, double dx_, double theta_, double T_, int Nx_, int Nt
     Nx = Nx_;
 }
 
-void Solver::solve(string outfileName_)
+mat Solver::solve(string outfileName_)
 {
     outfileName = outfileName_;
     mat solutionMatrixU = zeros<mat>(Nx+1,Nt+1);
@@ -52,6 +52,8 @@ void Solver::solve(string outfileName_)
     delete [] computed_right_hand_side;
     delete [] u;
     delete [] uOld;
+
+    return solutionMatrixU;
 }
 
 void Solver::generate_right_hand_side(double *computed_right_hand_side , double *uOld, double offDiagonalRhs, double diagonalRhs, int Nx){
@@ -92,4 +94,18 @@ void Solver::gassianTridiagonalSymmetricSolver(double * computed_right_hand_side
     delete [] diagonalTilde;
     //delete [] uOld;
     for (int i = 0; i < Nx; i++) uOld[i] = u[i];
+}
+
+void Solver::calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_){
+    // Calculates sup-norm for relative error
+    double temp_relative_error;
+    *computed_error = log10(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))
+                                  /computed_exact_solution(2,2)));
+    cout << "error inside calulate error " << *computed_error << endl;
+    for (int tj = 3; tj < Nt_; tj++){
+        for (int i = 3; i < Nx_; i++){
+            temp_relative_error = log10(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))/computed_exact_solution(i, tj)));
+            if(temp_relative_error > *computed_error) *computed_error = temp_relative_error;
+        }
+    }
 }

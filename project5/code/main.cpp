@@ -4,7 +4,9 @@
 using namespace std;
 void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, int argc, char** argv);
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
+void output_scalars(double computed_error, double dt, double dx);
 
+ofstream ofile1; // File for scalars
 
 
 int main(int argc, char* argv[])
@@ -14,12 +16,19 @@ int main(int argc, char* argv[])
     double thetaForwardEuler = 0.0;
     double thetaBackwardEuler = 1.0;
     double thetaCranckNicholson = 0.5;
-    string outfileName;
+    double computed_error;
+    string outfileName, outfileNameNorms;
 
     read_input(outfileName, dx, dt, theta, T, argc, argv);
 
     Nt = (int) (round(T/dt)) + 1;
     Nx = (int) (round(1./dx+1));
+
+    mat solutionMatrixFe = zeros<mat>(Nx+1,Nt+1);
+    mat solutionMatrixBe = zeros<mat>(Nx+1,Nt+1);
+    mat solutionMatrixCn = zeros<mat>(Nx+1,Nt+1);
+    mat solutionMatrixExact = zeros<mat>(Nx+1,Nt+1);
+
 
     string oufileNameForwardEuler = outfileName + "ForwardEuler";
     string oufileNameBackwardEuler = outfileName + "BackwardEuler";
@@ -29,11 +38,18 @@ int main(int argc, char* argv[])
     Solver backwardEuler =  Solver( dt, dx, thetaBackwardEuler, T,Nx, Nt);
     Solver cranckNicholson =  Solver( dt, dx, thetaCranckNicholson, T,Nx, Nt);
 
-    forwardEuler.solve(oufileNameForwardEuler);
-    backwardEuler.solve(oufileNameBackwardEuler);
-    cranckNicholson.solve(oufileNameCrancNicholson);
+    solutionMatrixFe  = forwardEuler.solve(oufileNameForwardEuler);
+    solutionMatrixBe  = backwardEuler.solve(oufileNameBackwardEuler);
+    solutionMatrixCn  = cranckNicholson.solve(oufileNameCrancNicholson);
 
-    analyticalU(outfileName, dt, dx, Nt, Nx);
+    solutionMatrixExact = analyticalU(outfileName, dt, dx, Nt, Nx);
+    forwardEuler.calculate_error(solutionMatrixFe, solutionMatrixExact, &computed_error, Nx, Nt);
+    cout << "error " << computed_error << endl;
+
+    outfileNameNorms = outfileName + string("Norms")+string(".csv");
+    ofile1.open(outfileNameNorms);
+    ofile1 << "dt,dx,computedError" << endl;
+    output_scalars(computed_error, dt, dx);
     return 0;
 }
 
@@ -72,5 +88,11 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
     outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU.txt";
     analyticalMatrixU.save(outfileNameAnalytical , raw_ascii);
     return analyticalMatrixU;
+}
 
+void output_scalars(double computed_error, double dt, double dx){
+  ofile1 << setiosflags(ios::showpoint | ios::uppercase);
+  ofile1 << setw(15) << setprecision(16) << log10(dt) << ", ";
+  ofile1 << setw(15) << setprecision(16) << log10(dx) << ", ";
+  ofile1 << setw(15) << setprecision(16) << computed_error << endl;
 }
