@@ -28,7 +28,9 @@ int main(int argc, char* argv[])
     mat solutionMatrixBe = zeros<mat>(Nx+1,Nt+1);
     mat solutionMatrixCn = zeros<mat>(Nx+1,Nt+1);
     mat solutionMatrixExact = zeros<mat>(Nx+1,Nt+1);
-
+    int numberOfSchemes = 3;
+    int numberOfVariablesNormMatrix = 3;
+    mat normMatrix= zeros<mat>(numberOfSchemes, numberOfVariablesNormMatrix);
 
     string oufileNameForwardEuler = outfileName + "ForwardEuler";
     string oufileNameBackwardEuler = outfileName + "BackwardEuler";
@@ -43,13 +45,29 @@ int main(int argc, char* argv[])
     solutionMatrixCn  = cranckNicholson.solve(oufileNameCrancNicholson);
 
     solutionMatrixExact = analyticalU(outfileName, dt, dx, Nt, Nx);
-    forwardEuler.calculate_error(solutionMatrixFe, solutionMatrixExact, &computed_error, Nx, Nt);
-    cout << "error " << computed_error << endl;
 
+    forwardEuler.calculate_error(solutionMatrixFe, solutionMatrixExact, &computed_error, Nx, Nt);
+    normMatrix(0,0) = log10(dt);
+    normMatrix(0,1) = log10(dx);
+    normMatrix(0,2) = computed_error;
+
+    backwardEuler.calculate_error(solutionMatrixBe, solutionMatrixExact, &computed_error, Nx, Nt);
+    normMatrix(1,0) = log10(dt);
+    normMatrix(1,1) = log10(dx);
+    normMatrix(1,2) = computed_error;
+
+    cranckNicholson.calculate_error(solutionMatrixCn, solutionMatrixExact, &computed_error, Nx, Nt);
+    normMatrix(2,0) = log10(dt);
+    normMatrix(2,1) = log10(dx);
+    normMatrix(2,2) = computed_error;
+
+    normMatrix.save(outfileName + ".txt", raw_ascii);
+    /*
     outfileNameNorms = outfileName + string("Norms")+string(".csv");
     ofile1.open(outfileNameNorms);
     ofile1 << "dt,dx,computedError" << endl;
     output_scalars(computed_error, dt, dx);
+    */
     return 0;
 }
 

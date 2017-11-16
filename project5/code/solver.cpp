@@ -101,7 +101,6 @@ void Solver::calculate_error(mat computed_numerical_solution, mat computed_exact
     double temp_relative_error;
     *computed_error = log10(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))
                                   /computed_exact_solution(2,2)));
-    cout << "error inside calulate error " << *computed_error << endl;
     for (int tj = 3; tj < Nt_; tj++){
         for (int i = 3; i < Nx_; i++){
             temp_relative_error = log10(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))/computed_exact_solution(i, tj)));
