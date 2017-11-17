@@ -47,18 +47,18 @@ int main(int argc, char* argv[])
     solutionMatrixExact = analyticalU(outfileName, dt, dx, Nt, Nx);
 
     forwardEuler.calculate_error(solutionMatrixFe, solutionMatrixExact, &computed_error, Nx, Nt);
-    normMatrix(0,0) = log10(dt);
-    normMatrix(0,1) = log10(dx);
+    normMatrix(0,0) = log2(dt);
+    normMatrix(0,1) = log2(dx);
     normMatrix(0,2) = computed_error;
 
     backwardEuler.calculate_error(solutionMatrixBe, solutionMatrixExact, &computed_error, Nx, Nt);
-    normMatrix(1,0) = log10(dt);
-    normMatrix(1,1) = log10(dx);
+    normMatrix(1,0) = log2(dt);
+    normMatrix(1,1) = log2(dx);
     normMatrix(1,2) = computed_error;
 
     cranckNicholson.calculate_error(solutionMatrixCn, solutionMatrixExact, &computed_error, Nx, Nt);
-    normMatrix(2,0) = log10(dt);
-    normMatrix(2,1) = log10(dx);
+    normMatrix(2,0) = log2(dt);
+    normMatrix(2,1) = log2(dx);
     normMatrix(2,2) = computed_error;
 
     normMatrix.save(outfileName + ".txt", raw_ascii);
