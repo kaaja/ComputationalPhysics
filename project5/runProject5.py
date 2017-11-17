@@ -116,11 +116,11 @@ class Project5:
 #                    os.system(cmd)
         
     def project5d(self):
-        dxValues = [0.1, 0.05, 0.025]#, 0.025]#, 0.01]#, 0.01]
+        dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
         safetyFactor = 1.05
         dt = dxValues[-1]**2/2.0*(1/safetyFactor)
-        theta = 0.5
         T = 0.25
+        theta = 0.5
         
         outfileName ='out5NormDx'
         outfileName2 = os.getcwd() + '/results/' + outfileName

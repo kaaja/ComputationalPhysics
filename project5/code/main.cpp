@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     double thetaForwardEuler = 0.0;
     double thetaBackwardEuler = 1.0;
     double thetaCranckNicholson = 0.5;
-    double computed_error;
+    double computed_error = 0.0;
     string outfileName, outfileNameNorms;
 
     read_input(outfileName, dx, dt, theta, T, argc, argv);
@@ -94,7 +94,7 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
    for (int t = 1; t < Nt; t++){
         for(int xj = 0; xj < Nx; xj++){
             uANalytical = 0.;
-            for (int k = 1; k < Nx; k++){
+            for (int k = 1; k < 100; k++){
                 uANalytical += exp(-pow(k*M_PI, 2)*(dt*t))*2./(k*M_PI)*pow((-1.), k)*sin(k*M_PI*dx*xj);
             }
             uANalytical += dx*xj;
