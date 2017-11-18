@@ -41,6 +41,8 @@ int main(int argc, char* argv[])
         string oufileNameBackwardEuler = outfileName + "BackwardEuler";
         string oufileNameCrancNicholson = outfileName + "CrancNicholson";
 
+        cout << "dt: " << dt << endl;
+
         Solver forwardEuler =  Solver( dt, dx, thetaForwardEuler, T, Nx, Nt);
         Solver backwardEuler =  Solver( dt, dx, thetaBackwardEuler, T,Nx, Nt);
         Solver cranckNicholson =  Solver( dt, dx, thetaCranckNicholson, T,Nx, Nt);

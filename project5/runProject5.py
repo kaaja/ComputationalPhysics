@@ -31,7 +31,7 @@ class Project5:
         dxValues = [0.1]#, 0.01]
         safetyFacors = [0.96, 1.04]
         movieCounter = 0
-        scenario = "1D"
+        dimension = "1D"
         for dx in dxValues:
             for safetyFactor in safetyFacors:
                 movieCounter += 1
@@ -44,7 +44,7 @@ class Project5:
                 outfileName2 = os.getcwd() + '/results/' + outfileName
                 saveEveryNSolution = 10
                 
-                self.runCpp(outfileName2, dt, dx, theta, T, scenario)
+                self.runCpp(outfileName2, dt, dx, theta, T, dimension)
                 
                 # Read data
                 data = OrderedDict()
@@ -116,6 +116,7 @@ class Project5:
 #                          '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
 #                    os.system(cmd)
         return data
+       
         
     def project5d(self):
         dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
@@ -123,7 +124,7 @@ class Project5:
         dt = dxValues[-1]**2/2.0*(1/safetyFactor)
         T = 0.25
         theta = 0.5
-        scenario = "1D"
+        dimension = "1D"
         
         outfileName ='out5NormDx'
         outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -132,7 +133,7 @@ class Project5:
         data = OrderedDict()
         for dx in dxValues:
             alpha = dt/dx**2
-            self.runCpp(outfileName2, dt, dx, theta, T, scenario)            
+            self.runCpp(outfileName2, dt, dx, theta, T, dimension)            
             # Read data
             data[counter] = pd.read_csv(outfileName2 + '.txt', delim_whitespace=True, header=None) 
             counter += 1
