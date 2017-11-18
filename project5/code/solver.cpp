@@ -96,6 +96,8 @@ void Solver::gassianTridiagonalSymmetricSolver(double * computed_right_hand_side
     for (int i = 0; i < Nx; i++) uOld[i] = u[i];
 }
 
+
+
 void Solver::calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_){
     // Calculates sup-norm for relative error
     double temp_relative_error = 0.0;

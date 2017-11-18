@@ -16,7 +16,7 @@ class Project5:
     def __init__(self):
         return None
         
-    def runCpp(self, outfileName, dt, dx, theta, T):
+    def runCpp(self, outfileName, dt, dx, theta, T, scenario):
         """
         Compiles and runs cpp program from the command line and
         makes sure the mesh size is not too big.
@@ -25,12 +25,13 @@ class Project5:
         dx = str(dx)
         theta = str(theta)
         T = str(T)
-        call(["./AllrunVectorized", outfileName, dt, dx, theta, T])
+        call(["./AllrunVectorized", outfileName, dt, dx, theta, T, scenario])
         
     def project5c(self):
         dxValues = [0.1]#, 0.01]
         safetyFacors = [0.96, 1.04]
         movieCounter = 0
+        scenario = "1D"
         for dx in dxValues:
             for safetyFactor in safetyFacors:
                 movieCounter += 1
@@ -43,7 +44,7 @@ class Project5:
                 outfileName2 = os.getcwd() + '/results/' + outfileName
                 saveEveryNSolution = 10
                 
-                self.runCpp(outfileName2, dt, dx, theta, T)
+                self.runCpp(outfileName2, dt, dx, theta, T, scenario)
                 
                 # Read data
                 data = OrderedDict()
@@ -100,7 +101,7 @@ class Project5:
                 ax2.set_xlabel(r'$x$')
                 ax2.set_ylabel(r"$u(x,t)$")
                 fig2.tight_layout()
-                fig2.savefig(outfileName + 'Number' + str(movieCounter) + '.png') 
+                fig2.savefig(outfileName2 + 'Number' + str(movieCounter) + '.png') 
                 plt.close()
         
                 
@@ -114,6 +115,7 @@ class Project5:
 #                    cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s ' \
 #                          '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
 #                    os.system(cmd)
+        return data
         
     def project5d(self):
         dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
@@ -121,6 +123,7 @@ class Project5:
         dt = dxValues[-1]**2/2.0*(1/safetyFactor)
         T = 0.25
         theta = 0.5
+        scenario = "1D"
         
         outfileName ='out5NormDx'
         outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -129,7 +132,7 @@ class Project5:
         data = OrderedDict()
         for dx in dxValues:
             alpha = dt/dx**2
-            self.runCpp(outfileName2, dt, dx, theta, T)            
+            self.runCpp(outfileName2, dt, dx, theta, T, scenario)            
             # Read data
             data[counter] = pd.read_csv(outfileName2 + '.txt', delim_whitespace=True, header=None) 
             counter += 1
@@ -158,9 +161,7 @@ class Project5:
         fig2.tight_layout()
         fig2.savefig(outfileName2+ '.png')
         plt.close()
-    
-
-            
+        
         return data
     
 #%%
@@ -189,7 +190,7 @@ if __name__ == "__main__":
     
     if args.task  == '5c':
        project5c = Project5()
-       project5c.project5c()
+       data = project5c.project5c()
 
     if args.task  == '5d':
        project5d = Project5()

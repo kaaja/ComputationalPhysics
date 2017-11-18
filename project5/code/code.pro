@@ -4,9 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    solver.cpp
+    solver.cpp \
+    twodimensionaldiffusionsolver.cpp
 
 HEADERS += \
-    solver.h
+    solver.h \
+    twodimensionaldiffusionsolver.h
 
 LIBS += -larmadillo -llapack -lblas
