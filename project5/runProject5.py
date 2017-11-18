@@ -9,6 +9,9 @@ from collections import OrderedDict
 import matplotlib.mlab as mlab
 from scipy.stats import norm
 from scipy.misc import comb
+from mpl_toolkits.mplot3d import Axes3D  # necessary for 3D plotting
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 #%% Run 
 class Project5:
@@ -164,7 +167,117 @@ class Project5:
         plt.close()
         
         return data
-    
+
+    def project5f(self):
+            dxValues = [0.1]#, 0.01]
+            safetyFacors = [1.04]#[0.96, 1.04]
+            movieCounter = 0
+            dimension = "2DExplicit"
+            for dx in dxValues:
+                x = int(round(1./dx + 1))
+                y = x
+                X, Y = np.meshgrid(x, y)
+                for safetyFactor in safetyFacors:
+                    fig = plt.figure()
+                    ax = fig.gca(projection='3d')
+                    
+                    #cv = u_box.grid.coorv  # vectorized mesh coordinates
+                    movieCounter += 1
+                    dt = dx**2/2.0*(1/safetyFactor)
+                    alpha = dt/dx**2
+                    theta = 0.5
+                    T = 0.5
+                    nT = int(round(T/dt+1))
+                    outfileName ='out5f'
+                    outfileName2 = os.getcwd() + '/results/' + outfileName
+                    saveEveryNSolution = 10
+                    
+                    self.runCpp(outfileName2, dt, dx, theta, T, dimension)
+                    
+                    # Read data
+                    #data = OrderedDict()
+                    scenerios = ['Explicit', 'Analytical']
+                    x = np.zeros(int(round(1./dx+1)))
+                    t = np.zeros(int(round(T/dt +1)))
+                    for scenario in scenerios:
+                        #data[scenario] = OrderedDict()
+                        for fileCounter in xrange(1, nT):
+                            data = pd.read_csv(outfileName2 + 'SolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                            
+#                            surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
+#                            rstride=1, cstride=1)
+#                            ax.zaxis.set_major_locator(LinearLocator(10))
+#                            ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+#                            fig.colorbar(surf)#, shrink=0.5, aspect=5)
+#                            fig.tight_layout()
+#                            #fig.savefig('movie/tmp_%04d' %fileCounter + outfileName + '.png') 
+#                            plt.show()
+#                            plt.close()
+                
+                    
+                    #results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
+                    
+            
+            
+                                
+    #                #Plots
+    #                counter =1
+    #                figureNumber = 1
+    #                fig2,ax2 = plt.subplots()
+    #                ax2.hold(True)
+    #                ax2Title = []
+    #                
+    #                for times in t:
+    #                    fig,ax = plt.subplots()
+    #                    ax.set_xlim([0, 1])
+    #                    ax.set_ylim([0, 1])
+    #                    ax.hold(True)
+    #                    if counter%saveEveryNSolution == 0 or counter == 1:
+    #                        for scenario in scenerios:
+    #                             ax.plot(x,data[scenario].ix[1:,counter])
+    #                        figureNumber += 1        
+    #                        ax.set_xlabel(r'$x$')
+    #                        ax.set_ylabel(r"$u(x,t)$")
+    #                        ax.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %g $ ' %alpha + '\n' + 't = %.5g' %times+ '\n')
+    #                        ax.legend(scenerios, loc=2)
+    #                        fig.tight_layout()
+    #                        fig.savefig('movie/%1dtmp_%04d' %(movieCounter, figureNumber) + outfileName + '.png') 
+    #                        plt.close()
+    #                    counter += 1
+    #        
+    #                    if counter == 2 or counter == len(t)/6 or counter == len(t):
+    #                        for scenario in scenerios:
+    #                            if scenario == 'ForwardEuler':
+    #                                markerType = 'r-+'
+    #                            elif scenario == 'BackwardEuler':
+    #                                markerType = 'b-o'
+    #                            elif scenario == 'CrancNicholson':
+    #                                markerType = 'g-^'
+    #                            else:
+    #                                markerType = 'y-'
+    #                            ax2.plot(x,data[scenario].ix[1:,counter], markerType)
+    #                        ax2Title.append(round(times,4))
+    #        
+    #                ax2.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %g $ ' %alpha + '\n' + 't = %s' %ax2Title + '\n')
+    #                ax2.legend(scenerios, loc=2)
+    #                ax2.set_xlabel(r'$x$')
+    #                ax2.set_ylabel(r"$u(x,t)$")
+    #                fig2.tight_layout()
+    #                fig2.savefig(outfileName2 + 'Number' + str(movieCounter) + '.png') 
+    #                plt.close()
+            
+                    
+    #                # Make video file
+    #                fps = 4  # frames per second
+    #                codec2ext = dict(libx264='mp4')  # video formats
+    #                filespec = 'movie/%1dtmp_%04d' %movieCounter + outfileName + '.png'
+    #                movie_program = 'ffmpeg'  # or 'avconv'
+    #                for codec in codec2ext:
+    #                    ext = codec2ext[codec]
+    #                    cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s ' \
+    #                          '-vcodec %(codec)s movie3_6.%(ext)s' % vars()
+    #                    os.system(cmd)
+            return data
 #%%
 if __name__ == "__main__":
     # Clean results and movie directory
@@ -197,6 +310,9 @@ if __name__ == "__main__":
        project5d = Project5()
        data=project5d.project5d()
 
+    if args.task  == '5f':
+       project5f = Project5()
+       data = project5f.project5f()
        
 #%%
 
