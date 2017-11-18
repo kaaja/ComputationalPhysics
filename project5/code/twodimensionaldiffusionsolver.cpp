@@ -48,10 +48,8 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_)
         for(int i = 0; i < Nx; i++){
             for (int j = 0; j < Ny; j++){
                 u[i][j] += uSteadyState(i*dx,j*dy);
-                cout << u[i][j] << ",";
                 solutionMatrixU(i,j) = u[i][j];
             }
-            cout << endl;
         }
         solutionMatrixU.save(outfileName + "SolutionMatrixUTime" + to_string(counter) + ".txt", raw_ascii);
         counter += 1;

@@ -115,5 +115,4 @@ void Solver::calculate_error(mat computed_numerical_solution, mat computed_exact
             if(temp_relative_error > *computed_error) *computed_error = temp_relative_error;
         }
     }
-    cout << "Computed errror: " << *computed_error << endl;
 }

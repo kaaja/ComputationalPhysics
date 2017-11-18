@@ -5,6 +5,7 @@
 using namespace std;
 void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int argc, char** argv);
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
+void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
 void output_scalars(double computed_error, double dt, double dx);
 
 ofstream ofile1; // File for scalars
@@ -74,6 +75,7 @@ int main(int argc, char* argv[])
 
         TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
         explicit2D.solve(outfileName);
+        analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
     }
     return 0;
 }
@@ -114,4 +116,23 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
     outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU.txt";
     analyticalMatrixU.save(outfileNameAnalytical , raw_ascii);
     return analyticalMatrixU;
+}
+void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver)
+{
+    string outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU2D";
+    double uSs;
+    mat analyticalMatrixU2D;
+    double fourOverPi = 4.0/M_PI;
+    int counter = 1;
+    for (int t = 1; t < Nt; t++){
+        uSs = 0.0;
+        analyticalMatrixU2D = zeros<mat>(Nx,Ny);
+        for (int i = 0; i < Nx ; i++){
+            for (int j = 0; j < Ny; j++){
+                analyticalMatrixU2D(i,j) = solver.uSteadyState(i*dx, j*dy);
+            }
+        }
+        analyticalMatrixU2D.save(outfileNameAnalytical+to_string(counter)+ ".txt" , raw_ascii);
+        counter +=1;
+    }
 }
