@@ -3,7 +3,7 @@ cd ${0%/*} || exit 1    # run from this directory
 # to make executable: chmod u+x AllrunVectorized
 cd code
 #mpic++ -O3 -o project5.x main.cpp solver.cpp twodimensionaldiffusionsolver.cpp -larmadillo -llapack -lblas
-c++  -O3 -o project5.x main.cpp solver.cpp twodimensionaldiffusionsolver.cpp -larmadillo -llapack -lblas
+c++  -O3 -o project5.x main.cpp solver.cpp lib.cpp twodimensionaldiffusionsolver.cpp -larmadillo -llapack -lblas
 #g++ -o main.exe main.cpp lib.cpp
 #mpirun -n $1 ./project4.x $2 $3 $4 $5 
 ./project5.x $1 $2 $3 $4 $5 $6

@@ -5,10 +5,12 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     solver.cpp \
-    twodimensionaldiffusionsolver.cpp
+    twodimensionaldiffusionsolver.cpp \
+    lib.cpp
 
 HEADERS += \
     solver.h \
-    twodimensionaldiffusionsolver.h
+    twodimensionaldiffusionsolver.h \
+    lib.h
 
 LIBS += -larmadillo -llapack -lblas
