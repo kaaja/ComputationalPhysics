@@ -185,10 +185,10 @@ class Project5:
                     
                     #cv = u_box.grid.coorv  # vectorized mesh coordinates
                     movieCounter += 1
-                    dt = dx**2/2.0*(1/safetyFactor)
+                    dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = 4.
+                    T = .3
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
