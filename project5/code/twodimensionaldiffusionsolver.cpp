@@ -36,16 +36,15 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_)
         //generate_right_hand_side( computed_right_hand_side, uOld, offDiagonalRhs, diagonalRhs, Nx);
         //gassianTridiagonalSymmetricSolver( computed_right_hand_side,  u, uOld, offDiagonalLhs, diagonalLhs, Nx);
         // Change of variables
-        explicitScheme(u, uOld, Nx, Ny);
+        //explicitScheme(u, uOld, Nx, Ny);
 
-        //backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference);
+        backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference);
         for(int i = 0; i < Nx; i++){
             for (int j = 0; j < Ny; j++){
-                cout << u[i][j] << ",";
                 u[i][j] += uSteadyState(i*dx,j*dy);
                 solutionMatrixU(i,j) = u[i][j];
             }
-            cout << endl;
+
         }
         solutionMatrixU.save(outfileName + "SolutionMatrixUTime" + to_string(counter) + ".txt", raw_ascii);
         counter += 1;
@@ -82,7 +81,7 @@ void TwoDimensionalDiffusionSolver::explicitScheme(double **u, double **uOld, in
     }
 
     //set uOld = u;
-    uOld = setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
+    setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
 }
 
 // Backward Euler, 2D, Jacobi
@@ -96,22 +95,20 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
     int iterations = 1;
     while ((iterations < maxIterations) && (diff > maxDifference)){
         diff = 0.;
-        uTemp = setMatrixAEqualMatrixB(uTemp, u, Nx, Ny);
+        setMatrixAEqualMatrixB(uTemp, u, Nx, Ny);
         for (int i = 1; i < Nx-1; i++){
             for (int j = 1; j < Ny-1; j++){
-                u[i][j] = uOld[i][j] + uTemp[i][j] +
-                      alpha*(uTemp[i+1][j] + uTemp[i][j+1] - 4.0*uTemp[i][j] +
-                         uTemp[i-1][j] + uTemp[i][j-1]);
+                //u[i][j] = uOld[i][j] + alpha*(uTemp[i+1][j] + uTemp[i][j+1] - 4.0*uTemp[i][j] + uTemp[i-1][j] + uTemp[i][j-1]);
+                u[i][j] =   1./(1+4.*alpha)*(alpha*(uTemp[i+1][j] + uTemp[i-1][j] + uTemp[i][j+1] + uTemp[i][j-1]) + uOld[i][j]);
                 diff += fabs(u[i][j] - uTemp[i][j]);
-
             }
-
         }
-
         diff /= (Nx*Ny);
         iterations += 1;
+        cout << diff << "  iterations " << iterations << endl;
+
     }
-    uOld = setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
+    setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
     DestroyMatrix(uTemp, Nx, Ny);
 }
 
@@ -132,13 +129,12 @@ void TwoDimensionalDiffusionSolver:: DestroyMatrix(double ** mat, int m, int n){
   delete[] mat;
 }
 
-double ** TwoDimensionalDiffusionSolver::setMatrixAEqualMatrixB(double ** matrixA, double ** matrixB, int m, int n)
+void TwoDimensionalDiffusionSolver::setMatrixAEqualMatrixB(double ** matrixA, double ** matrixB, int m, int n)
 {
     for (int i = 0; i < m; i++){
         for (int j = 0; j < n; j++){
             matrixA[i][j] = matrixB[i][j];
         }
     }
-    return matrixA;
 }
 

@@ -24,7 +24,7 @@ private:
     void backwardEuler(double **u, double **uOld, int Nx, int Ny, int maxIterations, double maxDifference);
     double ** CreateMatrix(int m, int n);
     void DestroyMatrix(double ** mat, int m, int n);
-    double ** setMatrixAEqualMatrixB(double ** matrixA, double ** matrixB, int m, int n);
+    void setMatrixAEqualMatrixB(double ** matrixA, double ** matrixB, int m, int n);
 
 public:
     TwoDimensionalDiffusionSolver(double dt_, double dx_, double dy_, double theta_, double T_, int Nx_, int Ny_, int Nt_);
