@@ -132,7 +132,7 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
     int sumLimit = 10;// for sums with integrals
     for (int t = 0; t < Nt; t++){
         analyticalMatrixU2D = zeros<mat>(Nx,Ny);
-        for (int i = 0; i < Nx ; i++){
+        for (int i = 0; i < Nx ; i++){//note: changed from 1 to 0
             for (int j = 0; j < Ny; j++){
                 double tempSum = 0.;
                 for (int n = 1; n < sumLimit; n++){
@@ -159,8 +159,8 @@ double gaussQuad(int n, int m, double x, double y, int numberOfIntegrationPoints
     double intGaussX = 0.;
     double intGaussY = 0.;
       for ( int i = 0;  i < n; i++){
-         intGaussX +=w[i]*solver.uSteadyState(xPoints[i], y)*sin(n*M_PI*xPoints[i])*sin(m*M_PI*y);
-         intGaussY +=w[i]*solver.uSteadyState(x, xPoints[i])*sin(n*M_PI*x)*sin(m*M_PI*xPoints[i]);
+         intGaussX +=w[i]*solver.uSteadyState(xPoints[i], y)*sin(n*M_PI*xPoints[i]);
+         intGaussY +=w[i]*solver.uSteadyState(x, xPoints[i])*sin(m*M_PI*xPoints[i]);
       }
-    return intGaussX + intGaussY;
+    return intGaussX*intGaussY;
 }
