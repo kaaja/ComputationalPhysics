@@ -85,7 +85,60 @@
 
 
 
-\section*{5a}
+\section{5a}
+
+\subsection{Derivation of schemes with truncation errors}
+All the schemes will be derived from Taylor series expansions, and the truncation error will be related to the remainder in the Taylor-series expansions. This remainded is the error we get when truncating the series by leaving out the remainder.\\
+
+\subsubsection{Forward Euler}
+For the time derivative, we expand $u(x, t + \Delta t)$ around $t$
+
+\begin{subequations}
+	\begin{align}
+		u(x, t+ \Delta t)  = u(x,t) +  u_t(x,t) \Delta t + \mathcal{O}(\Delta t^2)\\
+		\rightarrow u_t = \frac{u(x, t+ \Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t)\label{eq:FeTime}
+	\end{align}
+\end{subequations}
+
+The space derivative, which is a 2nd derivative, we derive by combining two Taylor series'
+
+\begin{subequations}
+	\begin{align}
+		u(x + \Delta x,t) = u(x,t) + u_x(x,t)\Delta x + \frac{u_{xx}(x,t) \Delta x^2}{2} + \frac{u_{xxx}(x,t) \Delta x^3}{6} + \mathcal{O}(\Delta x^4)\label{eq:feSpace1}\\
+		u(x - \Delta x,t) = u(x,t) - u_x(x,t)\Delta x + \frac{u_{xx}(x,t) \Delta x^2}{2} - \frac{u_{xxx}(x,t) \Delta x^3}{6} + \mathcal{O}(\Delta x^4)\label{eq:feSpace2}
+	\end{align}
+\end{subequations}
+
+Now we add (\ref{eq:feSpace1}) and (\ref{eq:feSpace2}) and solve for $u_{xx}(x,t)$
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			\Big(u(x + \Delta x,t) + u(x - \Delta x,t) \Big) &= \Big(u(x,t) + u(x,t) \Big)\\ 
+			&+ \Big(u_x(x,t)\Delta x + (- u_x(x,t)\Delta x) \Big)\\ 
+			&+ \Big(\frac{u_{xx}(x,t) \Delta x^2}{2} +  \frac{u_{xx}(x,t) \Delta x^2}{2}\Big)\\ 
+			&+ \Big(\frac{u_{xxx}(x,t) \Delta x^3}{6}  + (- \frac{u_{xxx}(x,t) \Delta x^3}{6}) \Big)\\ 
+			&+ \Big(\mathcal{O}(\Delta x^4) + \mathcal{O}(\Delta x^4) \Big)
+		\end{split}\\
+		&= 2u(x,t) + u_{xx}(x,t) \Delta x^2 + \mathcal{O}(\Delta x^4)\\
+		\rightarrow u_{xx}(x,t) &= \frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} + \mathcal{O}(\Delta x^2)\label{eq:feSpace3}
+	\end{align}
+\end{subequations}
+
+Combining (\ref{eq:FeTime}) and (\ref{eq:feSpace3}) we get the Forward Euler scheme
+
+\begin{subequations}
+	\begin{align}
+		u_t(x,t) &= u_{xx}(x,t)\\
+		\frac{u(x, t+ \Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t) &= 
+		\frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} + \mathcal{O}(\Delta x^2)\label{eq:fe}
+	\end{align}
+\end{subequations}
+
+From (\ref{eq:fe}) we see that the scheme has a truncation error that goes like $\mathcal{O} (\Delta t)$ in time and $\mathcal{O}(\Delta x^2)$ in space.\\
+
+We will now analyze the stability of the Forward Euler scheme (\ref{eq:fe}) by applying Neuman stability analyzis. From the analytical solution of the problem, we know that the particular solutions are on the form $u = e^{-(k \pi)^2 t}e^{i k \pi x}$, where $k$ is an integer greater than one. We observe that the solutions are stable in $t$, meaning that the solutions do not blow up as $t$ increaes. Based on the analytical particular solution, we make the numerical ansatz $u = a_k^n e^{i k \pi x_j}$. For the numerical ansatz to reproduce the characteristics of the analytical particular solution, with stability in $t$, we observe that $|a_k^n| < 1$ in necessary.
+
 
 
 
