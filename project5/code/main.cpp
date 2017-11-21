@@ -8,7 +8,7 @@ void read_input (string& outfileName, double& dt, double& dx, double& theta, dou
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
 void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
 void output_scalars(double computed_error, double dt, double dx);
-double gaussQuad(int n, int m, double x, double y, int numberOfIntegrationPoints, TwoDimensionalDiffusionSolver solver);
+double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, int numberOfIntegrationPoints);
 
 ofstream ofile1; // File for scalars
 
@@ -128,8 +128,8 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
     int counter = 1;
     uSs = 0.0;
     double integral = 0.;
-    int integrationPoints = 10;
-    int sumLimit = 10;// for sums with integrals
+    int integrationPoints = 30;
+    int sumLimit = 15;// for sums with integrals
     for (int t = 0; t < Nt; t++){
         analyticalMatrixU2D = zeros<mat>(Nx,Ny);
         for (int i = 0; i < Nx ; i++){//note: changed from 1 to 0
@@ -137,7 +137,7 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
                 double tempSum = 0.;
                 for (int n = 1; n < sumLimit; n++){
                     for (int m = 1; m < sumLimit; m++){
-                        integral = gaussQuad(n, m, i*dx, j*dy, integrationPoints, solver);
+                        integral = gaussQuad(sumLimit, n, m, i*dx, j*dy, integrationPoints);
                         tempSum += integral*sin(n*M_PI*i*dx)*sin(m*M_PI*j*dy)*exp(-pow(M_PI,2)*(n*n + m*m)*t*dt);
                     }
                 }
@@ -150,17 +150,21 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
     }
 }
 
-double gaussQuad(int n, int m, double x, double y, int numberOfIntegrationPoints, TwoDimensionalDiffusionSolver solver){
+double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, int numberOfIntegrationPoints){
     double leftIntegrationLimit = 0.;
     double rightIntegrationLimit = 1.;
     double *xPoints = new double [numberOfIntegrationPoints];
     double *w = new double [numberOfIntegrationPoints];
     gauleg(leftIntegrationLimit , rightIntegrationLimit,xPoints, w, numberOfIntegrationPoints);
-    double intGaussX = 0.;
-    double intGaussY = 0.;
-      for ( int i = 0;  i < n; i++){
-         intGaussX +=w[i]*solver.uSteadyState(xPoints[i], y)*sin(n*M_PI*xPoints[i]);
-         intGaussY +=w[i]*solver.uSteadyState(x, xPoints[i])*sin(m*M_PI*xPoints[i]);
-      }
-    return intGaussX*intGaussY;
+    double integralSum = 0.;
+    for ( int k = 1;  k < numberOfSummationPoints; k++){
+        double intGaussX = 0.;
+        double intGaussY = 0.;
+        for (int integrationCounter =0; integrationCounter < numberOfIntegrationPoints; integrationCounter++){
+            intGaussX += w[integrationCounter]*sin(k*M_PI*xPoints[integrationCounter])*sin(n*M_PI*xPoints[integrationCounter]);
+            intGaussY += w[integrationCounter]*sinh(k*M_PI*xPoints[integrationCounter])*sin(m*M_PI*xPoints[integrationCounter]);
+        }
+        integralSum += 4./M_PI*intGaussX*intGaussY/(k*sinh(k*M_PI));
+    }
+    return integralSum;
 }

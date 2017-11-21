@@ -59,7 +59,7 @@ double TwoDimensionalDiffusionSolver::uSteadyState(double x, double y)
 {
     double uSs = 0.0;
     double fourOverPi = 4.0/M_PI;
-    for (int k = 1; k < 100; k++){
+    for (int k = 1; k < 15; k++){
         double beta = 2*k-1;
         uSs += sin(beta*M_PI*x)*sinh(beta*M_PI*y)/(beta*sinh(beta*M_PI));
     }
@@ -105,7 +105,7 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
         }
         diff /= (Nx*Ny);
         iterations += 1;
-        cout << diff << "  iterations " << iterations << endl;
+        //cout << diff << "  iterations " << iterations << endl;
 
     }
     setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
