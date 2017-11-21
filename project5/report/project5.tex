@@ -83,7 +83,8 @@
 	
 \maketitle
 
-
+\section*{Note to instructurs reagarding Github repository}
+If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail addres available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
 \section{5a}
 
@@ -228,9 +229,9 @@ From (\ref{eq:neumanBe}) we see that, in contrast to the Forward Euler scheme, t
 		\frac{\Delta x^2}{\Delta t}(u_i^n - u_i^{n-1})  &=  u_{i-1}^n - 2u_i^n + u_{i+1}^n\\
 		- \Big(u_{i-1}^n - (2 + \frac{\Delta x^2}{\Delta t}) u_i^n + u_{i+1}^n\Big)   &=  \frac{\Delta x^2}{\Delta t}u_i^{n-1}\\
 		 \Big(-u_{i-1}^n + (2 + \frac{\Delta x^2}{\Delta t}) u_i^n - u_{i+1}^n\Big)   &=  \frac{\Delta x^2}{\Delta t}u_i^{n-1}\\
-		\underbrace{\begin{bmatrix} (2 + \frac{\Delta x^2}{\Delta t}) & -1 & \cdots & 0 \\ -1 & (2 + \frac{\Delta x^2}{\Delta t}) & -1 & \vdots \\
+		\underbrace{\begin{bmatrix} 2 + \frac{\Delta x^2}{\Delta t} & -1 & \cdots & 0 \\ -1 & 2 + \frac{\Delta x^2}{\Delta t} & -1 & \vdots \\
 			\vdots & &  \ddots & \vdots \\ 
-			0 & \cdots & -1 & (2 + \frac{\Delta x^2}{\Delta t}) \end{bmatrix}}_{\mathbf{A}} 
+			0 & \cdots & -1 & 2 + \frac{\Delta x^2}{\Delta t} \end{bmatrix}}_{\mathbf{A}} 
 		\underbrace{\begin{bmatrix} u_1^n\\ u_2^n \\ \vdots\\ u_N^n \end{bmatrix}}_{\mathbf{U}} &= 
 		\underbrace{\frac{\Delta x^2}{\Delta t} \begin{bmatrix} u_0^{n-1}\\ u_1^{n-1} \\ \vdots \\ u_N^{n-1}\end{bmatrix}}_{\mathbf{\tilde{b}}}\label{eq:beLinSys}
 	\end{align}
@@ -238,5 +239,166 @@ From (\ref{eq:neumanBe}) we see that, in contrast to the Forward Euler scheme, t
 
 We see from (\ref{eq:beLinSys}) that solving Backward Euler corresponds to solving a linear system $A U = \tilde{b}$, where $A$ is a trdiagonal matrix. 
 	
+\subsection{Crank-Nicolson}
+Here we Taylor expand $u(x+\Delta x, t+\Delta t)$ and $u(x-\Delta x, t+\Delta t)$ around $t'=t+\Delta t/2$ to get
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			u(x+\Delta x, t+\Delta t)&=u(x,t')+\frac{\partial u(x,t')}{\partial x}\Delta x+\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\ 
+			&+\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+		\end{split}\label{eq:cn1}\\
+		\begin{split}
+			u(x-\Delta x,t+ \Delta t)&=u(x,t')
+			-\frac{\partial u(x,t')}{\partial x}\Delta x 
+			+ \frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2
+			+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\ 
+			&- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x
+			+ \mathcal{O}(\Delta t^3)
+		\end{split}\label{eq:cn2}\\
+		\begin{split}
+			u(x+\Delta x,t)&=u(x,t')+\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} \\
+			&- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+		\end{split}\label{eq:cn3}\\
+		\begin{split}
+		u(x-\Delta x,t)&=u(x,t')-\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\
+		& +\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+		\end{split}\label{eq:cn4}\\
+		u(x,t+\Delta t)&=u(x,t')+\frac{\partial u(x,t')}{\partial t}\frac{\Delta_t}{2} +\frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 + \mathcal{O}(\Delta t^3)\label{eq:cn5}\\
+		u(x,t)&=u(x,t')-\frac{\partial u(x,t')}{\partial t}\frac{\Delta t}{2}+\frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 + \mathcal{O}(\Delta t^3)\label{eq:cn6}
+	\end{align}
+\end{subequations}
+
+The above formulae are taken from Hjorth-Jensen's  \href{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/pub/pde}{slides} \cite{MHJ2}.\\
+
+Combining (\ref{eq:cn5}) and (\ref{eq:cn6}) gives the time derivative
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			\Big(u(x,t+\Delta t) - u(x,t)\Big) &= \Big(u(x,t') -  u(x,t')\Big) + \Big(\frac{\partial u(x,t')}{\partial t}\frac{\Delta_t}{2} - (-\frac{\partial u(x,t')}{\partial t}\frac{\Delta t}{2}) \Big)\\ 
+			&+ \Big(\frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 - \frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 \Big) +\Big(\mathcal{O}(\Delta t^3) -  \mathcal{O}(\Delta t^3)\Big)
+		\end{split}\\
+		u(x,t+\Delta t) - u(x,t)& = \frac{\partial u(x,t')}{\partial t}\Delta t + \mathcal{O}(\Delta t^3)\\
+		\frac{\partial u(x,t')}{\partial t}&= \frac{u(x,t+\Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t^2)\label{eq:cnTime}
+	\end{align}
+\end{subequations}
+
+Now for the spacial derivative. First we solve (\ref{eq:cn1}) and (\ref{eq:cn2}) for $u_{xx}(x, t')$
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+		u(x+\Delta x, t+\Delta t) + u(x-\Delta x,t + \Delta t) &= 
+		\Big(u(x,t') + u(x,t') \Big) + \Big(\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial x}\Delta x\Big)\\ 
+		&+ \Big(\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} \Big) + \Big(\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2\Big)\\
+		& + \Big(\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} +\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} \Big) + \Big(\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x - \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x\Big)\\
+		& + \Big(\mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta t^3) \Big) + \mathcal{O}(\Delta x^4)
+		\end{split}\\
+		\begin{split}
+			&=2u(x,t') + \frac{\partial u(x,t')}{\partial t} \Delta t
+			+ \frac{\partial^2 u(x,t')}{\partial x^2}\Delta x^2
+			 + \frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{2}  
+			 + \mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta x^4)
+		\end{split}\\
+		\begin{split}
+			&=2u(x,t') + \frac{\partial u(x,t')}{\partial t} \Delta t
+			+ \frac{\partial^2 u(x,t')}{\partial x^2}\Delta x^2			
+			+ \mathcal{O}(\Delta t^2) + \mathcal{O}(\Delta x^4)
+		\end{split}\\	
+		\begin{split}
+		\frac{\partial^2 u(x,t')}{\partial x^2}\Delta x^2
+		& = 
+		u(x+\Delta x, t+\Delta t) + u(x-\Delta x,t + \Delta t) 
+		- 2u(x,t') 
+			\\ 
+		&+\frac{\partial u(x,t')}{\partial t} \Delta t
+		+  \mathcal{O}(\Delta t^2) + \mathcal{O}(\Delta x^4)
+		\end{split}\\
+		\begin{split}
+			\frac{\partial^2 u(x,t')}{\partial x^2}
+			&=\frac{u(x-\Delta x,t+ \Delta t)  - 2u(x,t') +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} +  \mathcal{O}(\Delta t) + \mathcal{O}(\Delta x^2)\label{eq:cnX2}
+		\end{split}		
+	\end{align}
+\end{subequations}
+
+Note that in (\ref{eq:cnX2}) we added $\mathcal{O}(\Delta x^4)$, since  $\mathcal{O}(\Delta x^3)$ cancells out in the addition. \\
+
+Doing the same as in (\ref{eq:cnX2}) for (\ref{eq:cn3}) and (\ref{eq:cn4}) we obtain
+
+\begin{equation}\label{eq:cnX3}
+	\frac{\partial^2 u(x,t')}{\partial x^2} =\frac{u(x-\Delta x,t) - 2u(x,t') + u(x+\Delta x, t)}{\Delta x^2} +  \mathcal{O}(\Delta t) + \mathcal{O}(\Delta x^2)
+\end{equation}
+
+Now we take the mean of (\ref{eq:cnX2}) and (\ref{eq:cnX3}) and ignore $\mathcal{O} (\Delta t)$, since it is $x$ that varies in these expressions
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			u_{xx}(x, t^{'}) &=\frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - 2u(x,t') +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} + \mathcal{O}(\Delta x^2) \\
+			&+  \frac{u(x-\Delta x,t) - 2u(x,t') + u(x+\Delta x, t)}{\Delta x^2} + \mathcal{O}(\Delta x^2)\Big)\\
+			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - 2u(x,t') +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} \\
+			& +  \frac{u(x-\Delta x,t) - 2u(x,t') + u(x+\Delta x, t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta x^2)\\
+			&\stackrel{u(x,t^{'}) = \frac{u(x,t) + u(x,t+\Delta t)}{2}}{=}\\
+			&\frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - u(x,t) + u(x,t+\Delta t) +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} \\
+			& +  \frac{u(x-\Delta x,t) - u(x,t) + u(x,t+\Delta t) + u(x+\Delta x, t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta x^2)\\
+			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t) - 2u(x,t+\Delta t) +u(x + \Delta x,t+\Delta t)}{\Delta x^2} + \frac{u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta x^2)\label{eq:cnX4}
+			\end{split}
+	\end{align}
+\end{subequations}
+
+Now combining (\ref{eq:cnTime}) and (\ref{eq:cnX4}) we get the Crank-Nicolson scheme
+
+\begin{subequations}\label{eq:cn1d}
+	\begin{align}
+		\begin{split}
+			\frac{u(x,t+\Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t^2)
+			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)
+			- 2u(x,t+\Delta t) +u(x+\Delta x,t+\Delta t)}{\Delta x^2} \\
+			&+ \frac{u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta x^2)
+		\end{split}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:cn1d}) shows that the Crank-Nicolson scheme is 2nd order in both time and space, implying better convergence properties for the Crank-Nicolson scheme compared to the Backward Euler scheme and the Forward Euler scheme.\\
+
+Next we study the stability of the Crank-Nicolson scheme by the same method as we used for the previous schemes: We insert the ansatz (\ref{eq:neumanAnsatz}) into the Crank-Nicolson scheme (\ref{eq:cn1d}) and solve for $|a_k|$:
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			\frac{u(x,t+\Delta t) - u(x,t)}{\Delta t} 
+			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)
+			- 2u(x,t+\Delta t) +u(x+\Delta x,t+\Delta t)}{\Delta x^2} \\
+			&+ \frac{u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)}{\Delta x^2} \Big) \\
+			a_k^n e^{i k \pi j \Delta x}\; \frac{ a_k  - 1}{\Delta t} &= \frac{a_k^n e^{i k \pi j \Delta x}}{2}\; \Big(\frac{a_k e^{-i k \pi \Delta x} - 2a_k + a_k e^{i k \pi \Delta x}}{\Delta x^2} + \frac{e^{-i k \pi \Delta x} - 2 +  e^{i k \pi \Delta x}}{\Delta x^2} \Big)\\
+			\frac{ a_k  - 1}{\Delta t}&=\frac{1}{2}\Big(\frac{a_k e^{-i k \pi \Delta x} - 2a_k + a_k e^{i k \pi \Delta x}}{\Delta x^2} + \frac{e^{-i k \pi \Delta x} - 2 +  e^{i k \pi \Delta x}}{\Delta x^2} \Big)\\
+			&= \frac{1+a_k}{2\Delta x^2} (e^{-i k \pi \Delta x} - 2 + e^{i k \pi \Delta x})\\
+			&\stackrel{(\ref{eq:naumanFe0})}{=} -4\frac{1+a_k}{2\Delta x^2} \sin^2(\frac{k\pi \Delta x}{2})\\
+			a_k -1 &= (1 + a_k) (-\frac{2 \Delta t}{\Delta x^2})\sin^2(\frac{k\pi \Delta x}{2})\\
+			\Big(1 +\frac{2 \Delta t}{\Delta x^2}\sin^2(\frac{k\pi \Delta x}{2})\Big)a_k &= 1 - \frac{2 \Delta t}{\Delta x^2}\sin^2(\frac{k\pi \Delta x}{2})\\
+			a_k &= \frac{1 - \frac{2 \Delta t}{\Delta x^2}\sin^2(\frac{k\pi \Delta x}{2})}{1 +\frac{2 \Delta t}{\Delta x^2}\sin^2(\frac{k\pi \Delta x}{2})} < 1\label{eq:neumanCn1d}
+		\end{split}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:neumanCn1d}) shows that the Crank-Nicolson scheme is unconditionally stable.\\
+
+Based on the analyzis of the different schemes, we expect the Crank-Nicolson scheme to be the best scheme with respect to convergence and stability. 
+
+
+
+\begin{thebibliography}{9}
+	\bibitem{MHJ} 
+	Hjorth-Jensen, M.(2015)
+	Computational physics. Lectures fall 2015. 
+	\url{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/Lectures}
+	
+	\bibitem{MHJ2}
+	\url{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/pub/pde}
+
+\end{thebibliography}
+
+
 
 \end{document}
