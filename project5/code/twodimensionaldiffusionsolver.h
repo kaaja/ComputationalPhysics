@@ -9,6 +9,7 @@
 #include "time.h"
 #include <armadillo>
 
+
 using namespace std;
 using namespace arma;
 

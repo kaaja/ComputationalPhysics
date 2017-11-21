@@ -2,6 +2,7 @@
 #include "solver.h"
 #include "twodimensionaldiffusionsolver.h"
 #include "lib.h"
+#include <omp.h>
 
 using namespace std;
 void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int argc, char** argv);
@@ -15,15 +16,22 @@ ofstream ofile1; // File for scalars
 
 int main(int argc, char* argv[])
 {
-    double dt, dx, dy, theta, T;
+    double dt, dx, dy, theta, T, wtime, wtime2;
     int Nx, Ny, Nt;
     double thetaForwardEuler = 0.0;
     double thetaBackwardEuler = 1.0;
     double thetaCranckNicholson = 0.5;
     double computed_error = 0.0;
     string outfileName, outfileNameNorms, scenario;
+    clock_t start, finish;
 
     read_input(outfileName, dx, dt, theta, T, scenario, argc, argv);
+
+    int thread_num;
+    omp_set_num_threads(4);
+    thread_num = omp_get_max_threads ();
+    cout << "  The number of processors available = " << omp_get_num_procs () << endl ;
+    cout << "  The number of threads available    = " << thread_num <<  endl;
 
 
     Nt = (int) (round(T/dt)) + 1;
@@ -76,8 +84,15 @@ int main(int argc, char* argv[])
     else if (scenario == "2DExplicit"){
 
         TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+        wtime = omp_get_wtime ( );
         explicit2D.solve(outfileName);
+        wtime = omp_get_wtime ( ) - wtime;
+        cout << "Time used: " << wtime << endl;
+
+        wtime2 = omp_get_wtime ( );
         analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
+        wtime2 = omp_get_wtime ( ) - wtime2;
+        cout << "Time used: " << wtime2 << endl;
     }
     return 0;
 }
@@ -121,26 +136,32 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
 }
 void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver)
 {
+    int t=0;int i=0;int j=0;int n=0;int m=0;
     string outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU2D";
     double uSs;
     mat analyticalMatrixU2D;
     double fourOverPi = 4.0/M_PI;
+    double tempSum = 0.0;
     int counter = 1;
     uSs = 0.0;
     double integral = 0.;
     int integrationPoints = 30;
     int sumLimit = 15;// for sums with integrals
-    for (int t = 0; t < Nt; t++){
+    for (t = 0; t < Nt; t++){
         analyticalMatrixU2D = zeros<mat>(Nx,Ny);
-        for (int i = 0; i < Nx ; i++){//note: changed from 1 to 0
-            for (int j = 0; j < Ny; j++){
-                double tempSum = 0.;
-                for (int n = 1; n < sumLimit; n++){
-                    for (int m = 1; m < sumLimit; m++){
+        #pragma omp parallel for default(shared) private(i,j,n,m) reduction(+:tempSum)
+        for (i = 0; i < Nx ; i++){//note: changed from 1 to 0
+            for (j = 0; j < Ny; j++){
+                #pragma omp critical
+                tempSum = 0.;
+                //#pragma omp parallel for default(shared) private(n,m) reduction(+:tempSum)
+                for (n = 1; n < sumLimit; n++){
+                    for (m = 1; m < sumLimit; m++){
                         integral = gaussQuad(sumLimit, n, m, i*dx, j*dy, integrationPoints);
                         tempSum += integral*sin(n*M_PI*i*dx)*sin(m*M_PI*j*dy)*exp(-pow(M_PI,2)*(n*n + m*m)*t*dt);
                     }
                 }
+                #pragma omp critical
                 uSs = solver.uSteadyState(i*dx, j*dy);
                 analyticalMatrixU2D(i,j) = uSs -4.*tempSum;
             }
@@ -151,16 +172,19 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
 }
 
 double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, int numberOfIntegrationPoints){
+    int k=0;
+    int integrationCounter=0;
     double leftIntegrationLimit = 0.;
     double rightIntegrationLimit = 1.;
     double *xPoints = new double [numberOfIntegrationPoints];
     double *w = new double [numberOfIntegrationPoints];
     gauleg(leftIntegrationLimit , rightIntegrationLimit,xPoints, w, numberOfIntegrationPoints);
     double integralSum = 0.;
-    for ( int k = 1;  k < numberOfSummationPoints; k++){
+    #pragma omp parallel for default(shared) private(k, integrationCounter) reduction(+:integralSum)
+    for ( k = 1;  k < numberOfSummationPoints; k++){
         double intGaussX = 0.;
         double intGaussY = 0.;
-        for (int integrationCounter =0; integrationCounter < numberOfIntegrationPoints; integrationCounter++){
+        for (integrationCounter =0; integrationCounter < numberOfIntegrationPoints; integrationCounter++){
             intGaussX += w[integrationCounter]*sin(k*M_PI*xPoints[integrationCounter])*sin(n*M_PI*xPoints[integrationCounter]);
             intGaussY += w[integrationCounter]*sinh(k*M_PI*xPoints[integrationCounter])*sin(m*M_PI*xPoints[integrationCounter]);
         }

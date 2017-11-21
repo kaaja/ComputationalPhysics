@@ -14,3 +14,6 @@ HEADERS += \
     lib.h
 
 LIBS += -larmadillo -llapack -lblas
+
+QMAKE_CXXFLAGS+= -fopenmp
+QMAKE_LFLAGS +=  -fopenmp

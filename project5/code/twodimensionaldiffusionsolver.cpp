@@ -49,22 +49,21 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_)
         solutionMatrixU.save(outfileName + "SolutionMatrixUTime" + to_string(counter) + ".txt", raw_ascii);
         counter += 1;
     }
-    //delete [] u;
-    //delete [] uOld;
     DestroyMatrix(u, Nx, Ny);
     DestroyMatrix(uOld, Nx, Ny);
 }
 
 double TwoDimensionalDiffusionSolver::uSteadyState(double x, double y)
 {
+    int k;
     double uSs = 0.0;
     double fourOverPi = 4.0/M_PI;
-    for (int k = 1; k < 15; k++){
+    //#pragma omp parallel for default(shared) private(k) reduction(+:uSs)
+    for (k = 1; k < 15; k++){
         double beta = 2*k-1;
         uSs += sin(beta*M_PI*x)*sinh(beta*M_PI*y)/(beta*sinh(beta*M_PI));
     }
     uSs *= fourOverPi;
-    //cout << "u steady in method " << uSs << endl;
     return uSs;
 }
 
@@ -98,15 +97,12 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
         setMatrixAEqualMatrixB(uTemp, u, Nx, Ny);
         for (int i = 1; i < Nx-1; i++){
             for (int j = 1; j < Ny-1; j++){
-                //u[i][j] = uOld[i][j] + alpha*(uTemp[i+1][j] + uTemp[i][j+1] - 4.0*uTemp[i][j] + uTemp[i-1][j] + uTemp[i][j-1]);
                 u[i][j] =   1./(1+4.*alpha)*(alpha*(uTemp[i+1][j] + uTemp[i-1][j] + uTemp[i][j+1] + uTemp[i][j-1]) + uOld[i][j]);
                 diff += fabs(u[i][j] - uTemp[i][j]);
             }
         }
         diff /= (Nx*Ny);
         iterations += 1;
-        //cout << diff << "  iterations " << iterations << endl;
-
     }
     setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
     DestroyMatrix(uTemp, Nx, Ny);

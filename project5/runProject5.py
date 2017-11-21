@@ -13,6 +13,8 @@ from mpl_toolkits.mplot3d import Axes3D  # necessary for 3D plotting
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from scitools.std import *
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL) 
 
 #%% Run 
 class Project5:
