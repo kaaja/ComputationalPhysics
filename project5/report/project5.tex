@@ -96,7 +96,7 @@ For the time derivative, we expand $u(x, t + \Delta t)$ around $t$
 \begin{subequations}
 	\begin{align}
 		u(x, t+ \Delta t)  = u(x,t) +  u_t(x,t) \Delta t + \mathcal{O}(\Delta t^2)\\
-		\rightarrow u_t = \frac{u(x, t+ \Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t)\label{eq:FeTime}
+		\rightarrow u_t(x,t) = \frac{u(x, t+ \Delta t) - u(x,t)}{\Delta t} + \mathcal{O}(\Delta t)\label{eq:FeTime}
 	\end{align}
 \end{subequations}
 
@@ -137,10 +137,106 @@ Combining (\ref{eq:FeTime}) and (\ref{eq:feSpace3}) we get the Forward Euler sch
 
 From (\ref{eq:fe}) we see that the scheme has a truncation error that goes like $\mathcal{O} (\Delta t)$ in time and $\mathcal{O}(\Delta x^2)$ in space.\\
 
-We will now analyze the stability of the Forward Euler scheme (\ref{eq:fe}) by applying Neuman stability analyzis. From the analytical solution of the problem, we know that the particular solutions are on the form $u = e^{-(k \pi)^2 t}e^{i k \pi x}$, where $k$ is an integer greater than one. We observe that the solutions are stable in $t$, meaning that the solutions do not blow up as $t$ increaes. Based on the analytical particular solution, we make the numerical ansatz $u = a_k^n e^{i k \pi x_j}$. For the numerical ansatz to reproduce the characteristics of the analytical particular solution, with stability in $t$, we observe that $|a_k^n| < 1$ in necessary.
+We will now analyze the stability of the Forward Euler scheme (\ref{eq:fe}) by applying Neuman stability analyzis. From the analytical solution of the problem, we know that the particular solutions are on the form $u = e^{-(k \pi)^2 t}e^{i k \pi x}$, where $k$ is an integer greater than one. We observe that the solutions are stable in $t$, meaning that the solutions do not blow up as $t$ increaes. Based on the analytical particular solution, we make the numerical ansatz 
+
+\begin{equation}\label{eq:neumanAnsatz}
+	u = a_k^n e^{i k \pi x_j}
+\end{equation}
+
+For the numerical ansatz (\ref{eq:neumanAnsatz}) to reproduce the characteristics of the analytical particular solution, with stability in $t$, we observe that $|a_k^n| < 1$ in necessary. We now plug in the ansatz (\ref{eq:neumanAnsatz}) into the (\ref{eq:fe}) and derive an equation for $|a_k^n|$:
+
+\begin{subequations}\label{eq:naumanFe0}
+	\begin{align}
+		\frac{u(x, t+ \Delta t) - u(x,t)}{\Delta t}  &= 
+		\frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} \\
+		\frac{a_k^{n+1} e^{i k \pi (j+1) \Delta x} - a_k^n e^{i k \pi j \Delta x}}{\Delta t}  &= 
+		\frac{a_k^{n} e^{i k \pi (j-1) \Delta x} - 2a_k^{n} e^{i k \pi j \Delta x} + a_k^{n} e^{i k \pi (j+1) \Delta x}}{\Delta x^2} \\
+		a_k^{n} e^{i k \pi j \Delta x}\; \frac{a_k  -1}{\Delta t}  &= 
+		a_k^{n} e^{i k \pi j \Delta x}\; \frac{ e^{-i k \pi \Delta x} - 2  +  e^{i k \pi  \Delta x}}{\Delta x^2} \\
+		 \frac{a_k  -1}{\Delta t}  &= 
+		 \frac{ e^{-i k \pi \Delta x} - 2  +  e^{i k \pi  \Delta x}}{\Delta x^2} \\
+		 a_k &= 1 + \frac{\Delta t}{\Delta x^2} (e^{-i k \pi \Delta x} - 2  +  e^{i k \pi  \Delta x})\\
+		 &= 1+ \frac{\Delta t}{\Delta x^2} \Big(2 \cos(k\pi\Delta x) - 2\Big)\\
+		 &= 1+ 2\frac{\Delta t}{\Delta x^2} \Big( \cos(k\pi\Delta x) - 1\Big)\\
+		 &= 1+ 2\frac{\Delta t}{\Delta x^2} \Big(- 2 \sin^2(\frac{k\pi\Delta x}{2}) \Big)\\
+		 &=1 - 4\frac{\Delta t}{\Delta x^2} \sin^2(\frac{k\pi\Delta x}{2}) \\
+		 |a_k| &= |1 - 4\frac{\Delta t}{\Delta x^2} \sin^2(\frac{k\pi\Delta x}{2})|\label{eq:neumanFe1}
+	\end{align}
+\end{subequations}
+
+From (\ref{eq:neumanFe1}) we get
+ 
+\begin{subequations}
+	\begin{align}
+		 &|a_k| < 1\; \text{if}\; ||1 - 4\frac{\Delta t}{\Delta x^2} \sin^2(\frac{k\pi\Delta x}{2})|| < 1 \\
+		 &\rightarrow |1 - 4 \frac{\Delta t}{\Delta x^2}| < 1 \rightarrow |a_k| < 1\;\text{(Since $\sin^2(k \pi \Delta x/2)_{max}  = 1$)}\\
+		 &\rightarrow 1 - 4 \frac{\Delta t}{\Delta x^2} > -1\\ 
+		 &\rightarrow \frac{\Delta t}{\Delta x^2} < \frac{1}{2}\label{eq:neumanFe2}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:neumanFe2}) gives that the Forward Euler scheme is conditionally stable, and the condition that ensures stability.
 
 
+\subsection{Backward Euler}
+Here we will do the same as we did for Forward Euler above: Derive the scheme, including truncation errors, and analyze stability.\\
+
+The only change compared to Forward Euler, is the time discretization, which now becomes
+
+\begin{subequations}
+	\begin{align}
+	u(x, t- \Delta t)  = u(x,t) +  u_t(x,t) \Delta t - \mathcal{O}(\Delta t^2)\\
+	\rightarrow u_t(x,t) = \frac{u(x, t) - u(x,t - \Delta t)}{\Delta t} + \mathcal{O}(\Delta t)\label{eq:beTime}
+	\end{align}
+\end{subequations}
+
+The space discretization is the same as for Forward Euler, (\ref{eq:feSpace3}). Combining the space discretization (\ref{eq:feSpace3}) and (\ref{eq:beTime}) gives
+
+\begin{subequations}
+	\begin{align}
+		\frac{u(x, t) - u(x,t - \Delta t)}{\Delta t} + \mathcal{O}(\Delta t) = \frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} + \mathcal{O}(\Delta x^2)\label{eq:be1}
+	\end{align}
+\end{subequations}
+
+We note that the truncation errors have the same asymptoptic behavior as for the Forward Euler scheme. \\
+
+Now lets check the stability of the Backward Euler scheme. We apply the same method as we did for Forward Euler, and insert the ansatz (\ref{eq:neumanAnsatz}) into (\ref{eq:be1}) to get
+
+\begin{subequations}
+	\begin{align}
+		\frac{u(x, t) - u(x,t - \Delta t)}{\Delta t}  &= \frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} \\
+		\frac{a_k^n e^{i k \pi j \Delta x} - a_k^{n-1} e^{i k \pi j \Delta x}}{\Delta t}  &= \frac{a_k^n e^{i k \pi (j -1)\Delta x} - 2a_k^n e^{i k \pi j \Delta x} + a_k^n e^{i k \pi (1 + j)\Delta x}}{\Delta x^2} \\
+		a_k^n e^{i k \pi j \Delta x}\; \frac{1 - a_k^{-1}}{\Delta t}&=
+		a_k^n e^{i k \pi j \Delta x}\; \frac{e^{-i k \pi \Delta x} - 2 + e^{i k \pi \Delta x}}{\Delta x^2}\\
+		\frac{1 - a_k^{-1}}{\Delta t}&= \frac{e^{-i k \pi \Delta x} - 2 + e^{i k \pi \Delta x}}{\Delta x^2}\\
+		a_k^{-1} &= 1 - \frac{\Delta t}{\Delta x^2} (e^{-i k \pi \Delta x} - 2 + e^{i k \pi \Delta x})\\
+		a_k &= \frac{1}{1 - \frac{\Delta t}{\Delta x^2} (e^{-i k \pi \Delta x} - 2 + e^{i k \pi \Delta x})}\\
+		&\stackrel{(\ref{eq:naumanFe0})}{=}  \frac{1}{1 + 4 \frac{\Delta t}{\Delta x^2} \sin^2(\frac{k\pi\Delta x}{2})}\\
+		|a_k| &=  \left|\frac{1}{1 + 4 \frac{\Delta t}{\Delta x^2} \sin^2(\frac{k\pi\Delta x}{2})}\right| < 1.\label{eq:neumanBe}\\
+	\end{align}
+\end{subequations}
+
+From (\ref{eq:neumanBe}) we see that, in contrast to the Forward Euler scheme, the Backward Euler scheme is unconditionally stable.\\
 
 
+(\ref{eq:be1}) reveals another difference between the Backward Euler scheme and the Forward Euler scheme: (\ref{eq:be1}) is implicit in $u(x,t)$, meaning that we cannot solve (\ref{eq:be1}) directly for $u(x,t)$, as we did in the Forward Euler scheme. However, we can find $u(x,t)$ from (\ref{eq:be1}) by recognizing that (\ref{eq:be1}) can be rewritten as a linear system:
+
+\begin{subequations}
+	\begin{align}
+		\frac{u(x, t) - u(x,t - \Delta t)}{\Delta t}  &= \frac{u(x - \Delta x, t) - 2u(x,t) + u(x+ \Delta x, t)}{\Delta x^2} \\
+		\frac{u_i^n - u_i^{n-1}}{\Delta t}  &= \frac{u_{i-1}^n - 2u_i^n + u_{i+1}^n}{\Delta x^2} \\
+		\frac{\Delta x^2}{\Delta t}(u_i^n - u_i^{n-1})  &=  u_{i-1}^n - 2u_i^n + u_{i+1}^n\\
+		- \Big(u_{i-1}^n - (2 + \frac{\Delta x^2}{\Delta t}) u_i^n + u_{i+1}^n\Big)   &=  \frac{\Delta x^2}{\Delta t}u_i^{n-1}\\
+		 \Big(-u_{i-1}^n + (2 + \frac{\Delta x^2}{\Delta t}) u_i^n - u_{i+1}^n\Big)   &=  \frac{\Delta x^2}{\Delta t}u_i^{n-1}\\
+		\underbrace{\begin{bmatrix} (2 + \frac{\Delta x^2}{\Delta t}) & -1 & \cdots & 0 \\ -1 & (2 + \frac{\Delta x^2}{\Delta t}) & -1 & \vdots \\
+			\vdots & &  \ddots & \vdots \\ 
+			0 & \cdots & -1 & (2 + \frac{\Delta x^2}{\Delta t}) \end{bmatrix}}_{\mathbf{A}} 
+		\underbrace{\begin{bmatrix} u_1^n\\ u_2^n \\ \vdots\\ u_N^n \end{bmatrix}}_{\mathbf{U}} &= 
+		\underbrace{\frac{\Delta x^2}{\Delta t} \begin{bmatrix} u_0^{n-1}\\ u_1^{n-1} \\ \vdots \\ u_N^{n-1}\end{bmatrix}}_{\mathbf{\tilde{b}}}\label{eq:beLinSys}
+	\end{align}
+\end{subequations}
+
+We see from (\ref{eq:beLinSys}) that solving Backward Euler corresponds to solving a linear system $A U = \tilde{b}$, where $A$ is a trdiagonal matrix. 
+	
 
 \end{document}
