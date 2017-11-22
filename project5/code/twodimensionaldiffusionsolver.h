@@ -29,7 +29,7 @@ private:
 
 public:
     TwoDimensionalDiffusionSolver(double dt_, double dx_, double dy_, double theta_, double T_, int Nx_, int Ny_, int Nt_);
-    void solve(string outfileName_);
+    void solve(string outfileName_, string method_);
     double uSteadyState(double x, double y);
 
 };

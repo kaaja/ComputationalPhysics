@@ -212,23 +212,33 @@ class Project5:
                         #data[scenario] = OrderedDict()
                     fileCounter = 1
                     for fileCounter in xrange(1, nT):
-                        data = pd.read_csv(outfileName2 + 'SolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                        data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
                         
                         #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
                         #rstride=1, cstride=1, linewidth=0, antialiased = False)
                         
-                        st.surfc(xv, yv, data, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
+                        st.surfc(xv, yv, data, title='Implicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                               shading='flat')  #
-                        st.savefig('movie/tmp_%04d' %fileCounter + outfileName + '.png') 
+                        st.savefig('movie/tmpImplicit_%04d' %fileCounter + outfileName + '.png')
                         
-                        data2 = pd.read_csv(outfileName2 + 'AnalyticalSolutionMatrixU2D%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                        st.surfc(xv, yv, data2, title='Analytical Time = %.4f' % ((fileCounter-1)*dt), zlim=[-0.1, 1.1],
+                        data2 = pd.read_csv(outfileName2 + 'ExplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                        
+                        #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
+                        #rstride=1, cstride=1, linewidth=0, antialiased = False)
+                        
+                        st.surfc(xv, yv, data2, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
+                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                              shading='flat')  #
+                        st.savefig('movie/tmpExplicit_%04d' %fileCounter + outfileName + '.png')  
+                        
+                        data3 = pd.read_csv(outfileName2 + 'AnalyticalSolutionMatrixU2D%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                        st.surfc(xv, yv, data3, title='Analytical Time = %.4f' % ((fileCounter-1)*dt), zlim=[-0.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                               shading='flat')  #
                         st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
                         
-                        st.surfc(xv, yv, data-data2, title='Numerical-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
+                        st.surfc(xv, yv, data-data3, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                               shading='flat')  #
                         st.savefig('movie/tmpError_%04d' %fileCounter + outfileName + '.png')
@@ -239,11 +249,11 @@ class Project5:
                
             width = 0.35 
             fig, ax = plt.subplots()
-            rects1 = ax.bar(np.arange(3), [np.asscalar(data.numerical.values), np.asscalar(data.analytic.values), np.asscalar(data.analytic.values)/np.asscalar(data.numerical.values)], width)#, color='r')
+            rects1 = ax.bar(np.arange(3), [np.asscalar(data.implicit.values), np.asscalar(data.analytic.values), np.asscalar(data.analytic.values)/np.asscalar(data.implicit.values)], width)#, color='r')
             fontSizes = 20
             ax.set_title('Timing Numerical and analytical', fontsize = fontSizes )
             ax.set_xticks(np.arange(3) + width / 10)
-            ax.set_xticklabels(('Numerical', 'Analytical', r'$\frac{Analytical}{Numerical}$'))
+            ax.set_xticklabels(('Implicit', 'Analytical', r'$\frac{Analytical}{Numerical}$'))
             #plt.show()
             fig.tight_layout()
             plt.savefig( outfileName2 + 'Timing.png')

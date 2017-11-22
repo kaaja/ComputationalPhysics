@@ -16,7 +16,7 @@ ofstream ofile1; // File for scalars
 
 int main(int argc, char* argv[])
 {
-    double dt, dx, dy, theta, T, wtime, wtime2;
+    double dt, dx, dy, theta, T, wtime, wtime2, wtime3;
     int Nx, Ny, Nt, threadNumberFromUser;
     double thetaForwardEuler = 0.0;
     double thetaBackwardEuler = 1.0;
@@ -81,24 +81,36 @@ int main(int argc, char* argv[])
         normMatrix.save(outfileName + ".txt", raw_ascii);
     }
     else if (scenario == "2DExplicit"){
+        string outfileName2DExplicit;
+        string outfileName2DImplicit;
 
         TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
-        wtime = omp_get_wtime ( );
-        explicit2D.solve(outfileName);
-        wtime = omp_get_wtime ( ) - wtime;
-        cout << "Time used numerical: " << wtime << endl;
+        TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
 
+        outfileName2DExplicit = outfileName + "Explicit";
+        wtime = omp_get_wtime ( );
+        explicit2D.solve(outfileName2DExplicit, "Explicit");
+        wtime = omp_get_wtime ( ) - wtime;
+        cout << "Time used explicit: " << wtime << endl;
+
+        outfileName2DImplicit = outfileName + "Implicit";
         wtime2 = omp_get_wtime ( );
-        analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
+        implicit2D.solve(outfileName2DImplicit, "Implicit");
         wtime2 = omp_get_wtime ( ) - wtime2;
-        cout << "Time used analytic: " << wtime2 << endl;
+        cout << "Time used implicit: " << wtime2 << endl;
+
+        wtime3 = omp_get_wtime ( );
+        analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
+        wtime3 = omp_get_wtime ( ) - wtime3;
+        cout << "Time used analytic: " << wtime3 << endl;
 
 
         ofile1.open(outfileName + "Timing.txt");
-        ofile1 << "numerical,analytic" << endl;
+        ofile1 << "explicit,implicit,analytic" << endl;
         ofile1 << setiosflags(ios::showpoint | ios::uppercase);
         ofile1 << setw(15) << setprecision(16) << wtime<< ", ";
-        ofile1 << setw(15) << setprecision(16) << wtime2<< endl;
+        ofile1 << setw(15) << setprecision(16) << wtime2<< ", ";
+        ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
     }
     return 0;
 }

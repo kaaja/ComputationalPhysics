@@ -12,7 +12,7 @@ TwoDimensionalDiffusionSolver::TwoDimensionalDiffusionSolver(double dt_, double 
     Ny = Ny_;
 }
 
-void TwoDimensionalDiffusionSolver::solve(string outfileName_)
+void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_)
 {
     outfileName = outfileName_;
     mat solutionMatrixU = zeros<mat>(Nx,Ny);
@@ -33,12 +33,8 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_)
 
     int counter = 1;
     for (int t = 1; t < Nt; t++){
-        //generate_right_hand_side( computed_right_hand_side, uOld, offDiagonalRhs, diagonalRhs, Nx);
-        //gassianTridiagonalSymmetricSolver( computed_right_hand_side,  u, uOld, offDiagonalLhs, diagonalLhs, Nx);
-        // Change of variables
-        //explicitScheme(u, uOld, Nx, Ny);
-
-        backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference);
+        if (method_ =="Explicit") explicitScheme(u, uOld, Nx, Ny);
+        else if (method_ == "Implicit") backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference);
         for(int i = 0; i < Nx; i++){
             for (int j = 0; j < Ny; j++){
                 u[i][j] += uSteadyState(i*dx,j*dy);
