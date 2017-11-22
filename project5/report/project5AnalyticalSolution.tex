@@ -337,24 +337,26 @@ were ${X_n(x)}$ is the family of particular solutions.\\
 \\
 
 The $y$ dependent term can be rewritten as 
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
-y'' = \beta^2 Y \\ \nonumber
+y'' = \beta^2 Y \\ 
 \Rightarrow Y'' - \beta^2 Y = 0 
 \end{eqnarray}
+\end{subequations}
 We are again using an anzats so that $Y = e^{\gamma y}$. This leaves us with the term
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
-\gamma^2 e^{\gamma y} - \beta^2 e^{\gamma y} &=& 0 \\ \nonumber
-\Rightarrow \gamma^2 &=& \beta^2 \\ \nonumber
+\gamma^2 e^{\gamma y} - \beta^2 e^{\gamma y} &=& 0 \\ 
+\Rightarrow \gamma^2 &=& \beta^2 \\ 
 \Rightarrow \gamma &=& \pm \beta
 \end{eqnarray}
+\end{subequations}
 and we end up with the following expression
 \begin{eqnarray}
-Y_n(y) = C_ne^{-n\pi y} + D_ne^{n\pi y} \\ 
-Y_n(y) = C_ncosh(n\pi y) + D_nsinh(n\pi y)
+Y_n(y) &=& C_ne^{-n\pi y} + D_ne^{n\pi y} \\ 
+&\Rightarrow & C_ncosh(n\pi y) + D_nsinh(n\pi y)
 \end{eqnarray}
-where {$Y_n(y)$} is the family of particular solutions.
+We have chosen hyperbolic sines and cosines as the form of the solutions, because of the boundary at $U(x,y=1) = 1$. We further have that {$Y_n(y)$} is the family of particular solutions.
 \\
 \\
 The fundamental solutions of the steady-state is the given by
@@ -385,8 +387,8 @@ dn = 2\int_0^1 sin(m\pi x) dx = \frac{2}{m\pi}(1-(-1)^m\\
 This in turn lets us write the steady-state solution as 
 \begin{subequations}
 \begin{eqnarray}
-U(x,y) = \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{sin(m\pi x)sinh(m\pi y)}{\pi sinh(m\pi)}(1-(-1)^m \\ 
-U(x,y) = \frac{4}{\pi} \sum_{m}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
+U(x,y) &=& \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{sin(m\pi x)sinh(m\pi y)}{\pi sinh(m\pi)}(1-(-1)^m \\ 
+&\Rightarrow & \frac{4}{\pi} \sum_{m}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
 \end{eqnarray}
 \end{subequations}
 
