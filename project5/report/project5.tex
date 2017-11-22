@@ -628,6 +628,49 @@ end time-loop
 \end{lstlisting}
 
 \subsubsection{2D implicit scheme}
+We start in the same way as we did for Forward Euler in 2D, and just add an extra term for $u_{yy}$ to the 1D Backward Euler scheme (\ref{eq:be1}). In addition we will assume $h = \Delta x = \Delta y$.
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			\frac{u(x,y, t) - u(x,y,t - \Delta t)}{\Delta t} + \mathcal{O}(\Delta t) &= \frac{u(x - \Delta x,y, t) 
+				- 2u(x,y,t) + u(x+ \Delta x,y, t)}{\Delta x^2} \\
+			&+ \frac{u(x,y - \Delta y, t) - 2u(x,y,t) + u(x,y+ \Delta y, t)}{\Delta y^2}\\
+			&+ \mathcal{O}(\Delta x^2) + \mathcal{O}(\Delta y^2)
+		\end{split}\\
+		\begin{split}
+		\frac{u_{i,j}^n - u_{i,j}^{n-1}}{\Delta t}  &\approx \frac{u_{i-1,j}^{n} 
+			- 2u_{i,j}^n + u_{i+1,j}^n}{\Delta x^2} \\
+		&+ \frac{u_{i,j-1}^n - 2u_{i,j}^n + u_{i,j+1}^n}{\Delta y^2}
+		\end{split}\\
+		\begin{split}
+			\frac{u_{i,j}^n - u_{i,j}^{n-1}}{\Delta t} &\stackrel{h = \Delta x = \Delta y}{\approx} \frac{u_{i-1,j}^{n} 
+			- 2u_{i,j}^n + u_{i+1,j}^n}{h^2} \\
+			&+ \frac{u_{i,j-1}^n - 2u_{i,j}^n + u_{i,j+1}^n}{h^2}
+		\end{split}\\				
+		u_{i,j}^n - u_{i,j}^{n-1}  &\stackrel{(\ref{eq:alpha})}{\approx} \alpha (u_{i-1,j}^{n} 
+			- 4u_{i,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\\
+		u_{i,j}^n &= u_{i,j}^{n-1}  + \frac{1}{1+4\alpha}(u_{i-1,j}^{n} 
+		+ u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\label{eq:2dBe}
+	\end{align}
+\end{subequations}
+
+We that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that standard methods as LU-decomposion becomes unpractical. In our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. 
+
+\subsubsection{Jacobi's algorithm}
+We will solve the implicit 2D scheme (\ref{eq:2dBe}) by using Jacobi's iteration algorithm, and, following Hjorth-Jensen \cite{MHJ} p. 319, we have the following main algorithm
+
+\begin{itemize}
+	\item{1: Make intial guess for $u_{i,j}$ for all internal points.}
+	\item{2: Caclulate iteration $k$ of $u$, $u^k$ using (\ref{eq:2dBe})}.
+	\item{3: Stop if wanted convergence reached, else continue next iteration.}
+	\item{4: Set previous $u$-value equal to new $u$.}
+	\item{5: Repeat all steps from step 2.}
+\end{itemize}
+
+The above algorithm is used for all time steps, starting with the first internal time step, solving one step at the time before moving to the next step.
+
+
 
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 
