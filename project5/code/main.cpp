@@ -5,7 +5,7 @@
 #include <omp.h>
 
 using namespace std;
-void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int argc, char** argv);
+void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int& threadNumberFromUser, int argc, char** argv);
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
 void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
 void output_scalars(double computed_error, double dt, double dx);
@@ -17,18 +17,17 @@ ofstream ofile1; // File for scalars
 int main(int argc, char* argv[])
 {
     double dt, dx, dy, theta, T, wtime, wtime2;
-    int Nx, Ny, Nt;
+    int Nx, Ny, Nt, threadNumberFromUser;
     double thetaForwardEuler = 0.0;
     double thetaBackwardEuler = 1.0;
     double thetaCranckNicholson = 0.5;
     double computed_error = 0.0;
     string outfileName, outfileNameNorms, scenario;
-    clock_t start, finish;
 
-    read_input(outfileName, dx, dt, theta, T, scenario, argc, argv);
+    read_input(outfileName, dx, dt, theta, T, scenario, threadNumberFromUser, argc, argv);
 
     int thread_num;
-    omp_set_num_threads(4);
+    omp_set_num_threads(threadNumberFromUser);
     thread_num = omp_get_max_threads ();
     cout << "  The number of processors available = " << omp_get_num_procs () << endl ;
     cout << "  The number of threads available    = " << thread_num <<  endl;
@@ -87,17 +86,24 @@ int main(int argc, char* argv[])
         wtime = omp_get_wtime ( );
         explicit2D.solve(outfileName);
         wtime = omp_get_wtime ( ) - wtime;
-        cout << "Time used: " << wtime << endl;
+        cout << "Time used numerical: " << wtime << endl;
 
         wtime2 = omp_get_wtime ( );
         analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
         wtime2 = omp_get_wtime ( ) - wtime2;
-        cout << "Time used: " << wtime2 << endl;
+        cout << "Time used analytic: " << wtime2 << endl;
+
+
+        ofile1.open(outfileName + "Timing.txt");
+        ofile1 << "numerical,analytic" << endl;
+        ofile1 << setiosflags(ios::showpoint | ios::uppercase);
+        ofile1 << setw(15) << setprecision(16) << wtime<< ", ";
+        ofile1 << setw(15) << setprecision(16) << wtime2<< endl;
     }
     return 0;
 }
 
-void read_input (string& outfileName, double &dt, double &dx, double &theta, double &T, string &scenario, int argc, char** argv)
+void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int& threadNumberFromUser, int argc, char** argv)
 {
     if( argc<= 1){
       cout << "Insert: outfile-name, number of simulations, amplification factor, start dimension" << endl;
@@ -111,6 +117,7 @@ void read_input (string& outfileName, double &dt, double &dx, double &theta, dou
     theta = atof(argv[4]);
     T = atof(argv[5]);
     scenario = argv[6];
+    threadNumberFromUser = atoi(argv[7]);
 }
 
 mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
