@@ -731,6 +731,33 @@ We will solve the implicit 2D scheme (\ref{eq:2dBe}) by using Jacobi's iteration
 
 The above algorithm is used for all time steps, starting with the first internal time step, solving one step at the time before moving to the next step.
 
+\subsection{2D boundary conditions}
+We choose to model a laminar flow inside an infinite tunnel with a finite quadratic cross section. We only model a single cross section, the problem being identical for all cross sections because of the homogenity assumption in the flow direction. \\
+
+There will be no slip boundary conditions on all four walls. The floor and the sides will be fixed, while the roof will be moving in the flow direction. With these boundary conditions we have zero velocity on the floor and the side walls, while we have a non-zero velcocity in the flow direction. The figure below shows our problem.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5e/boxDrawing2-0.png}
+	\caption{2D problem sketch}
+	\label{1}
+\end{figure}
+
+With our choise of coordinate system, positive flow represents flow out of the paper. \\
+
+We choose $u(x,y=1) = 1$, and $u(x=0, y) = u(x=1,y) = u(x,y=0) = 0$. \\
+
+We model the flow with the heat equation. This equation can be derived from the equations of incompressible flow, the Navier-Stokes equations, by assuming laminar flow and a flow profile of type $u = u(x,y)$:
+
+\begin{subequations}
+	\begin{align}
+		\mathbf{u}_t + (\mathbf{u} \cdot \nabla) \mathbf{u} &= -\frac{\nabla p}{\rho} + \nabla^2 \mathbf{u}\\
+		w(x,y)_t + (w \frac{\partial}{\partial z}) w(x,y) &\stackrel{\text{Zero pressure gradient}}{=} (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} ) w(x,y)\\
+		w(x,y)_t &= (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} )w(x,y)\label{eq:ns}
+	\end{align}
+\end{subequations}
+
+Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. With turbulent flow we would have flow in all directions. This implies that our heat equation is only valid for Reynolds numbers giving laminar flow.
 
 
 \begin{thebibliography}{9}
