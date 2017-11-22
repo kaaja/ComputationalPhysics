@@ -241,7 +241,12 @@ class Project5:
                         st.surfc(xv, yv, data-data3, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                               shading='flat')  #
-                        st.savefig('movie/tmpError_%04d' %fileCounter + outfileName + '.png')
+                        st.savefig('movie/tmpErrorImplicit_%04d' %fileCounter + outfileName + '.png')
+                        
+                        st.surfc(xv, yv, data2-data3, title='Explicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
+                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                              shading='flat')  #
+                        st.savefig('movie/tmpErrorExplicit_%04d' %fileCounter + outfileName + '.png')
                         
                         
             
