@@ -91,7 +91,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 \subsection{Derivation of schemes with truncation errors}
 All the schemes will be derived from Taylor series expansions, and the truncation error will be related to the remainder in the Taylor-series expansions. This remainded is the error we get when truncating the series by leaving out the remainder.\\
 
-\subsubsection{Forward Euler}
+\subsection{Forward Euler}
 For the time derivative, we expand $u(x, t + \Delta t)$ around $t$
 
 \begin{subequations}
@@ -581,6 +581,53 @@ for time in times:
 
 end time loop
 \end{lstlisting}
+
+\subsection{2D schemes}
+We will derive and apply a Forward Euler (explicit) scheme and a Backward Euler (implicit) scheme for the 2D case.
+
+\subsubsection{2D explicit scheme}
+The new thing in the 2D case for the explicit scheme, is that we get an extra term for $u_{yy}$ in (\ref{eq:fe}). $u_{yy}$ is approximated in exactly the same way as $u_{xx}$ (\ref{eq:feSpace3}), so we get
+
+\begin{equation}
+	 u_{yy}(x,y,t) = \frac{u(x,y - \Delta y, t) - 2u(x,y,t) + u(x,y+ \Delta y, t)}{\Delta y^2} + \mathcal{O}(\Delta y^2)\label{eq:uyyFe2d}
+\end{equation}
+
+Adding (\ref{eq:uyyFe2d}) to the 1D FE scheme (\ref{eq:fe}) gives the explicit 2D-scheme
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+			\frac{u(x,y, t+ \Delta t) - u(x,y,t)}{\Delta t} + \mathcal{O}(\Delta t) &= 
+			\frac{u(x - \Delta x, y,t) - 2u(x,y,t) + u(x+ \Delta x,y, t)}{\Delta x^2} \\
+			&+  \frac{u(x,y - \Delta y, t) - 2u(x,y,t) + u(x,y+ \Delta y, t)}{\Delta y^2} \\
+			&+ \mathcal{O}(\Delta x^2)  + \mathcal{O}(\Delta y^2)
+		\end{split}\\
+		\rightarrow u_{ij}^{n+1} &\stackrel{(\ref{eq:alpha})}{\approx} u_{ij}^{n} + \alpha (u_{i-1,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n - 4u_{ij}^n)\label{eq:Fe2d}
+	\end{align}
+\end{subequations}
+
+The new thing in (\ref{eq:Fe2d}) compared to (\ref{eq:fe}), is that $u{ij}^{n+1}$ in the 2D case is a matrix and not a vector as in the 1D case. The fact that we are dealing with a matrix instead of a vector, does not change anything with regards to the solution strategy. The equation (\ref{eq:Fe2d}) is still explicit, the only difference in implementation is that instead of one single loop a double loop over two space dimensions is needed now.\\
+
+The algorithm for solving 2D Forward Euler follows.
+
+\begin{lstlisting}
+Set IC
+
+for time in times:
+	Set BC
+	
+	for x in X:
+		for y in Y:
+			Calculate u_{ij}^{n+1} = f(u^{n})
+		end y-loop
+	end x-loop
+	
+	Set u^{n} = u^{n+1}	
+	
+end time-loop
+\end{lstlisting}
+
+\subsubsection{2D implicit scheme}
 
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 
