@@ -366,6 +366,7 @@ U(x,y) = \sum_{n=1}^{\infty} X(x)Y(y) = \sum_{n=1}^{\infty} B_nsin(n\pi x)\Big(C
 Applying the the boundary of $U(x,0)$ to the equation above we get that $C_n$ must be zero. We are then left with the expression
 \begin{equation}
  U(x,y) = \sum_{n=1}^{\infty} c_n sin(n\pi x)sinh(n\pi y)
+\label{eqn:UsteadyStatefundamentalSolutions}
 \end{equation}
 Applying the last boundary $U(x,1) = 1$ we must have that
 \begin{equation}
@@ -376,7 +377,7 @@ setting $d_n = c_nsinh(n\pi)$ we get that
 1 = \sum_{n=1}^{\infty} d_n sin(n\pi x)
 \end{equation}
 \\
-and using again that the functions $sin(n\pi x)$ is orthogonal (\ref{eqn:orhogonalSine}), as in the 1D case, we get that 
+Using again that the functions $sin(n\pi x)$ is orthogonal (\ref{eqn:orhogonalSine}), as in the 1D case, and multiplying the above equation with $\int_0^1 sin(m\pi y)$ we get that 
 \begin{subequations}
 \begin{eqnarray}
 dn = 2\int_0^1 sin(m\pi x) dx = \frac{2}{m\pi}(1-(-1)^m\\
@@ -384,7 +385,7 @@ dn = 2\int_0^1 sin(m\pi x) dx = \frac{2}{m\pi}(1-(-1)^m\\
 \end{eqnarray}
 \end{subequations}
 
-This in turn lets us write the steady-state solution as 
+putting the coefficients $c_n$ back into the expression for the fundamental solutions \ref{eqn:UsteadyStatefundamentalSolutions} we end up with the following expression for the steady-state
 \begin{subequations}
 \begin{eqnarray}
 U(x,y) &=& \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{sin(m\pi x)sinh(m\pi y)}{\pi sinh(m\pi)}(1-(-1)^m \\ 
