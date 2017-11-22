@@ -80,13 +80,16 @@
 \maketitle
 \section*{Analytical solution 1D}
 The one-dimensional problem is written as 
+
+\begin{subequations}
 \begin{eqnarray}
-\frac{\partial^2 u(x,t)}{\partial x^2} &=& \frac{\partial u(x,t)}{\partial t} \textit{, } t> 0 \textit{, } x \in [0,L] \\ \nonumber
+	\frac{\partial^2 u(x,t)}{\partial x^2} &=& \frac{\partial u(x,t)}{\partial t} \textit{, } t> 0 \textit{, } x \in [0,L] \\ \nonumber
 \\
 u(x,0) &=& 0 \textit{, } 0 <x < L \textit{,} \\
 u(0,t) &=& 0 \textit{, } t>0 \\
 u(L,t) &=& 1 \textit{, } t>0
 \end{eqnarray}
+\end{subequations}
 With initial conditions at $t=0$ and $L=1$ is the length of the $x$-region of interest.
 \\
 \\
@@ -99,6 +102,7 @@ u(x,t) = U(x) + V(x,t)
 where $U(x)$ is the steady-state solution and $V(x,t)$ is the transient solution.\\ 
 \\
 Since the steady-state problem is not changing in time, i.e. $\partial_ t = 0$, it is written in a compact form as:
+\begin{subequations}
 \begin{eqnarray}
 \label{eqn:steadyStateSODE}
 U_{xx} &=& 0 \textit{ , } x \in [0,1]\\ \nonumber
@@ -106,7 +110,9 @@ U_{xx} &=& 0 \textit{ , } x \in [0,1]\\ \nonumber
 U(0) &=& 0 \textit{  } \\
 U(L) &=& 1
 \end{eqnarray}
+\end{subequations}
 For the transient part of the problem we have the problem written in compact form as:
+\begin{subequations}
 \begin{eqnarray}
 \label{eqn:transientODE}
 V_t &=& V_{xx} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
@@ -116,6 +122,7 @@ V(x,0) &=& -U_s(x) \textit{ , } 0<x<1 \\
 V(0,t) &=& 0 \textit{ , } t>0 \\
 V(1,t) &=& 0 \textit{ , } t>0
 \end{eqnarray}
+\end{subequations}
 \\
 \\
 The steady state solution is solved by integrating \ref{eqn:steadyStateSODE} twice
@@ -131,7 +138,7 @@ U(x) = x
 \end{equation}
 The transient problem \ref{eqn:transientODE} has homogeneous boundary conditions, and we can solve it by seperation of variables. We start by making the anzats that $V(x,t) = T(t)X(x)$ so that we can rewrite \ref{eqn:transientODE} as:
 \begin{equation}
-XT'=X''T \nonumber
+XT'=X''T 
 \end{equation}
 Reordering the equation we get the following:
 \begin{equation}
@@ -143,17 +150,17 @@ The term can be solved seperately as we get that the left hand side is only depe
 \\
 For the $t$ dependent part we get
 \begin{eqnarray}
-\nonumber
-\frac{T'}{T} = -\lambda^2 \\ \nonumber
+\frac{T'}{T} = -\lambda^2 \\ 
 T' = -\lambda^2 T
 \end{eqnarray}
 The equation can be solved by using the anzats $T = e^{\alpha t}$. We get the following expression
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
-\alpha e^{\alpha t} + \lambda^2 e^{\alpha t} = 0 \\ \nonumber
-\alpha +\lambda^2 = 0 \\ \nonumber
+\alpha e^{\alpha t} + \lambda^2 e^{\alpha t} = 0 \\ 
+\alpha +\lambda^2 = 0 \\ 
 \Rightarrow \alpha = -\lambda^2
 \end{eqnarray}
+\end{subequations}
 The $t$ dependent term is then given by
 \begin{equation}
 T = Ae^{-\lambda^2 t}
@@ -162,18 +169,21 @@ From this epression we see that the $\lambda$ must be real. Otherwise the term w
 \\
 \\
 For the $x$ dependent term we get
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
-X'' = -\lambda^2 X \\ \nonumber
+X'' = -\lambda^2 X \\
 \Rightarrow X'' + \lambda^2 X = 0 
 \end{eqnarray}
+\end{subequations}
+
 Again we use an anzats, that $X=e^{\alpha x}$:
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
-\alpha^2 e^{\alpha x} + \lambda^2 e^{\alpha x} &=& 0 \\ \nonumber
-\Rightarrow \alpha^2 &=& -\lambda^2 \\ \nonumber
+\alpha^2 e^{\alpha x} + \lambda^2 e^{\alpha x} &=& 0 \\ 
+\Rightarrow \alpha^2 &=& -\lambda^2 \\ 
 \Rightarrow \alpha &=& \pm \sqrt{-\lambda^2}
 \end{eqnarray}
+\end{subequations}
 By using that $\lambda$ must be a real number, the $x$ dependent term has the general solution 
 \begin{equation}
 X = Be^{-\lambda x} + Ce^{\lambda x}
@@ -181,7 +191,7 @@ X = Be^{-\lambda x} + Ce^{\lambda x}
 \end{equation}
 We are looking for trigonometric solution to the term, so we rewrite the expression above as:
 \begin{equation}
-X(x) = Bcos(\lambda x) + Csin(\lambda x)
+X(x) = Bcos(\lambda x) + Csin(\lambda x) 
 \end{equation}
 Applying the boundary conditions we get that
 \begin{eqnarray}
@@ -192,11 +202,13 @@ From the first boundary condition wher $L=0$ we must have that $B=0$. We are loo
 \\
 \\
 We have then infinite solutions of the transient part on the form:
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
 V_n(x,t) = A_ne^{-(n\pi)^2 t}C_nsin(n \pi x)\\
 \Rightarrow a_ne^{-(n\pi)^2 t}sin(n \pi x) \textit{ for } n = 1,2, \ldots 
 \end{eqnarray}
+\end{subequations}
+\\
 Where ${V_n(x,t)}$ is the family of particular solutions we are looking for. Our desired solution will be a certain sum of this family of particular solutions i.e. fundamental solutions:
 \begin{equation}
 \sum_{n=1}^{\infty} a_ne^{-(n\pi)^2 t}sin(n \pi x)
@@ -204,7 +216,7 @@ Where ${V_n(x,t)}$ is the family of particular solutions we are looking for. Our
 \end{equation}
 We must add the sum above in a way that the coefficients $a_n$ satisfies the the initial condition of the transient solution (\ref{eqn:transientIC}). This is done by setting 
 \begin{equation}
--U(x) = \sum_{n=1}^{\infty} a_nsin(n \pi x) \nonumber
+-U(x) = \sum_{n=1}^{\infty} a_nsin(n \pi x) 
 \end{equation}
 To obtain an expression for the coefficients $a_n$ we use that the functions $sin(n\pi x)$ is orthogonal to each other in the sense that 
 \begin{equation}
@@ -212,7 +224,7 @@ To obtain an expression for the coefficients $a_n$ we use that the functions $si
 	\begin{cases} 0 & \quad \text{if } m \neq n\\
     1/2 & \quad \text{if } m = n 
     \end{cases}
-    \nonumber
+    \label{eqn:orhogonalSine}
 \end{equation}
 Using the above statement and multiplying the particular solutions   \ref{eqn:FundamentalSolutionODE} by $\int_0^1sin(m\pi x)$ we get the expression
 \begin{eqnarray}
@@ -244,14 +256,16 @@ sin(n\pi x)e^{-(n\pi)^2 t}
 
 \section*{Analytical solution 2D}
 In the two-dimensional case the differential equation becomes
+\begin{subequations}
 \begin{eqnarray}
 \frac{\partial^2 u(x,y,t)}{\partial x^2} + \frac{\partial^2 u(x,y,t)}{\partial y^2} &=&  \frac{\partial u(x,y,t)}{\partial t} \textit{ , } t>0 \textit{ , } x,y \in [0,1] \\ \nonumber \\
 u(x,y,0) &=& 0 \textit{  } \\ 
 u(0,y,t) &=& 0 \textit{ , } t> 0 \\
 u(1,y,t) &=& 0 \textit{ , } t> 0 \\
 u(x,0,t) &=& 0 \textit{ , } t> 0  \\
-u(x,1,t) &=& 1 \textit{ , } t> 0 \\
+u(x,1,t) &=& 1 \textit{ , } t> 0 
 \end{eqnarray}
+\end{subequations}
 The boundary conditions is extended in such a way that the physical problem can be that of a flow whitin a box with infinite plates in the streamwise direction ($z$), where the fluid is initially at rest and the plate at $y=1$ is given a sudden movement. So we get "no slip" boundary conditions i.e. the fluid has zero movement on all boundaries except at $y=1$.
 \\
 \\
@@ -264,16 +278,18 @@ u(x,y,t) = U(x,y) + V(x,y,t)
 where $U(x,y)$ is the steady-state solution and $V/x,y,t)$ is the transient solution.\\
 \\
 The steady-solution is then written in a compact form as:
-
+\begin{subequations}
 \begin{eqnarray}
 U_{xx} + U_{yy} &=& 0 \textit{ , } x,y \in [0,1]\\ \nonumber
 \\
 U(0,y) &=& 0 \textit{  } \\
 U(1,y) &=& 0 \textit{  } \\
 U(x,0) &=& 0 \textit{  } \\
-U(x,1) &=& 1 \textit{  } \\
+U(x,1) &=& 1 \textit{  } 
 \end{eqnarray}
+\end{subequations}
 For the transient problem we have the propblem defined as:
+\begin{subequations}
 \begin{eqnarray}
 \label{eqn:transientPDE}
 V_t &=& V_{xx} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
@@ -283,9 +299,10 @@ V(x,0) &=& -U(x,y) \textit{ , } x,y \in [0,1] \\
 V(0,y,t) &=& 0 \textit{ , } t>0 \\
 V(1,y,t) &=& 0 \textit{ , } t>0 \\
 V(x,0,t) &=& 0 \textit{ , } t>0 \\
-V(x,1,t) &=& 0 \textit{ , } t>0 \\
+V(x,1,t) &=& 0 \textit{ , } t>0 
 \end{eqnarray}
-
+\end{subequations}
+\\\\
 For the steady-state problem we have a 2D Laplacian equation, which we can solve by seperation of variables. We use the anzats that $U(x,y) = X(x)Y(y)$, so that we end up with:
 \begin{eqnarray}
 \nonumber
@@ -294,10 +311,10 @@ YX'' + XY''=0 \\ \nonumber
 \end{eqnarray}
 Due to the independence of the terms on each side of the equation, we can solve the equations separately, with each equation beeing
 \begin{equation}
-\frac{X''}{X} = -\beta^2 
+\frac{X''}{X} = -\beta^2 \nonumber
 \end{equation}
 \begin{equation}
-\frac{Y''}{Y} = \beta^2 
+\frac{Y''}{Y} = \beta^2 \nonumber
 \end{equation}
 The sign on the right hand side in both of the above equations es determined by the fact that in the $x$ dependent term we have homogeneous boundaries, while in the $y$ dependent term we have non-homogeneous. The $x$ independent term must be on a form that allows it to be homogeneous on the boundaries, while the $y$ term must be on a form that allows it to be 0 at $y=0$ and 1 at $y=1$. 
 
@@ -309,13 +326,16 @@ X'' = -\beta^2 X \\ \nonumber
 \end{eqnarray}
 which has a similar solution as that of the transient $x$ dependent term in the one-dimensional case (\ref{eqn:xDependenttransientTerm1D}).We are again looking for a trigonometric form
 \begin{equation}
-X(x) = Acos(\beta x) + Bsin(\beta x)
+X(x) = Acos(\beta x) + Bsin(\beta x) \nonumber
 \end{equation}
 Applying the boundary conditions we end up with the term
 \begin{equation}
 X_n(x) = B_nsin(n\pi x)
+\label{eqn:xDependenSteadyState2D}
 \end{equation}
-were ${X_n(x)}$ is the family of particular solutions.
+were ${X_n(x)}$ is the family of particular solutions.\\
+\\
+
 The $y$ dependent term can be rewritten as 
 \begin{eqnarray}
 \nonumber
@@ -350,28 +370,25 @@ Applying the last boundary $U(x,1) = 1$ we must have that
 1 = \sum_{n=1}^{\infty} c_n sin(n\pi x)sinh(n\pi)
 \end{equation}
 setting $d_n = c_nsinh(n\pi)$ we get that 
-$$ 1 = \sum_{n=1}^{\infty} d_n sin(n\pi x)$$
-and using again that the functions $sin(n\pi x)$ is orthogonal in the sense that
-$$
-\int_0^1 sin(n\pi x) sin(m\pi x) dx = 
-	\begin{cases} 0 & \quad \text{if } m \neq n\\
-    1/2 & \quad \text{if } m = n 
-    \end{cases}
-    \nonumber
-$$ 
-we get that 
+\begin{equation}
+1 = \sum_{n=1}^{\infty} d_n sin(n\pi x)
+\end{equation}
+\\
+and using again that the functions $sin(n\pi x)$ is orthogonal (\ref{eqn:orhogonalSine}), as in the 1D case, we get that 
+\begin{subequations}
 \begin{eqnarray}
 dn = 2\int_0^1 sin(m\pi x) dx = \frac{2}{m\pi}(1-(-1)^m\\
 \Rightarrow c_n = \frac{2}{m\pi sinh(m\pi)}(1-(-1)^m
 \end{eqnarray}
-
+\end{subequations}
 
 This in turn lets us write the steady-state solution as 
+\begin{subequations}
 \begin{eqnarray}
-\nonumber
 U(x,y) = \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{sin(m\pi x)sinh(m\pi y)}{\pi sinh(m\pi)}(1-(-1)^m \\ 
 U(x,y) = \frac{4}{\pi} \sum_{m}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
 \end{eqnarray}
+\end{subequations}
 
 
 
