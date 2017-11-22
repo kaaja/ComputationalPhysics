@@ -130,7 +130,7 @@ class Project5:
     def project5d(self):
         dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
         safetyFactor = 1.05
-        dt = dxValues[-1]**2/2.0*(1/safetyFactor)
+        #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
         T = 0.25
         theta = 0.5
         dimension = "1D"
@@ -141,6 +141,7 @@ class Project5:
         counter = 1
         data = OrderedDict()
         for dx in dxValues:
+            dt = 1./2.*dx**2
             alpha = dt/dx**2
             self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)            
             # Read data

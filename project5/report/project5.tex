@@ -602,9 +602,50 @@ Adding (\ref{eq:uyyFe2d}) to the 1D FE scheme (\ref{eq:fe}) gives the explicit 2
 			&+  \frac{u(x,y - \Delta y, t) - 2u(x,y,t) + u(x,y+ \Delta y, t)}{\Delta y^2} \\
 			&+ \mathcal{O}(\Delta x^2)  + \mathcal{O}(\Delta y^2)
 		\end{split}\\
-		\rightarrow u_{ij}^{n+1} &\stackrel{(\ref{eq:alpha})}{\approx} u_{ij}^{n} + \alpha (u_{i-1,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n - 4u_{ij}^n)\label{eq:Fe2d}
+		\rightarrow u_{ij}^{n+1} &\stackrel{(\ref{eq:alpha})}{\approx} u_{ij}^{n} + \alpha (u_{i-1,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n - 4u_{ij}^n),\label{eq:Fe2d}
 	\end{align}
 \end{subequations}
+
+where we in the last transition assumed $\Delta x = \Delta y$ such that $\alpha$ is given as before.\\
+
+First we observe that the truncation errors go like $\mathcal{O}(\Delta t)$, $\mathcal{O}(\Delta x^2)$ and $\mathcal{O}(\Delta y^2)$.\\
+
+Now lets analyze the stability, by inserting the ansatz
+
+\begin{equation}\label{eq:ansatz2d}
+	u = a_k^n e^{i k \pi \Delta x j} e^{i k \pi \Delta y l}
+\end{equation}
+
+into (\ref{eq:Fe2d}) and solve for $|a|$, as before\\
+
+\begin{subequations}
+	\begin{align}
+		u_{ij}^{n+1} &= u_{ij}^{n} + \alpha (u_{i-1,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n - 4u_{ij}^n)\\
+		a_k^n e^{i \pi k \Delta x j} e^{i \pi k \Delta j l} a&= 
+		a_k^n e^{i \pi k \Delta x j} e^{i \pi k \Delta j l} 
+		\Big(1 + \alpha(e^{-i k \pi \Delta x} + e^{i k \pi \Delta x})  - 2 + e^{-i k \pi \Delta y} + e^{i k \pi \Delta y})  - 2\Big)\\
+		a&= 
+		\Big(1 + \alpha(e^{-i k \pi \Delta x} + e^{i k \pi \Delta x})  - 2 + e^{-i k \pi \Delta y} + e^{i k \pi \Delta y})  - 2\Big)\\
+		&\stackrel{(\ref{eq:naumanFe0})}{=}
+		1 - 4 \alpha \Big(\sin^2 (k \pi \Delta x /2) + \sin^2(k \pi \Delta y/2)\Big)\\
+		|a| &=
+		\left|1 - 4 \alpha \Big(\sin^2 (k \pi \Delta x /2) + \sin^2(k \pi \Delta y/2)\Big)\right|\\
+		|a| < 1 &\rightarrow 		\left|1 - 4 \alpha \Big(\sin^2 (k \pi \Delta x /2) + \sin^2(k \pi \Delta y/2)\Big)\right|  < 1\label{eq:2dFeStab1}\\
+		&\left|1 - 4 \alpha \Big(\sin^2 (k \pi \Delta x /2) + \sin^2(k \pi \Delta y/2)\Big)\right| < \left|1 - 8 \alpha \right|\label{eq:2dFeStab2}
+	\end{align}
+\end{subequations}
+
+Again assuming $\Delta x = \Delta y$, we have $\alpha = \Delta t/\Delta x^2 > 0$, so that (\ref{eq:2dFeStab1}) and (\ref{eq:2dFeStab2}) gives
+
+\begin{subequations}
+	\begin{align}
+		1 - 8 \alpha < -1\\
+		\alpha < \frac{1}{4}.\label{eq:2dFeStab}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:2dFeStab}) gives that the 2D Forward Euler scheme is conditionally stable. We note that we could probably have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:Fe2d}) was already assumed that $\Delta x = \Delta y$. \\
+
 
 The new thing in (\ref{eq:Fe2d}) compared to (\ref{eq:fe}), is that $u{ij}^{n+1}$ in the 2D case is a matrix and not a vector as in the 1D case. The fact that we are dealing with a matrix instead of a vector, does not change anything with regards to the solution strategy. The equation (\ref{eq:Fe2d}) is still explicit, the only difference in implementation is that instead of one single loop a double loop over two space dimensions is needed now.\\
 
@@ -649,13 +690,33 @@ We start in the same way as we did for Forward Euler in 2D, and just add an extr
 			&+ \frac{u_{i,j-1}^n - 2u_{i,j}^n + u_{i,j+1}^n}{h^2}
 		\end{split}\\				
 		u_{i,j}^n - u_{i,j}^{n-1}  &\stackrel{(\ref{eq:alpha})}{\approx} \alpha (u_{i-1,j}^{n} 
-			- 4u_{i,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\\
+			- 4u_{i,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\label{eq:2dBe1}\\
 		u_{i,j}^n &= u_{i,j}^{n-1}  + \frac{1}{1+4\alpha}(u_{i-1,j}^{n} 
 		+ u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\label{eq:2dBe}
 	\end{align}
 \end{subequations}
 
-We that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that standard methods as LU-decomposion becomes unpractical. In our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. 
+First we observe that the truncation errors go like $\mathcal{O}(\Delta t)$, $\mathcal{O}(\Delta x^2)$ and $\mathcal{O}(\Delta y^2)$, so there is no difference in the truncation errors between Forward Euler and Backward Euler, just as for the 1D case.\\
+
+We study stability of the 2D Backward Euler scheme by inerting the 2D ansatz (\ref{eq:ansatz2d}) into
+(\ref{eq:2dBe1})
+
+\begin{subequations}
+	\begin{align}
+	u_{i,j}^n - u_{i,j}^{n-1} 
+	&=
+	\alpha (u_{i-1,j}^{n} 
+	- 4u_{i,j}^n + u_{i+1,j}^n + u_{i,j-1}^n + u_{i,j+1}^n)\\
+	a_k - 1 &= \alpha a (e^{-ik \pi \Delta x} + e^{ik \pi \Delta x} -2 + e^{-ik \pi \Delta y} + e^{ik \pi \Delta y} -2 )\\
+	&\stackrel{(\ref{eq:naumanFe0})}{=} - 4 \alpha a \Big(\sin^2(k \pi \Delta x/2) +  \sin^2(k \pi \Delta y/2)\Big)\\
+	&\stackrel{\Delta x = \Delta y = h}{=} -8 \alpha a \sin^2(kh/2)\\
+	a &= \frac{1}{1+ 8 \alpha \sin^2(kh/2)} < 1\label{eq:2dBeStability}
+	\end{align}
+\end{subequations}
+
+From (\ref{eq:2dBeStability}) we see that the Backward Euler scheme is also unconditionally stable in two dimensions, as it was for one dimension. We note that we probably could have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:2dBe1}) was already assumed that $\Delta x = \Delta y$.\\
+
+We see that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that standard methods as LU-decomposion becomes unpractical. In our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. 
 
 \subsubsection{Jacobi's algorithm}
 We will solve the implicit 2D scheme (\ref{eq:2dBe}) by using Jacobi's iteration algorithm, and, following Hjorth-Jensen \cite{MHJ} p. 319, we have the following main algorithm
