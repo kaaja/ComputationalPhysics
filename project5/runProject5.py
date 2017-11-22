@@ -194,7 +194,7 @@ class Project5:
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = .1
+                    T = .3
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -227,6 +227,13 @@ class Project5:
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                               shading='flat')  #
                         st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
+                        
+                        st.surfc(xv, yv, data-data2, title='Numerical-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
+                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                              shading='flat')  #
+                        st.savefig('movie/tmpError_%04d' %fileCounter + outfileName + '.png')
+                        
+                        
             
             data = pd.read_csv(outfileName2 + 'Timing.txt' , delimiter=',')
                

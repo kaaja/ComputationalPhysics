@@ -187,15 +187,17 @@ double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, 
     double *w = new double [numberOfIntegrationPoints];
     gauleg(leftIntegrationLimit , rightIntegrationLimit,xPoints, w, numberOfIntegrationPoints);
     double integralSum = 0.;
+    double beta;
     #pragma omp parallel for default(shared) private(k, integrationCounter) reduction(+:integralSum)
     for ( k = 1;  k < numberOfSummationPoints; k++){
+        beta = 2*k-1;
         double intGaussX = 0.;
         double intGaussY = 0.;
         for (integrationCounter =0; integrationCounter < numberOfIntegrationPoints; integrationCounter++){
-            intGaussX += w[integrationCounter]*sin(k*M_PI*xPoints[integrationCounter])*sin(n*M_PI*xPoints[integrationCounter]);
-            intGaussY += w[integrationCounter]*sinh(k*M_PI*xPoints[integrationCounter])*sin(m*M_PI*xPoints[integrationCounter]);
+            intGaussX += w[integrationCounter]*sin(beta*M_PI*xPoints[integrationCounter])*sin(n*M_PI*xPoints[integrationCounter]);
+            intGaussY += w[integrationCounter]*sinh(beta*M_PI*xPoints[integrationCounter])*sin(m*M_PI*xPoints[integrationCounter]);
         }
-        integralSum += 4./M_PI*intGaussX*intGaussY/(k*sinh(k*M_PI));
+        integralSum += 4./M_PI*intGaussX*intGaussY/(beta*sinh(beta*M_PI));
     }
     return integralSum;
 }
