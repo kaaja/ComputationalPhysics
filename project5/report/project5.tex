@@ -420,14 +420,167 @@ From the $\theta$-scheme (\ref{eq:thetaRule}) we see that $\theta = 0,\;1/2,\;1$
 When implementing the 1D-schemes, we will use the $\theta$-scheme. Using the $\theta$-scheme, we need only write one scheme instead of three.
 
 \subsection{Implementation of 1D problem}
-As mentioned in the previous paragraph, we implement the 1D schemes using the $\theta$-scheme. \\
+As mentioned in the previous paragraph, we implement the 1D schemes using the $\theta$-scheme. We will now rewrite (\ref{eq:thetaRule}) to a linear system, and then we will apply the Thomas algorithm to this system.\\
 
-To ease the notation, we introdude 
+To ease the notation, we introduce 
 
 \begin{equation}\label{eq:alpha}
-	\alpha = 
+	\alpha = \frac{\Delta t}{\Delta x^2}.
 \end{equation}
 
+Insertion of $\alpha$ (\ref{eq:alpha}) into the $\theta$-scheme (\ref{eq:thetaRule}) and introdusing the discretization $u(x + \Delta x, t - \Delta t) = u_{i+1}^{n-1}$ gives
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+				&\frac{u(x,t+\Delta t) - u(x,t)}{\Delta t}= 
+		\theta \frac{u(x-\Delta x,t+ \Delta t)
+			- 2u(x,t+\Delta t) +u(x+\Delta x,t+\Delta t)}{\Delta x^2} \\
+		&+ (1 - \theta) \frac{u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)}{\Delta x^2} 
+		\end{split}\\
+		\begin{split}
+			&u(x,t+\Delta t) - u(x,t)= 
+			\alpha \theta \Big(u(x-\Delta x,t+ \Delta t)
+				- 2u(x,t+\Delta t) +u(x+\Delta x,t+\Delta t)\Big) \\
+			&+ \alpha (1 - \theta) \Big(u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)\Big) 
+		\end{split}\\
+			&u_i^{n+1} - u_i^{n}= 
+			\alpha \theta \Big(u_{i-1}^{n+1}
+			- 2u_i^{n+1} +u_{i+1}^{n+1}\Big) + \alpha (1 - \theta) \Big(u_{i-1}^n - 2u_i^n +u_{i+1}^n\Big) \\
+		&u_i^{n} - u_i^{n-1}= 
+		\alpha \theta \Big(u_{i-1}^{n}
+		- 2u_i^{n} +u_{i+1}^{n}\Big) + \alpha (1 - \theta) \Big(u_{i-1}^{n-1} - 2u_i^{n-1} +u_{i+1}^{n-1}\Big) \\
+			&u_i^{n} -\alpha \theta \Big(u_{i-1}^{n}
+			- 2u_i^{n} +u_{i+1}^{n}\Big) = u_i^{n-1} 
+			 + \alpha (1 - \theta) \Big(u_{i-1}^{n-1} - 2u_i^{n-1} +u_{i+1}^{n-1}\Big)\\
+			&-\alpha \theta u_{i-1}^{n} +
+			(2 \alpha \theta + 1) u_i^{n} - \alpha \theta u_{i+1}^{n} = 
+			 \alpha (1 - \theta) u_{i-1}^{n-1} +\Big(1 - 2 \alpha (1 - \theta) \Big)u_i^{n-1} +\alpha (1 - \theta)u_{i+1}^{n-1}\\
+			 &-2\alpha \theta u_{i-1}^{n} +
+			 2(2 \alpha \theta + 1) u_i^{n} - 2\alpha \theta u_{i+1}^{n} = 
+			 2\alpha (1 - \theta) u_{i-1}^{n-1} +2\Big(1 - 2 \alpha (1 - \theta) \Big)u_i^{n-1} +2\alpha (1 - \theta)u_{i+1}^{n-1}\label{eq:thetaAlgo1}
+	\end{align}
+\end{subequations}
+
+Now we rewrite (\ref{eq:thetaAlgo1}) as a matrix-vector equation $A_1 U^n = A_2 U^{n-1}$:
+
+\begin{subequations}
+	\begin{align}
+		\begin{split}
+		\underbrace{\begin{bmatrix} 2(2 \alpha \theta + 1) & - 2\alpha \theta & \cdots & 0 \\ - 2\alpha \theta & 2(2 \alpha \theta + 1) & - 2\alpha \theta & \vdots \\
+			\vdots & &  \ddots & - 2\alpha \theta \\ 
+			0 & \cdots & - 2\alpha \theta &2(2 \alpha \theta + 1) \end{bmatrix}}_{\mathbf{A_1}} 
+		\underbrace{\begin{bmatrix} u_1^n\\ u_2^n \\ \vdots\\ u_N^n \end{bmatrix}}_{\mathbf{U^{n}}}\\ = 
+		\underbrace{\begin{bmatrix} 2( 1 - 2 \alpha (1-\theta)) &  2\alpha (1-\theta) & \cdots & 0 \\  2\alpha (1-\theta) & 2( 1 - 2 \alpha (1-\theta)) &  2\alpha (1-\theta) & \vdots \\
+	\vdots & &  \ddots &  2\alpha (1-\theta) \\ 
+	0 & \cdots &  2\alpha (1-\theta) &2( 1 - 2 \alpha (1-\theta)) \end{bmatrix}}_{\mathbf{A_2}} 
+	\underbrace{\begin{bmatrix} u_1^{n-1}\\ u_2^{n-1} \\ \vdots\\ u_N^{n-1} \end{bmatrix}}_{\mathbf{U^{n-1}}}	
+		\end{split}\label{eq:thetaLinsSys}
+	\end{align}
+\end{subequations}
+
+In (\ref{eq:thetaLinsSys}), the right hand side $\mathbf{A_2 U^{n-1}}$ is known, since $\mathbf{U}^{n-1}$ is the previous periods solution, so (\ref{eq:thetaLinsSys}) is a linear system of the known type $A U = b$. So in principle the above system is solved for each time step, solving it for a time step and then using this solution in the right hand side in the next time step.\\
+
+We note that with $\theta = 0$ in (\ref{eq:thetaLinsSys}), the system reduces to the explicit Forward Euler system, which can be obtained from (\ref{eq:fe}). $\theta  = 1$ gives the Backward Euler system (\ref{eq:beLinSys}). $\theta = 1/2$ in (\ref{eq:thetaLinsSys}) gives the system that can be obtained by rewrting the Crank-Nicolson scheme (\ref{eq:cn1d}) as a linear system.\\
+
+In principle the above system can be solved by calculating the inverse of $A_1$ and solving $U^n = A_1^{-1} (A_2 U^{n-1})$. This is a costly operation and is avoided. Instead of calculating the inverse, one often solves these systems by some kind of elimination method, e.g. Gaussian elimination or by LU. In this case, we note that we are dealing with a tridiagonal matrix. For tridiagonal systems, the Thomas algorithm gives an alterative way of solving the linear system which reduces the number of FLOPS considerably. In our case we are eaven more lucky. Our matrix is symmetric, and the elements are constant, so the standard Thomas algorithm can be further improved. We will now derive the algorithm that we implement.\\
+
+We start with a tridiagonal symmetric linear system $Au =f$, with $A$ being $4 \times 4$. The following show the forward substitution steps for this sytem
+
+\begin{subequations}
+	\begin{align}
+		\begin{bmatrix}
+		     d_1 & e_1 & 0 & 0 & f_1\\
+		      e_2 & d_2 & e_2 & 0 & f_2\\
+			 0 & e_3 & d_3 & e_3 & f_3\\
+	         0 & 0 & e_4 & d_4 & f_4
+		\end{bmatrix}
+		\rightarrow
+		\begin{bmatrix}
+		d_1 & e_1 & 0 & 0 & f_1\\
+		0 & \tilde{d}_2 & e_2 & 0 & \tilde{f}_2\\
+		0 & e_3 & d_3 & e_3 & f_3\\
+		0 & 0 & e_4 & d_4 & f_4
+		\end{bmatrix}
+		\rightarrow
+		\begin{bmatrix}
+		d_1 & e_1 & 0 & 0 & f_1\\
+		0 & \tilde{d}_2 & e_2 & 0 &\tilde{f}_2 \\
+		0 & 0 & \tilde{d}_3 & e_3 & \tilde{f}_3\\
+		0 & 0 & e_4 & d_4 & f_4
+		\end{bmatrix}
+		\rightarrow
+		\begin{bmatrix}
+		d_1 & e_1 & 0 & 0 & f_1\\
+		0 & \tilde{d}_2 & e_2 & 0 &\tilde{f}_2 \\
+		0 & 0 & \tilde{d}_3 & e_3 & \tilde{f}_3\\
+		0 & 0 & e_4 & \tilde{d}_4 & \tilde{f}_4
+		\end{bmatrix}
+	\end{align}\label{eq:thomas1}
+\end{subequations}
+
+
+From (\ref{eq:thetaLinsSys}) we have that in our case $e_1=e_2 = ... = e_N= -2 \alpha$ and $d_1 = d_2 = ... = d_N = 2(2\alpha \theta +1)$. Calculating the first couple of $\tilde{d}$'s we quickly see that we get the following general expression for $\tilde{d}_i$
+
+\begin{equation}\label{eq:thomasDtilde}
+	\tilde{d}_i = 2(2\alpha \theta +1) + \frac{(2\alpha)^2}{\tilde{d}_{i-1}}\;\text{for } i>1.
+\end{equation}
+
+Doing the same for $\tilde{f}$ we get the general expression
+
+\begin{equation}\label{eq:thomasFtilde}
+	\tilde{f}_i = f_i + \frac{2 \alpha \theta}{\tilde{d}_{i-1}} \tilde{f}_{i-1}\;\text{for } i>1.
+\end{equation}
+
+Having $\tilde{d}$ and $\tilde{f}$ we are ready to do the back substitution step. We have
+
+\begin{subequations}
+	\begin{align}
+		\begin{bmatrix}
+		d_1 & e_1 & 0 & 0\\
+		0 & \tilde{d}_2 & e_2 & 0  \\
+		0 & 0 & \tilde{d}_3 & e_3 \\
+		0 & 0 & e_4 & \tilde{d}_4 
+		\end{bmatrix}
+		\begin{bmatrix} u_1\\ u_2 \\ u_3\\ u_4  \end{bmatrix}
+		= \begin{bmatrix} f_1\\\tilde{f}_2 \\ \tilde{f}_3\\ \tilde{f}_4  \end{bmatrix}
+	\end{align}\label{eq:thomasBack1}
+\end{subequations}
+
+From (\ref{eq:thomasBack1}) we get
+
+\begin{equation}\label{eq:thomasULast}
+	u_4 = \frac{\tilde{f}_4}{\tilde{d}_4}
+\end{equation}
+
+and
+
+\begin{equation}\label{eq:thomasU}
+	u_i = \frac{\tilde{f}_i + 2\alpha \theta u_{i+1}}{\tilde{d}_i}\; \text{for } i > 1.
+\end{equation}
+
+The equations (\ref{eq:thomasDtilde}), (\ref{eq:thomasFtilde}), (\ref{eq:thomasULast}) and (\ref{eq:thomasU}) is what we need for our algorithm.
+
+\begin{lstlisting}
+for time in times:
+	Calculate RHS f (= A_2 U^{n-1})
+	
+	// Forward substitution
+	for row in rows (Start from 1st row):
+		Calculate \tilde{d}
+		Calculate \tilde{f}
+	end row loop
+	
+	// Backward substitution
+	For row in rows (Starting from last row)
+		Calculate u
+	end row loop
+
+	// Update RHS for next time step
+	U^{n-1} = U^{n}
+
+end time loop
+\end{lstlisting}
 
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 
