@@ -118,7 +118,7 @@ For the transient part of the problem we have the problem written in compact for
 V_t &=& V_{xx} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
 \\
 \label{eqn:transientIC}
-V(x,0) &=& -U_s(x) \textit{ , } 0<x<1 \\
+V(x,0) &=& -U(x) \textit{ , } 0<x<1 \\
 V(0,t) &=& 0 \textit{ , } t>0 \\
 V(1,t) &=& 0 \textit{ , } t>0
 \end{eqnarray}
@@ -262,7 +262,7 @@ In the two-dimensional case the differential equation becomes
 \begin{subequations}
 \begin{eqnarray}
 \frac{\partial^2 u(x,y,t)}{\partial x^2} + \frac{\partial^2 u(x,y,t)}{\partial y^2} &=&  \frac{\partial u(x,y,t)}{\partial t} \textit{ , } t>0 \textit{ , } x,y \in [0,1] \\ \nonumber \\
-u(x,y,0) &=& 0 \textit{  } \\ 
+u(x,y,0) &=& 0 \textit{ , } x,y \in [0,1] \\ 
 u(0,y,t) &=& 0 \textit{ , } t> 0 \\
 u(1,y,t) &=& 0 \textit{ , } t> 0 \\
 u(x,0,t) &=& 0 \textit{ , } t> 0  \\
