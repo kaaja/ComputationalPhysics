@@ -470,8 +470,8 @@ To find the last coefficient $A_{nm}$ we use the initial condition for the trans
 We can solve for the coefficient by again using the orthogonality from \ref{eqn:orhogonalSine}, so that when we multiply the term above with $\int_0^1 sin(m\pi x)$ and $\int_0^1 sin(n\pi y)$ we get that
 \begin{subequations}
 \begin{eqnarray}
-\int_0^1 \int_0^1 -U(x,y) sin(n\pi y)sin(m\pi x) dxdy =  \frac{A_{mn}}{4}\\
-\Rightarrow A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(n\pi x)sin(m\pi y) dxdy
+\int_0^1 \int_0^1 -U(x,y) sin(m\pi x)sin(n\pi y) dxdy =  \frac{A_{mn}}{4}\\
+\Rightarrow A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(m\pi x)sin(n\pi y) dxdy
 \end{eqnarray}
 \end{subequations}
 \\
@@ -486,7 +486,7 @@ U(x,y) = \frac{4}{\pi} \sum_{m=1}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi 
 \end{equation}
 and 
 \begin{equation}
-A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(n\pi x)sin(m\pi y) dxdy
+A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(m\pi x)sin(n\pi y) dxdy
 \end{equation}
 
 
