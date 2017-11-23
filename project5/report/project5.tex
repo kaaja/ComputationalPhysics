@@ -716,10 +716,132 @@ We study stability of the 2D Backward Euler scheme by inerting the 2D ansatz (\r
 
 From (\ref{eq:2dBeStability}) we see that the Backward Euler scheme is also unconditionally stable in two dimensions, as it was for one dimension. We note that we probably could have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:2dBe1}) was already assumed that $\Delta x = \Delta y$.\\
 
-We see that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that standard methods as LU-decomposion becomes unpractical. In our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. 
+We see that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that we cannot apply the Thomas algorithm anymore, and standard methods as LU-decomposion becomes unpractical. However, in our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. Iterative methods are often much faster than direct methods like Gaussian elimination and LU-decomposition. Hence we will solve the implicit problem applying iterative methods. 
+
+\subsubsection{Iterative methods}
+This section follows Olver and Shakiban's \cite{olver} chapter on iterative methods closesly. The goal is to present the main idea behind iterative methods, and to present the Jacobi method as part of a general framework.\\
+
+Firstly, an iterative method is not a direct method, like e.g. Gaussian elemination, that solves the problem as it is stated, typically 
+
+\begin{equation}\label{eq:AuB}
+	\mathbf{A}\mathbf{u} = \mathbf{b}.
+\end{equation} 
+
+Instead, with iterative methods, one solves another problem:
+
+\begin{equation}\label{eq:iter1}
+	\mathbf{u}^{k+1} = \mathbf{T} \mathbf{u}^k + \mathbf{c},
+\end{equation}
+where $k$ stands for iterations. \\
+
+For the iterative method to work, it firstly has to converge: 
+
+\begin{equation}\label{eq:itConver}
+	\lim_{k \rightarrow \infty} \mathbf{u}^{k} = \mathbf{u}^{*}.
+\end{equation}
+
+Taking the limit on both sides of (\ref{eq:iter1}) and using (\ref{eq:itConver}) we get
+
+\begin{subequations}
+	\begin{align}
+			\lim_{k \rightarrow \infty} \mathbf{u}^{k+1} &= 	\lim_{k \rightarrow \infty} \mathbf{T} \mathbf{u}^k + \mathbf{c}\\
+			\mathbf{u}^{*} &= \mathbf{T} \mathbf{u}^{*} + \mathbf{c}.\label{eq:itFixedPoint}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:itFixedPoint}) is a fixed point equation, and we have that the solution to the iterative scheme has to converge to a fixed point.\\
+ 
+Secondly, the convergent solution $\mathbf{u}^{*}$ that is approached  as $k \rightarrow \infty$ must become equal to the solution $\mathbf{u}$ of the original problem, $\mathbf{A}\mathbf{u} = \mathbf{b}$. \\
+
+Lets now look at conditions for the 1st condition, convergence to the fixed point $\mathbf{u^{*}}$ to hold. We study the error with respect to the fixed point
+
+\begin{subequations}
+	\begin{align}
+		\mathbf{e}^{k+1} &= \mathbf{u}^{k+1} - \mathbf{u}^{*}\\
+		&\stackrel{(\ref{eq:iter1})}{=}  \mathbf{T} \mathbf{u}^k + \mathbf{c} - \mathbf{u}^{*}\\
+		&=\mathbf{T} \mathbf{u}^k + \mathbf{c} - (\mathbf{T} \mathbf{u}^{*} + \mathbf{c})\\
+		&=\mathbf{T} (\mathbf{u}^k -\mathbf{u}^{*}\\
+		&=\mathbf{T}\mathbf{e}^{k}\\
+		&=\mathbf{T}^k\mathbf{e}^{(0)}.\label{eq:iterConvError}
+	\end{align}
+\end{subequations}
+
+(\ref{eq:iterConvError}) shows that the development of the error in convergence towards the fixed point depends on the same matrix as the original iterative problem, $\mathbf{T}$. We have convergende towards the fixed point $\mathbf{u}^{*}$ if $\mathbf{T}$ is a convergent matrix. $\mathbf{T}$ is a convergent matrix if the spectral radius of $\mathbf{T}$ is less than one, $\rho(T) < 1$. The speed of convergence is inversly related to the spectral radius, implying that we want to construct $T$ with as low spectral radius as possible.  \\
+
+We now have a condition for the first requirement for our iterative scheme: convergence to the fixed point. Now for the 2nd condition: convergence to the true solution. An iterative scheme converging to a fixed point different from the true solution is of little use in our case. It turns out that convergence to the true solution depeneds on the chosen scheme, represented by the matrix $T$ in our case, and the coefficient matrix of the original problem, $A$. We have that both the Jacobi scheme, to be derived, and the Gauss-Seidel scheme are convergent to the true solution if $A$ is strictly diagonally dominant.\\
+
+We sum up our results in this section:\\
+
+The iteration scheme (\ref{eq:iter1}) converges to the solution of the original linear system (\ref{eq:AuB}) if the following two conditions are satisfied
+
+\begin{itemize}
+	\item{The spectral radius of $T$ in (\ref{eq:iter1}) is less than one.}
+	
+	\item{$A$ in (\ref{eq:AuB}) is strictly diagonally dominant (In the case of Jacobi and Gauss-Seidel)}
+\end{itemize}
+
+Next we will derive the Jacobi-algorithm and relate it to our genereal iterative system (\ref{eq:iter1}).
 
 \subsubsection{Jacobi's algorithm}
-We will solve the implicit 2D scheme (\ref{eq:2dBe}) by using Jacobi's iteration algorithm, and, following Hjorth-Jensen \cite{MHJ} p. 319, we have the following main algorithm
+We begin by a rewrite of the linear system (\ref{eq:AuB}), where we split $A$ into one strictly lower triangular matrix, $L$, one strictly upper triangular matrix, $U$, and one diagonal matrix, $D$:
+
+\begin{subequations}
+	\begin{align}
+		A \mathbf{u} &= \mathbf{b}\\
+		(L + D + U) \mathbf{u} &= \mathbf{b}\\
+		\mathbf{u} &= D^{-1} \Big(-(L+D) \mathbf{u} + \mathbf{b}\Big)\label{eq:iterJacobi1}
+	\end{align}
+\end{subequations}
+
+The above is nothing new. It is still the original system. With the Jacobi algorithm, one sets $\mathbf{u}^{k+1} = \mathbf{u}$ on the left hand side of (\ref{eq:iterJacobi1}) and $\mathbf{u} = \mathbf{u}^k$ on the right hand side to get
+
+\begin{subequations}
+	\begin{align}
+	\mathbf{u}^{k+1}  &= D^{-1} \Big(-(L+D) \mathbf{u}^k + \mathbf{b}\Big)\label{eq:iterJacobi2}
+	\end{align}
+\end{subequations}
+
+We see that the Jacobi-scheme (\ref{eq:iterJacobi2}) fits our general iterative fixed point scheme (\ref{eq:iter1}), with
+
+\begin{subequations}\label{eq:jacobiFixed}
+	\begin{align}
+		&T = -D^{-1}(L+D)\\
+		&\mathbf{c} = D^{-1} \mathbf{b}.
+	\end{align}
+\end{subequations}
+
+It is perhaps easier to see that the Jacbi algoritm (\ref{eq:iterJacobi2}) do by considering a single row in the matrix-vector system
+
+\begin{subequations}\label{eq:jacobiRow}
+	\begin{align}
+		u_i^{(k+1)} = - \frac{1}{a_{ii}} \sum_{j=1,i \neq j} a_{ij} u_j^{(k)} + \frac{b_i}{a_{ii}}.
+	\end{align}
+\end{subequations}
+
+Using (\ref{eq:jacobiRow}) we will in the next section see that it is easy to formulate a Jacobi-solver for the 2D implicit scheme (\ref{eq:2dBe}).
+
+\subsubsection{Jacobi's algorithm applied to the 2D implicit diffusion}
+Now we will apply Jacobi's algorithm (\ref{eq:jacobiRow}) to the 2D implicit scheme (\ref{eq:2dBe}). We see that (\ref{eq:2dBe}) is already almost set up like a Jacobi-scheme. We get
+
+\begin{subequations}\label{eq:jacobi2D}
+	\begin{align}
+				u_{i,j}^{n,(k+1)} &= u_{i,j}^{n-1}  + \frac{1}{1+4\alpha}(u_{i-1,j}^{n, (k)} 
+		+ u_{i+1,j}^{n,(k)} + u_{i,j-1}^{n,(k)} + u_{i,j+1}^{n,(k)})
+	\end{align}
+\end{subequations}
+
+(\ref{eq:jacobi2D}) is our Jacobi-Solver. By setting
+
+\begin{subequations}
+	\begin{align}
+		&a_{ii} = -(1 + 4\alpha)\\
+		&b_i = a_{ii} u_{i,j}^{n-1}
+	\end{align}
+\end{subequations}
+
+in (\ref{eq:jacobi2D}) we see that (\ref{eq:jacobi2D}) corresponds to the Jacobi-algorithm (\ref{eq:jacobiRow}). We also note that only 4 neighboring pints are needed.\\
+
+Following Hjorth-Jensen \cite{MHJ} p. 319, we get the following main algorithm for the Jacobi-solver
 
 \begin{itemize}
 	\item{1: Make intial guess for $u_{i,j}$ for all internal points.}
@@ -731,7 +853,7 @@ We will solve the implicit 2D scheme (\ref{eq:2dBe}) by using Jacobi's iteration
 
 The above algorithm is used for all time steps, starting with the first internal time step, solving one step at the time before moving to the next step.
 
-\subsection{2D boundary conditions}
+\subsection{2D Physical problem with boundary conditions}
 We choose to model a laminar flow inside an infinite tunnel with a finite quadratic cross section. We only model a single cross section, the problem being identical for all cross sections because of the homogenity assumption in the flow direction. \\
 
 There will be no slip boundary conditions on all four walls. The floor and the sides will be fixed, while the roof will be moving in the flow direction. With these boundary conditions we have zero velocity on the floor and the side walls, while we have a non-zero velcocity in the flow direction. The figure below shows our problem.
@@ -768,6 +890,10 @@ Central assumptions behind the resulting heat equation is that there is no exter
 	
 	\bibitem{MHJ2}
 	\url{https://github.com/CompPhysics/ComputationalPhysics/tree/master/doc/pub/pde}
+	
+	\bibitem{olver} 
+	Olver, P.J and Shakiban, C.(2006)
+	Applied linear algebra. Pearson Prentice Hall. 
 
 \end{thebibliography}
 
