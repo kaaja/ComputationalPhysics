@@ -153,17 +153,20 @@ For the $t$ dependent part we get
 \frac{T'}{T} = -\lambda^2 \\ 
 T' = -\lambda^2 T
 \end{eqnarray}
-The equation can be solved by using the anzats $T = e^{\alpha t}$. We get the following expression
+The equation can be solved by integration i. e. 
 \begin{subequations}
 \begin{eqnarray}
-\alpha e^{\alpha t} + \lambda^2 e^{\alpha t} = 0 \\ 
-\alpha +\lambda^2 = 0 \\ 
-\Rightarrow \alpha = -\lambda^2
+\label{eqn:solvingTdependentTransientTerm1D}
+\frac{1}{T}\frac{dT}{dt} = -\lambda^2 \\ 
+\Rightarrow \frac{1}{T} = -\lambda^2 dt\\
+\int \frac{1}{T}dT = - \int \lambda^2 dt \\
+\Rightarrow ln(T) = -\lambda^t + A
 \end{eqnarray}
 \end{subequations}
 The $t$ dependent term is then given by
 \begin{equation}
 T = Ae^{-\lambda^2 t}
+\label{eqn:tdependentTransientTerm1D}
 \end{equation}
 From this epression we see that the $\lambda$ must be real. Otherwise the term would grow whitout bounds over time, which is not in accordance with the behaviour we are looking for. 
 \\
@@ -292,7 +295,7 @@ For the transient problem we have the propblem defined as:
 \begin{subequations}
 \begin{eqnarray}
 \label{eqn:transientPDE}
-V_t &=& V_{xx} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
+V_t &=& V_{xx} + V_{yy} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
 \\
 \label{eqn:transientICPDE}
 V(x,0) &=& -U(x,y) \textit{ , } x,y \in [0,1] \\
@@ -389,11 +392,102 @@ putting the coefficients $c_n$ back into the expression for the fundamental solu
 \begin{subequations}
 \begin{eqnarray}
 U(x,y) &=& \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{sin(m\pi x)sinh(m\pi y)}{\pi sinh(m\pi)}(1-(-1)^m \\ 
-&\Rightarrow & \frac{4}{\pi} \sum_{m}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
+&\Rightarrow & \frac{4}{\pi} \sum_{m=1}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
 \end{eqnarray}
 \end{subequations}
-
-
+\\
+\\
+For the transient problem we once again use the anzats that $V(x,y,t) = X(x)Y(y)T(t)$ in order to write the problem as
+\begin{subequations}
+\begin{eqnarray}
+XYT' = YTX'' + XTY'' \\
+\Rightarrow \frac{T'}{T} = \frac{X''}{X} + \frac{Y''}{Y} = -k^2
+\end{eqnarray}
+\end{subequations}
+Starting by solving the $t$ dependent term, which is solved in the same way as for the one-dimensional term (\ref{eqn:solvingTdependentTransientTerm1D}) and we end up with the expression
+\begin{equation}
+T=Ae^{-k^2t}
+\label{eqn:2DtransientTdependentGeneralTerm}
+\end{equation}
+\\
+for the $x$ dependent part we have 
+\begin{subequations}
+\begin{eqnarray}
+\frac{X''}{X} = -\frac{Y''}{Y} - k^2\\
+\Rightarrow \frac{X''}{X} = -\gamma^2
+\end{eqnarray}
+\end{subequations}
+and it has the same solution form as the $x$ dependent transient one-dimensional term \ref{eqn:xDependenttransientTerm1D} , as well as the steadu-state two-dimensional term \ref{eqn:xDependenSteadyState2D}. so we end up with 
+\begin{equation}
+X(x) = Bcos(\gamma x) + Csin(\gamma x)
+\end{equation}
+For the above equation to hold on the boundaries, $B=0$ and $\gamma = n\pi$ and we end up with
+\begin{equation}
+X_n(x) = c_nsin(n\pi x)
+\label{eqn:2DtransientXdependentTerm}
+\end{equation}
+\\
+We are left with the $y$ dependent term, which is written as 
+\begin{subequations}
+\begin{equation}
+\frac{Y''}{Y} = k^2 - \gamma^2\\
+\end{equation}
+\end{subequations}
+Solving for $Y$ we again use the anzats $Y=e^{\alpha y}$ and obtain the term
+\begin{subequations}
+\begin{eqnarray}
+\alpha^2 e^{\alpha y} + (\gamma^2 - k^2)e^{\alpha y} = 0 \\
+\alpha^2 + \gamma^2 - k^2 = 0 \\
+\Rightarrow \alpha = \pm \sqrt{k^2 - \gamma^2} 
+\end{eqnarray}
+\end{subequations}
+We are looking for a solution on the form that satisfies the bounderies for the transient term, resulting in
+\begin{equation}
+Y = Dcos(\sqrt{k^2 - \gamma^2}y) + Esin(\sqrt{k^2 - \gamma^2}y)
+\end{equation}
+for the above equation to satisfy the boundary conditions $Y(0) = 0$ and $Y(1) = 0$ we have that $D = 0$ and that $\sqrt{k^2 - \gamma^2} = m\pi$.
+The $Y$ term is the given by
+\begin{equation}
+Y_m(y) = E_msin(m\pi y)
+\label{eqn:2DtransientYdependentTerm}
+\end{equation}
+\\
+\\
+we kan now define the constat $k^2 = \gamma^2 + (m\pi)^2 = (n\pi)^2 + (m\pi)^2$. Putting this back into the $t$ dependent transient term \ref{eqn:2DtransientTdependentGeneralTerm} we have that 
+\begin{equation}
+T = A_{nm}e^{-\pi^2(m^2+n^2)t}
+\label{eqn:2DtransientTdependentTerm}
+\end{equation}
+\\
+Combining the $x,y$ and $t$ dependent terms (\ref{eqn:2DtransientXdependentTerm}, \ref{eqn:2DtransientYdependentTerm} and \ref{eqn:2DtransientTdependentTerm} respectively) we end up with the fundamental solution
+\begin{equation}
+V(x,y,t) = \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}sin(n\pi x)sin(m\pi y)e^{-\pi^2(m^2+n^2)t}
+\end{equation}
+To find the last coefficient $A_{nm}$ we use the initial condition for the transient term. We need to have that
+\begin{equation}
+-U(x,y) =  \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}sin(n\pi x)sin(m\pi y)
+\end{equation}
+We can solve for the coefficient by again using the orthogonality from \ref{eqn:orhogonalSine}, so that when we multiply the term above with $\int_0^1 sin(m\pi x)$ and $\int_0^1 sin(n\pi y)$ we get that
+\begin{subequations}
+\begin{eqnarray}
+\int_0^1 \int_0^1 -U(x,y) sin(n\pi y)sin(m\pi x) dxdy =  \frac{A_{mn}}{4}\\
+\Rightarrow A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(n\pi x)sin(m\pi y) dxdy
+\end{eqnarray}
+\end{subequations}
+\\
+Finally we can combine the steady-state solution and the transient solution in order to get the analytical expression
+\begin{eqnarray}
+u(x,y,t) &=& U(x,y) + V(x,y,t)\\ \nonumber
+ &=& U(x,y) + \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}sin(n\pi x)sin(m\pi y)e^{-\pi^2(m^2+n^2)t}
+\end{eqnarray}
+Where
+\begin{equation}
+U(x,y) = \frac{4}{\pi} \sum_{m=1}^{\infty} \frac{sin((2m-1)\pi x)sinh((2m-1)\pi y)}{\pi sinh((2m-1)\pi)}
+\end{equation}
+and 
+\begin{equation}
+A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) sin(n\pi x)sin(m\pi y) dxdy
+\end{equation}
 
 
 
