@@ -591,7 +591,7 @@ A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) \sin(m\pi x)\sin(n\pi y) dxdy.
 \section{5a}
 
 \subsection{Derivation of schemes with truncation errors}
-All the schemes will be derived from Taylor series expansions, and the truncation error will be related to the remainder in the Taylor-series expansions. This remainded is the error we get when truncating the series by leaving out the remainder.\\
+All the schemes will be derived from Taylor series expansions, and the truncation error will be related to the remainder in the Taylor-series expansions. This remainder is the error we get when truncating the series by leaving out the remainder.\\
 
 \subsection{Forward Euler}
 For the time derivative, we expand $u(x, t + \Delta t)$ around $t$
@@ -640,13 +640,13 @@ Combining (\ref{eq:FeTime}) and (\ref{eq:feSpace3}) we get the Forward Euler sch
 
 From (\ref{eq:fe}) we see that the scheme has a truncation error that goes like $\mathcal{O} (\Delta t)$ in time and $\mathcal{O}(\Delta x^2)$ in space.\\
 
-We will now analyze the stability of the Forward Euler scheme (\ref{eq:fe}) by applying Neuman stability analyzis. From the analytical solution of the problem, we know that the particular solutions are on the form $u = e^{-(k \pi)^2 t}e^{i k \pi x}$, where $k$ is an integer greater than one. We observe that the solutions are stable in $t$, meaning that the solutions do not blow up as $t$ increaes. Based on the analytical particular solution, we make the numerical ansatz 
+We will analyze the stability of the Forward Euler scheme (\ref{eq:fe}) by applying Neuman stability analysis. From the analytical solution of the problem, we know that the particular solutions are on the form $u = e^{-(k \pi)^2 t}e^{i k \pi x}$, where $k$ is an integer greater than one. We observe that the solutions are stable in $t$, meaning that the solutions do not blow up as $t$ increaes. Based on the analytical particular solution, we make the numerical ansatz 
 
 \begin{equation}\label{eq:neumanAnsatz}
 	u = a_k^n e^{i k \pi x_j}
 \end{equation}
 
-For the numerical ansatz (\ref{eq:neumanAnsatz}) to reproduce the characteristics of the analytical particular solution, with stability in $t$, we observe that $|a_k^n| < 1$ in necessary. We now plug in the ansatz (\ref{eq:neumanAnsatz}) into the (\ref{eq:fe}) and derive an equation for $|a_k^n|$:
+For the numerical ansatz (\ref{eq:neumanAnsatz}) to reproduce the characteristics of the analytical particular solution, with stability in $t$, we observe that $|a_k^n| < 1$ is necessary. We now plug in the ansatz (\ref{eq:neumanAnsatz}) into the (\ref{eq:fe}) and derive an equation for $|a_k^n|$:
 
 \begin{subequations}\label{eq:naumanFe0}
 	\begin{align}
@@ -703,7 +703,7 @@ The space discretization is the same as for Forward Euler, (\ref{eq:feSpace3}). 
 
 We note that the truncation errors have the same asymptoptic behavior as for the Forward Euler scheme. \\
 
-Now lets check the stability of the Backward Euler scheme. We apply the same method as we did for Forward Euler, and insert the ansatz (\ref{eq:neumanAnsatz}) into (\ref{eq:be1}) to get
+To analyze the stability of the Backward Euler scheme, we apply the same method as we did for Forward Euler and insert the ansatz (\ref{eq:neumanAnsatz}) into (\ref{eq:be1}) to get
 
 \begin{subequations}
 	\begin{align}
@@ -720,7 +720,6 @@ Now lets check the stability of the Backward Euler scheme. We apply the same met
 \end{subequations}
 
 From (\ref{eq:neumanBe}) we see that, in contrast to the Forward Euler scheme, the Backward Euler scheme is unconditionally stable.\\
-
 
 (\ref{eq:be1}) reveals another difference between the Backward Euler scheme and the Forward Euler scheme: (\ref{eq:be1}) is implicit in $u(x,t)$, meaning that we cannot solve (\ref{eq:be1}) directly for $u(x,t)$, as we did in the Forward Euler scheme. However, we can find $u(x,t)$ from (\ref{eq:be1}) by recognizing that (\ref{eq:be1}) can be rewritten as a linear system:
 
@@ -747,24 +746,36 @@ Here we Taylor expand $u(x+\Delta x, t+\Delta t)$ and $u(x-\Delta x, t+\Delta t)
 \begin{subequations}
 	\begin{align}
 		\begin{split}
-			u(x+\Delta x, t+\Delta t)&=u(x,t')+\frac{\partial u(x,t')}{\partial x}\Delta x+\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\ 
-			&+\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+			u(x+\Delta x, t+\Delta t)&=u(x,t')+\frac{\partial u(x,t')}{\partial x}\Delta x+\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2 +\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3\\
+			&+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} 
+			+\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta x^4)
 		\end{split}\label{eq:cn1}\\
 		\begin{split}
 			u(x-\Delta x,t+ \Delta t)&=u(x,t')
 			-\frac{\partial u(x,t')}{\partial x}\Delta x 
-			+ \frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2
-			+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\ 
-			&- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x
-			+ \mathcal{O}(\Delta t^3)
+			+ \frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} + 
+			\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2 
+			-\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3\\
+			&+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} 
+			- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x
+			+ \mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta x^4)
 		\end{split}\label{eq:cn2}\\
 		\begin{split}
-			u(x+\Delta x,t)&=u(x,t')+\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} \\
-			&- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+			u(x+\Delta x,t)&=u(x,t')
+			+\frac{\partial u(x,t')}{\partial x}\Delta x
+			-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2
+			 +\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3\\
+			&+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} 
+			- \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta x^4)
 		\end{split}\label{eq:cn3}\\
 		\begin{split}
-		u(x-\Delta x,t)&=u(x,t')-\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}\\
-		& +\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x+ \mathcal{O}(\Delta t^3)
+		u(x-\Delta x,t)&=u(x,t')-\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} 
+		+ \frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2
+		-\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3\\
+		&
+		+\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4}
+		+\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x
+		+ \mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta x^4)
 		\end{split}\label{eq:cn4}\\
 		u(x,t+\Delta t)&=u(x,t')+\frac{\partial u(x,t')}{\partial t}\frac{\Delta_t}{2} +\frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 + \mathcal{O}(\Delta t^3)\label{eq:cn5}\\
 		u(x,t)&=u(x,t')-\frac{\partial u(x,t')}{\partial t}\frac{\Delta t}{2}+\frac{\partial ^2 u(x,t')}{2\partial t^2}\Delta t^2 + \mathcal{O}(\Delta t^3)\label{eq:cn6}
@@ -794,6 +805,7 @@ Now for the spacial derivative. First we solve (\ref{eq:cn1}) and (\ref{eq:cn2})
 		u(x+\Delta x, t+\Delta t) + u(x-\Delta x,t + \Delta t) &= 
 		\Big(u(x,t') + u(x,t') \Big) + \Big(\frac{\partial u(x,t')}{\partial x}\Delta x-\frac{\partial u(x,t')}{\partial x}\Delta x\Big)\\ 
 		&+ \Big(\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} \Big) + \Big(\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2+\frac{\partial^2 u(x,t')}{2\partial x^2}\Delta x^2\Big)\\
+		&+ \Big(\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} +\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{2} \Big) + \Big(\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3-\frac{\partial^3 u(x,t')}{6\partial x^3}\Delta x^3\Big)\\
 		& + \Big(\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} +\frac{\partial^2 u(x,t')}{2\partial t^2}\frac{\Delta t^2}{4} \Big) + \Big(\frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x - \frac{\partial^2 u(x,t')}{\partial x\partial t}\frac{\Delta t}{2} \Delta x\Big)\\
 		& + \Big(\mathcal{O}(\Delta t^3) + \mathcal{O}(\Delta t^3) \Big) + \mathcal{O}(\Delta x^4)
 		\end{split}\\
@@ -825,8 +837,6 @@ Now for the spacial derivative. First we solve (\ref{eq:cn1}) and (\ref{eq:cn2})
 	\end{align}
 \end{subequations}
 
-Note that in (\ref{eq:cnX2}) we added $\mathcal{O}(\Delta x^4)$, since  $\mathcal{O}(\Delta x^3)$ cancells out in the addition. Also note that the $\Delta x^3$-term was not originally  included in (\ref{eq:cn1}) and  (\ref{eq:cn2}), but these would have been of equal magnitude with opposite sign, so when adding the equaions we would have been left with $\mathcal{O}(\Delta x^4)$.\\
-
 Doing the same as in (\ref{eq:cnX2}) for (\ref{eq:cn3}) and (\ref{eq:cn4}) we obtain
 
 \begin{subequations}\label{eq:cnX3}
@@ -848,8 +858,8 @@ Now we take the mean of (\ref{eq:cnX2}) and (\ref{eq:cnX3})
 			&+  \frac{u(x-\Delta x,t) - 2u(x,t') + u(x+\Delta x, t)}{\Delta x^2} -\frac{\partial u(x,t')}{\partial t} \frac{\Delta t}{\Delta x^2} + \mathcal{O}(\Delta t^2)  + \mathcal{O}(\Delta x^2)\Big)\\
 			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - 2u(x,t') +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} \\
 			& +  \frac{u(x-\Delta x,t) - 2u(x,t') + u(x+\Delta x, t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta t^2) + \mathcal{O}(\Delta x^2)\\
-			&\stackrel{u(x,t^{'}) = \frac{u(x,t) + u(x,t+\Delta t)}{2}}{=}\\
-			&\frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - u(x,t) + u(x,t+\Delta t) +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} \\
+			&\stackrel{u(x,t^{'}) = \frac{u(x,t) + u(x,t+\Delta t)}{2}}{=}
+			\frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t)  - u(x,t) + u(x,t+\Delta t) +  	u(x+\Delta x, t+\Delta t)}{\Delta x^2} \\
 			& +  \frac{u(x-\Delta x,t) - u(x,t) + u(x,t+\Delta t) + u(x+\Delta x, t)}{\Delta x^2} \Big) + \mathcal{O}(\Delta t^2) + \mathcal{O}(\Delta x^2)\\
 			&= \frac{1}{2} \Big(\frac{u(x-\Delta x,t+ \Delta t) - 2u(x,t+\Delta t) +u(x + \Delta x,t+\Delta t)}{\Delta x^2} + \frac{u(x-\Delta x,t) - 2u(x,t) +u(x+ \Delta x,t)}{\Delta x^2} \Big)\\
 			& + \mathcal{O}(\Delta t^2)  + \mathcal{O}(\Delta x^2)\label{eq:cnX4}
@@ -874,7 +884,7 @@ where we have put both $\mathcal{O}(\Delta t^2)$ into a common term.\\
 
 (\ref{eq:cn1d}) shows that the Crank-Nicolson scheme is 2nd order in both time and space, implying better convergence properties for the Crank-Nicolson scheme compared to the Backward Euler scheme and the Forward Euler scheme.\\
 
-Using the same method as we used for the previous schemes, we  now study the stability of the Crank-Nicolson scheme. We insert the ansatz (\ref{eq:neumanAnsatz}) into the Crank-Nicolson scheme (\ref{eq:cn1d}) and solve for $|a_k|$:
+We study the stability of the Crank-Nicolson scheme using the same method as for the previous schemes. Insertion of the ansatz (\ref{eq:neumanAnsatz}) into the Crank-Nicolson scheme (\ref{eq:cn1d}) and solving for $|a_k|$ gives:
 
 \begin{subequations}
 	\begin{align}
@@ -899,7 +909,7 @@ Using the same method as we used for the previous schemes, we  now study the sta
 Based on the analyzis of the different schemes, we expect the Crank-Nicolson scheme to be the best scheme with respect to convergence and stability. 
 
 \subsection{$\theta$-rule}
-All the schemes derived above can be derived from a more general scheme, called the $\theta$-rule scheme. To see this, first notice that the Crank-Nicolson scheme (\ref{eq:cn1d}) is the average of the Forward Euler scheme (\ref{eq:fe}) and the Backward Euler scheme (\ref{eq:be1}). We can think of the average, represented by the Crank-Nicolson scheme, as the special case of equals weights in a weighted average of the Backward Euler scheme and the Forward Euler scheme. Writing the weighted average of the Forward Euler and Backward Euler schemes with weights $0 \leq \theta \leq1$, we get the $\theta$-rule
+All the schemes derived above can be derived from a more general scheme, called the $\theta$-rule scheme. To see this, first notice that the Crank-Nicolson scheme (\ref{eq:cn1d}) is the average of the Forward Euler scheme (\ref{eq:fe}) and the Backward Euler scheme (\ref{eq:be1}). If we think of the $\theta$-rule as a weighted average with weights $\theta$ and $1-\theta$ so that $u_{t} = \theta u_{xx,BE} + (1- \theta) u_{xx,FE}$, we see that the Crank-Nicolson shceme is just a special case of the $\theta$-scheme with equal weights, $\theta = 1/2$. Based on this reasoning, we get the $\theta$-rule
 
 \begin{subequations}
 	\begin{align}
@@ -981,11 +991,11 @@ Now we rewrite (\ref{eq:thetaAlgo1}) as a matrix-vector equation $A_1 U^n = A_2 
 	\end{align}
 \end{subequations}
 
-In (\ref{eq:thetaLinsSys}), the right hand side $\mathbf{A_2 U^{n-1}}$ is known, since $\mathbf{U}^{n-1}$ is the previous periods solution, so (\ref{eq:thetaLinsSys}) is a linear system of the known type $A U = b$. So in principle the above system is solved for each time step, solving it for a time step and then using this solution in the right hand side in the next time step.\\
+In (\ref{eq:thetaLinsSys}), the right hand side $\mathbf{A_2 U^{n-1}}$ is known, since $\mathbf{U}^{n-1}$ is the previous periods solution. Hence (\ref{eq:thetaLinsSys}) is a linear system of the known type $A U = b$, which needs to be solved at each time step.\\
 
 We note that with $\theta = 0$ in (\ref{eq:thetaLinsSys}), the system reduces to the explicit Forward Euler system, which can be obtained from (\ref{eq:fe}). $\theta  = 1$ gives the Backward Euler system (\ref{eq:beLinSys}). $\theta = 1/2$ in (\ref{eq:thetaLinsSys}) gives the system that can be obtained by rewrting the Crank-Nicolson scheme (\ref{eq:cn1d}) as a linear system.\\
 
-In principle the above system can be solved by calculating the inverse of $A_1$ and solving $U^n = A_1^{-1} (A_2 U^{n-1})$. This is a costly operation and is avoided. Instead of calculating the inverse, one often solves these systems by some kind of elimination method, e.g. Gaussian elimination or by LU. In this case, we note that we are dealing with a tridiagonal matrix. For tridiagonal systems, the Thomas algorithm gives an alterative way of solving the linear system which reduces the number of FLOPS considerably. In our case we are eaven more lucky. Our matrix is symmetric, and the elements are constant, so the standard Thomas algorithm can be further improved. We will now derive the algorithm that we implement.\\
+In principle the above system can be solved by calculating the inverse of $A_1$ and solving $U^n = A_1^{-1} (A_2 U^{n-1})$. This is a costly operation and is avoided. Instead of calculating the inverse, one often solves these systems by a elimination method, e.g. Gaussian elimination or by LU. In this case, we note that we are dealing with a tridiagonal matrix. For tridiagonal systems, the Thomas algorithm gives an alterative way of solving the linear system which reduces the number of FLOPS considerably. In our case we are eaven more lucky. Our matrix is symmetric, and the elements are constant, so the standard Thomas algorithm can be further improved. We will now derive the algorithm that we implement.\\
 
 We start with a tridiagonal symmetric linear system $Au =f$, with $A$ being $4 \times 4$. The following show the forward substitution steps for this sytem
 
@@ -1088,7 +1098,7 @@ end time loop
 We will derive and apply a Forward Euler (explicit) scheme and a Backward Euler (implicit) scheme for the 2D case.
 
 \subsubsection{2D explicit scheme}
-The new thing in the 2D case for the explicit scheme, is that we get an extra term for $u_{yy}$ in (\ref{eq:fe}). $u_{yy}$ is approximated in exactly the same way as $u_{xx}$ (\ref{eq:feSpace3}), so we get
+Compared to the 1D case, we get an extra term for $u_{yy}$ in (\ref{eq:fe}) for the explicit scheme. $u_{yy}$ is approximated in exactly the same way as $u_{xx}$ (\ref{eq:feSpace3}), so we get
 
 \begin{equation}
 	 u_{yy}(x,y,t) = \frac{u(x,y - \Delta y, t) - 2u(x,y,t) + u(x,y+ \Delta y, t)}{\Delta y^2} + \mathcal{O}(\Delta y^2)\label{eq:uyyFe2d}
@@ -1112,7 +1122,7 @@ where we in the last transition assumed $\Delta x = \Delta y$ such that $\alpha$
 
 First we observe that the truncation errors go like $\mathcal{O}(\Delta t)$, $\mathcal{O}(\Delta x^2)$ and $\mathcal{O}(\Delta y^2)$.\\
 
-Now lets analyze the stability, by inserting the ansatz
+We analyze the stability by inserting the ansatz
 
 \begin{equation}\label{eq:ansatz2d}
 	u = a_k^n e^{i k \pi \Delta x j} e^{i k \pi \Delta y l}
@@ -1148,8 +1158,7 @@ Again assuming $\Delta x = \Delta y$, we have $\alpha = \Delta t/\Delta x^2 > 0$
 
 (\ref{eq:2dFeStab}) gives that the 2D Forward Euler scheme is conditionally stable. We note that we could probably have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:Fe2d}) was already assumed that $\Delta x = \Delta y$. \\
 
-
-The new thing in (\ref{eq:Fe2d}) compared to (\ref{eq:fe}), is that $u{ij}^{n+1}$ in the 2D case is a matrix and not a vector as in the 1D case. The fact that we are dealing with a matrix instead of a vector, does not change anything with regards to the solution strategy. The equation (\ref{eq:Fe2d}) is still explicit, the only difference in implementation is that instead of one single loop a double loop over two space dimensions is needed now.\\
+The new thing in (\ref{eq:Fe2d}), compared to the 1D case (\ref{eq:fe}), is that $u{ij}^{n+1}$ in the 2D case is a matrix and not a vector. The fact that we are dealing with a matrix instead of a vector, does not change anything with regards to the solution strategy. The equation (\ref{eq:Fe2d}) is still explicit, the only difference in implementation is that instead of one single loop, a double loop over two space dimensions is needed now.\\
 
 The algorithm for solving 2D Forward Euler follows.
 
@@ -1200,7 +1209,7 @@ We start in the same way as we did for Forward Euler in 2D, and just add an extr
 
 First we observe that the truncation errors go like $\mathcal{O}(\Delta t)$, $\mathcal{O}(\Delta x^2)$ and $\mathcal{O}(\Delta y^2)$, so there is no difference in the truncation errors between Forward Euler and Backward Euler, just as for the 1D case.\\
 
-We study stability of the 2D Backward Euler scheme by inerting the 2D ansatz (\ref{eq:ansatz2d}) into
+We study stability of the 2D Backward Euler scheme by inserting the 2D ansatz (\ref{eq:ansatz2d}) into
 (\ref{eq:2dBe1})
 
 \begin{subequations}
@@ -1216,9 +1225,9 @@ We study stability of the 2D Backward Euler scheme by inerting the 2D ansatz (\r
 	\end{align}
 \end{subequations}
 
-From (\ref{eq:2dBeStability}) we see that the Backward Euler scheme is also unconditionally stable in two dimensions, as it was for one dimension. We note that we probably could have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:2dBe1}) was already assumed that $\Delta x = \Delta y$.\\
+From (\ref{eq:2dBeStability}) we see that the Backward Euler scheme is unconditionally stable in two dimensions, as it was for one dimension. We note that we probably could have applied a simpler ansatz than (\ref{eq:ansatz2d}), since it in (\ref{eq:2dBe1}) was already assumed that $\Delta x = \Delta y$.\\
 
-We see that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that we cannot apply the Thomas algorithm anymore, and standard methods as LU-decomposion becomes unpractical. However, in our case the matrix is positive definite, implying that iterative schemes converges to the tru solution, Hjorth-Jensen \cite{MHJ} p. 322. Iterative methods are often much faster than direct methods like Gaussian elimination and LU-decomposition. Hence we will solve the implicit problem applying iterative methods. 
+We see that (\ref{eq:2dBe}) is an implicit scheme, since the only known is $u_{i,j}^n$. (\ref{eq:2dBe}) can be transformed into a linear system of the known type $Au = b$. The procedure for transforming (\ref{eq:2dBe}) into a linear system is the same as demonstrated for the 1D case, see Hjorth-Jensen \cite{MHJ} p. 317. However, there is one important difference compared to the 1D linear system: The matrix is not tridiagonal anymore! This means that we cannot apply the Thomas algorithm anymore, and standard methods as LU-decomposion becomes unpractical. However, in our case the matrix is positive definite, implying that iterative schemes converges to the true solution, Hjorth-Jensen \cite{MHJ} p. 322. Iterative methods are often much faster than direct methods like Gaussian elimination and LU-decomposition. Hence we will solve the implicit problem applying iterative methods. 
 
 \subsubsection{Iterative methods}
 This section follows Olver and Shakiban's \cite{olver} chapter on iterative methods closesly. The goal is to present the main idea behind iterative methods, and to present the Jacobi method as part of a general framework.\\
@@ -1229,14 +1238,16 @@ Firstly, an iterative method is not a direct method, like e.g. Gaussian eleminat
 	\mathbf{A}\mathbf{u} = \mathbf{b}.
 \end{equation} 
 
-Instead, with iterative methods, one solves another problem:
+Instead, with iterative methods, one attempts solving (\ref{eq:AuB}) by solving another, affine iterative, system:
 
 \begin{equation}\label{eq:iter1}
-	\mathbf{u}^{k+1} = \mathbf{T} \mathbf{u}^k + \mathbf{c},
+	\mathbf{u}^{(k+1)} = \mathbf{T} \mathbf{u}^{(k)} + \mathbf{c},
 \end{equation}
-where $k$ stands for iterations. \\
+where $k$ stands for iterations, $T$ is a coefficient matrix of same size as $A$, and $\mathbf{c}$ is a vector. We observe that the right hand side is an affine function of $\mathbf{u}^{(k)}$. For comparison, a linear iterative system is on the form $\mathbf{u}^{(k+1)} = \mathbf{T} \mathbf{u}^{(k)}$, so it is the addition of the vector $\mathbf{c}$ that makes our iterative an affine one, and not a linear one. The affine representation is more genereal compared to the linear one, and allows for more reflexibility in developing iterative schemes.\\
 
-For the iterative method to work, it firstly has to converge: 
+So how is using (\ref{eq:iter1}) in place of solving the original system better? It might not be better. But potentially it can be a lot faster. Look at the FLOP count. In (\ref{eq:iter1}) the matrix-vector multiplication is $\mathcal{O}(N)$ flops, and the addition is of the same order, giving $\mathcal{O}(N)$ FLOPS per iteration. The total FLOP-count for the iterative method is $\mathcal{O}{kN}$ FLOPS. In comparison the Gaussian elimination method is always $\mathcal{O}(N^3)$ FLOPS. This shows that if we can construct a $T$ and $\mathbf{c}$ in our affine iterative scheme (\ref{eq:iter1}) that converges to the true solution after few iterations, the iterative scheme will be much less demanding with respect to FLOPS compared to direct methods like Gaussian elimination.\\
+
+We have shown that the potential of the iterative methods with regards to FLOPS is bug. Now we need to analyse condition for when the method actually works. For the iterative method (\ref{eq:iter1}) to work, it firstly has to converge: 
 
 \begin{equation}\label{eq:itConver}
 	\lim_{k \rightarrow \infty} \mathbf{u}^{k} = \mathbf{u}^{*}.
@@ -1251,11 +1262,11 @@ Taking the limit on both sides of (\ref{eq:iter1}) and using (\ref{eq:itConver})
 	\end{align}
 \end{subequations}
 
-(\ref{eq:itFixedPoint}) is a fixed point equation, and we have that the solution to the iterative scheme has to converge to a fixed point.\\
+(\ref{eq:itFixedPoint}) is a fixed point equation, and we have that the solution to the iterative scheme has to converge to a fixed point, $\mathbf{u^{*}}$.\\
  
-Secondly, the convergent solution $\mathbf{u}^{*}$ that is approached  as $k \rightarrow \infty$ must become equal to the solution $\mathbf{u}$ of the original problem, $\mathbf{A}\mathbf{u} = \mathbf{b}$. \\
+Secondly, the convergent solution $\mathbf{u}^{*}$ that is approached  as $k \rightarrow \infty$ must become equal to the solution $\mathbf{u}$ of the original problem, $\mathbf{A}\mathbf{u} = \mathbf{b}$. If the affine iterative system (\ref{eq:iter1}) converges to a fixed point that differs from the true solution, $\mathbf{u}^{*} \neq \mathbf{u}$, the fixed point splution is of little use for us.\\
 
-Lets now look at conditions for the 1st condition, convergence to the fixed point $\mathbf{u^{*}}$ to hold. We study the error with respect to the fixed point
+Lets now look at conditions for the 1st condition, convergence to the fixed point $\mathbf{u^{*}}$, to hold. We study the error with respect to the fixed point
 
 \begin{subequations}
 	\begin{align}
@@ -1268,9 +1279,9 @@ Lets now look at conditions for the 1st condition, convergence to the fixed poin
 	\end{align}
 \end{subequations}
 
-(\ref{eq:iterConvError}) shows that the development of the error in convergence towards the fixed point depends on the same matrix as the original iterative problem, $\mathbf{T}$. We have convergende towards the fixed point $\mathbf{u}^{*}$ if $\mathbf{T}$ is a convergent matrix. $\mathbf{T}$ is a convergent matrix if the spectral radius of $\mathbf{T}$ is less than one, $\rho(T) < 1$. The speed of convergence is inversly related to the spectral radius, implying that we want to construct $T$ with as low spectral radius as possible.  \\
+(\ref{eq:iterConvError}) shows that the development of the error in convergence towards the fixed point depends on the same matrix as the original iterative problem, $\mathbf{T}$. We have convergence towards the fixed point $\mathbf{u}^{*}$ if $\mathbf{T}$ is a convergent matrix. $\mathbf{T}$ is a convergent matrix if the spectral radius of $\mathbf{T}$ is less than one, $\rho(T) < 1$. The speed of convergence is inversly related to the spectral radius, implying that we want to construct $T$ with as low spectral radius as possible.  \\
 
-We now have a condition for the first requirement for our iterative scheme: convergence to the fixed point. Now for the 2nd condition: convergence to the true solution. An iterative scheme converging to a fixed point different from the true solution is of little use in our case. It turns out that convergence to the true solution depeneds on the chosen scheme, represented by the matrix $T$ in our case, and the coefficient matrix of the original problem, $A$. We have that both the Jacobi scheme, to be derived, and the Gauss-Seidel scheme are convergent to the true solution if $A$ is strictly diagonally dominant.\\
+We now have a condition for the first requirement for our iterative scheme: convergence to the fixed point. Now for the 2nd condition: convergence to the true solution. It turns out that convergence to the true solution depeneds on the chosen scheme, represented by the matrix $T$ in our case, and the coefficient matrix of the original problem, $A$. We have that both the Jacobi scheme, to be derived, and the Gauss-Seidel scheme are convergent to the true solution if $A$ is strictly diagonally dominant.\\
 
 We sum up our results in this section:\\
 
@@ -1312,13 +1323,15 @@ We see that the Jacobi-scheme (\ref{eq:iterJacobi2}) fits our general iterative 
 	\end{align}
 \end{subequations}
 
-It is perhaps easier to see that the Jacbi algoritm (\ref{eq:iterJacobi2}) do by considering a single row in the matrix-vector system
+It is perhaps easier to see the workings of the Jacbi algoritm (\ref{eq:iterJacobi2}) by considering a single row in the matrix-vector system (\ref{eq:iterJacobi2}) 
 
 \begin{subequations}\label{eq:jacobiRow}
 	\begin{align}
 		u_i^{(k+1)} = - \frac{1}{a_{ii}} \sum_{j=1,i \neq j} a_{ij} u_j^{(k)} + \frac{b_i}{a_{ii}}.
 	\end{align}
 \end{subequations}
+
+From (\ref{eq:jacobiRow}) we see that only non-diagonal terms are used in the iteration on the right hand side, and that all terms are divided by the diagonal terms from the original matrix $A$. (\ref{eq:jacobiRow}) is very close to the form of the implemented algorithm.\\
 
 Using (\ref{eq:jacobiRow}) we will in the next section see that it is easy to formulate a Jacobi-solver for the 2D implicit scheme (\ref{eq:2dBe}).
 
@@ -1381,7 +1394,7 @@ We model the flow with the heat equation. This equation can be derived from the 
 	\end{align}
 \end{subequations}
 
-Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. With turbulent flow we would have flow in all directions. This implies that our heat equation is only valid for Reynolds numbers giving laminar flow.
+Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. 
 
 
 \begin{thebibliography}{9}
