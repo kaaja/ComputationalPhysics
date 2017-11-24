@@ -86,6 +86,508 @@
 \section*{Note to instructurs reagarding Github repository}
 If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail addres available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
+
+\section{Analytical solution 1D}
+The one-dimensional problem is written as 
+
+\begin{subequations}
+	\begin{eqnarray}
+	\frac{\partial^2 u(x,t)}{\partial x^2} &=& \frac{\partial u(x,t)}{\partial t} \textit{, } t> 0 \textit{, } x \in (0,L) \\ \nonumber
+	\\
+	u(x,0) &=& 0 \textit{, } 0 <x < 1 \textit{,} \\
+	u(0,t) &=& 0 \textit{, } t>0 \\
+	u(L,t) &=& 1 \textit{, } t>0,
+	\end{eqnarray}
+\end{subequations}
+
+where the length has been scaled by the lenght of the $x$-domain, $L$.\\
+
+The problem consists of non-homogeneous boundary conditions, and it is not trivial to find a closed form solution. The problem can be seen as a physical problem such as a temperature gradient in a rod or flow between two infinite flat plates, where the fluid is initially at rest and the plate at $x=1$ is given a sudden movement. \\
+
+From physical observations we know that as time goes, i.e. when $t\rightarrow \infty$,  the problem coinsides whith its surroundings and becomes steady.It is reasonable to introduce a solution consisting of the sum of two parts, a steady-state solution, and a transient solution that depends on the initial conditions:
+
+\begin{equation}
+u(x,t) = U(x) + V(x,t)
+\end{equation}
+where $U(x)$ is the steady-state solution and $V(x,t)$ is the transient solution.\\ 
+
+Since the steady-state problem is not changing in time, i.e. $\partial_ t = 0$, it is written in a compact form as:
+\begin{subequations}
+	\begin{eqnarray}
+	\label{eqn:steadyStateSODE}
+	U_{xx} &=& 0 \textit{ , } x \in [0,1]\\ \nonumber
+	\\
+	U(0) &=& 0 \textit{  } \\
+	U(L) &=& 1
+	\end{eqnarray}
+\end{subequations}
+
+For the transient part of the problem we have the problem written in compact form as:
+
+\begin{subequations}
+	\begin{eqnarray}
+	\label{eqn:transientODE}
+	V_t &=& V_{xx} \textit{ , } t>0 \textit{ , } x \in (0,1) \\ \nonumber
+	\\
+	\label{eqn:transientIC}
+	V(x,0) &=& -U(x) \textit{ , } 0<x<1 \\
+	V(0,t) &=& 0 \textit{ , } t>0 \\
+	V(1,t) &=& 0 \textit{ , } t>0
+	\end{eqnarray}
+\end{subequations}
+
+
+The steady state solution is solved by integrating (\ref{eqn:steadyStateSODE}) twice
+
+\begin{eqnarray}
+\nonumber
+\int \frac{\partial^2 u(x,t)}{\partial x^2}\;dx &=& A \\ \nonumber
+\int \frac{\partial u(x,t)}{\partial x}\;dx &=& \int Adx +B \\ \nonumber
+\end{eqnarray}
+
+and we end up with the general solution $U(x) = Ax + B$. Applying the boundary conditions at $x=0$ and $x=1$ we get that 
+
+\begin{equation}
+U(x) = x
+\label{eqn:UsteadyState1D}
+\end{equation}
+
+The transient problem (\ref{eqn:transientODE}) has homogeneous boundary conditions, and we can solve it by seperation of variables. We start by making the anzats that $V(x,t) = T(t)X(x)$ so that we can rewrite (\ref{eqn:transientODE}) as:
+
+\begin{equation}
+XT'=X''T 
+\end{equation}
+
+Reordering the equation we get the following:
+
+\begin{equation}
+\frac{T'}{T} = \frac{X''}{X} = k,
+\end{equation}
+where $k$ is an unknown constant. The reason we can insert $k$ into the above equation, is that the sides depends on different varirables, and so equality between the sides is only acheived if both sides equals a constant. We have homogenuous BCs, and for this to be achieved when we solve the $X$-part of the above equaion, we must have $k <0$. As can be seen later, with $k\geq 0$ we would not be able to satisfy the homogenupus BCs. For computationaly ease, we set $k = -\lambda^2$, where $\lambda > 0$. \\
+
+Starting with the $t$ dependent part, we get
+
+\begin{eqnarray}
+\frac{T'}{T} = -\lambda^2 \\ 
+T' = -\lambda^2 T
+\end{eqnarray}
+
+The ODE can be solved by separation of variables
+
+\begin{subequations}
+	\begin{eqnarray}
+	\label{eqn:solvingTdependentTransientTerm1D}
+	\frac{1}{T}\frac{dT}{dt} = -\lambda^2 \\ 
+	\Rightarrow \frac{1}{T} dT = -\lambda^2 dt\\
+	\int \frac{1}{T}dT = - \int \lambda^2 dt \\
+	\Rightarrow \ln(T) = -\lambda^2 + A
+	\end{eqnarray}
+\end{subequations}
+
+The $t$ dependent term is then given by
+
+\begin{equation}
+T = Ae^{-\lambda^2 t}
+\label{eqn:tdependentTransientTerm1D}
+\end{equation}
+
+We see that our assumption $\lambda > 0$ makes sense also for the $T$-solution, since we do not get blow-up as $t \rightarrow \infty$. \\
+
+For the $x$ dependent term we get
+
+\begin{subequations}
+	\begin{eqnarray}
+	X'' = -\lambda^2 X \\
+	\Rightarrow X'' + \lambda^2 X = 0 
+	\end{eqnarray}
+\end{subequations}
+
+We use an anzats $X=e^{\alpha x}$:
+
+\begin{subequations}
+	\begin{eqnarray}
+	\alpha^2 e^{\alpha x} + \lambda^2 e^{\alpha x} &=& 0 \\ 
+	\Rightarrow \alpha^2 &=& -\lambda^2 \\ 
+	\Rightarrow \alpha &=& \pm \sqrt{-\lambda^2}
+	\end{eqnarray}
+\end{subequations}
+
+Since we have $\lambda > 0$, we get our wanted trigonometric solution
+
+\begin{equation}
+X = Be^{-i\lambda x} + Ce^{i\lambda x},
+\label{eqn:xDependenttransientTerm1D}
+\end{equation}
+
+which can be written as
+
+\begin{equation}
+X(x) = B\cos(\lambda x) + C\sin(\lambda x) 
+\end{equation},
+
+where the constants have changed.\\
+
+Applying the boundary conditions we get that
+
+\begin{eqnarray}
+X(0) = B\cos(0) + C\sin(0) = 0 \\ 
+X(1) = B\cos(\lambda) + C\sin(\lambda) = 0
+\end{eqnarray}
+
+From the first boundary condition wher $x=0$ we must have that $B=0$. We are lookong for non-trivial solutions of the problem, so for $x=1$ we must find the  values that gives $C\sin(\lambda)=0$. We know that\\ $\sin(n \pi) =0 \textit{ for } n = 1,2, \ldots $, which lets us determine that $\lambda = n \pi$.\\
+
+Summing up, we have the following particular solutions for the transient part:
+
+\begin{subequations}
+	\begin{eqnarray}
+	V_n(x,t) = A_ne^{-(n\pi)^2 t}\sin(n \pi x), n=1,2,...,\infty
+	\end{eqnarray}
+\end{subequations}
+
+Since all particular solutions satisfy the PDE, and the BCs are homogenuous, all linear combinations of the particular solutions will also satisfy our problem, giving the general soultion of the transient problem
+
+\begin{equation}
+\sum_{n=1}^{\infty} a_ne^{-(n\pi)^2 t}\sin(n \pi x)
+\label{eqn:FundamentalSolutionODE}
+\end{equation}
+
+The coefficients $a_n$ is found by applying the initial condidtion (IC)
+
+\begin{equation}\label{eq:genSolTrans}
+-U(x) = \sum_{n=1}^{\infty} a_n\sin(n \pi x) 
+\end{equation}
+
+To obtain an expression for the coefficients $a_n$ we use that the functions $\sin(n\pi x)$ is orthogonal to each other in the sense that 
+
+\begin{equation}
+\int_0^1 \sin(n\pi x) \sin(m\pi x) dx = 
+\begin{cases} 0 & \quad \text{if } m \neq n\\
+1/2 & \quad \text{if } m = n 
+\end{cases}
+\label{eqn:orhogonalSine}
+\end{equation}
+
+Using the above statement, multiplying \ref{eq:genSolTrans} by $\sin(m\pi x)$  and then integrating over $x$ over the domain, we get 
+
+\begin{eqnarray}
+\nonumber
+- \int_0^1 U(x)\sin(m\pi x)\;dx &=& a_n \int_0^1 \sum_{n=1}^{\infty} \sin(m\pi x)\sin(n\pi x)\;dx = a_m\int_0^1 \sin^2(m\pi x)\;dx\\ \nonumber
+&\Rightarrow& - \int_0^1 U(x)\sin(m\pi x) =\frac{a_m}{2}\\ 
+&\Rightarrow& a_m = - 2\int_0^1 U(x)\sin(m\pi x) \;dx
+\end{eqnarray}
+
+Solving for $a_n$, applying the steady state solution (\ref{eqn:UsteadyState1D}), yields 
+
+\begin{eqnarray}
+\nonumber
+a_n = -2 \int_0^1 x \sin(m\pi x) &=& \Big[\frac{2}{(m\pi)^2} \sin(m\pi x) + \frac{2x}{m\pi}\cos(m\pi x)\Big]_0^1 \\ 
+\label{eqn:fourierCoefficients}
+&\Rightarrow & a_n = \frac{2}{m\pi}(-1)^m
+\end{eqnarray}
+\newline
+
+Putting the coefficient from (\ref{eqn:fourierCoefficients}) into the fundamental solutions (\ref{eqn:FundamentalSolutionODE}) we end up with the following solution for the transient problem:
+
+\begin{equation}
+V(x,t) = 2\sum_{n=1}^{\infty} \frac{(-1)^k}{n\pi} e^{-(n\pi)^2 t}\sin(n\pi x)
+\label{eqn:transientSolution1D}
+\end{equation}
+
+Now we get an expression for the whole problem by putting combining the steady-state solution (\ref{eqn:UsteadyState1D}) and the transient solution (\ref{eqn:transientSolution1D}) such that we obtain 
+
+\begin{equation}
+u(x,t) = U(x) + V(x,t) = x + 2\sum_{n=1}^{\infty}e^{-(n\pi)^2 t} \frac{(-1)^k}{n\pi}
+\sin(n\pi x)
+\label{eqn:solution1D}
+\end{equation}
+
+\section{Analytical solution 2D}
+In the two-dimensional case the differential equation becomes
+\begin{subequations}
+	\begin{eqnarray}
+	\frac{\partial^2 u(x,y,t)}{\partial x^2} + \frac{\partial^2 u(x,y,t)}{\partial y^2} &=&  \frac{\partial u(x,y,t)}{\partial t} \textit{ , } t>0 \textit{ , } x,y \in (0,1) \\ \nonumber \\
+	u(x,y,0) &=& 0 \textit{ , } x,y \in (0,1) \\ 
+	u(0,y,t) &=& 0 \textit{ , } t> 0 \\
+	u(1,y,t) &=& 0 \textit{ , } t> 0 \\
+	u(x,0,t) &=& 0 \textit{ , } t> 0  \\
+	u(x,1,t) &=& 1 \textit{ , } t> 0 
+	\end{eqnarray}
+\end{subequations}
+
+The boundary conditions is extended in such a way that the physical problem can be that of a flow whitin a box with infinite plates in the streamwise direction ($z$), where the fluid is initially at rest and the plate at $y=1$ is given a sudden movement. We have "no slip" boundary conditions i.e. the fluid has zero movement on all boundaries except at $y=1$.\\
+
+To obtain a closed form solution for the two-dimensional, we use the same argument as for the one-dimensional problem, i.e. we split the solution into a steady-state solution and a transient solution.\\
+
+We end up with a solution defined as:
+\begin{equation}
+u(x,y,t) = U(x,y) + V(x,y,t)
+\end{equation}
+where $U(x,y)$ is the steady-state solution and $V(x,y,t)$ is the transient solution.\\
+
+The steady-solution is then written in a compact form as:
+\begin{subequations}
+	\begin{eqnarray}
+	U_{xx} + U_{yy} &=& 0 \textit{ , } x,y \in [0,1]\\ \nonumber
+	\\
+	U(0,y) &=& 0 \textit{  } \\
+	U(1,y) &=& 0 \textit{  } \\
+	U(x,0) &=& 0 \textit{  } \\
+	U(x,1) &=& 1 \textit{  } 
+	\end{eqnarray}
+\end{subequations}
+
+For the transient problem we have the propblem defined as:
+
+\begin{subequations}
+	\begin{eqnarray}
+	\label{eqn:transientPDE}
+	V_t &=& V_{xx} + V_{yy} \textit{ , } t>0 \textit{ , } x \in [0,1] \\ \nonumber
+	\\
+	\label{eqn:transientICPDE}
+	V(x,0) &=& -U(x,y) \textit{ , } x,y \in [0,1] \\
+	V(0,y,t) &=& 0 \textit{ , } t>0 \\
+	V(1,y,t) &=& 0 \textit{ , } t>0 \\
+	V(x,0,t) &=& 0 \textit{ , } t>0 \\
+	V(x,1,t) &=& 0 \textit{ , } t>0 
+	\end{eqnarray}
+\end{subequations}
+
+For the steady-state problem we have a 2D Laplacian equation, which we can solve by seperation of variables. We use the anzats that $U(x,y) = X(x)Y(y)$, so that we end up with:
+
+\begin{eqnarray}
+\nonumber
+YX'' + XY''=0 \\ \nonumber
+\frac{X''}{X} = - \frac{Y''}{Y} = -\beta^2
+\end{eqnarray}
+
+Due to the independence of the terms on each side of the equation, we can solve the equations separately, each equation becoming
+
+\begin{equation}
+\frac{X''}{X} = -\beta^2 \nonumber
+\end{equation}
+
+\begin{equation}
+\frac{Y''}{Y} = \beta^2 \nonumber
+\end{equation}
+
+The sign on the right hand side in both of the above equations is determined by the fact that in the $x$ dependent term we have homogeneous boundaries, while in the $y$ dependent term we have non-homogeneous. By the same reasoning as in the 1D-case, homogenupus BCs in the $x$-direction, we get $\beta > 0$. \\
+
+For the $x$ dependent term we get
+
+\begin{eqnarray}
+\nonumber
+X'' = -\beta^2 X \\ \nonumber
+\Rightarrow X'' + \beta^2 X = 0,
+\end{eqnarray}
+
+which has a similar solution as that of the transient $x$ dependent term in the one-dimensional case (\ref{eqn:xDependenttransientTerm1D}). With our choise of $\beta$, we get the wanted trigonometric form
+
+\begin{equation}
+X(x) = A\cos(\beta x) + B\sin(\beta x) \nonumber.
+\end{equation}
+
+Applying the boundary conditions, we end up with the term
+
+\begin{equation}
+X_n(x) = B_n\sin(n\pi x),
+\label{eqn:xDependenSteadyState2D}
+\end{equation}
+
+were ${X_n(x)}$ is the family of particular solutions.\\
+
+The $y$ dependent term can be rewritten as 
+
+\begin{subequations}
+	\begin{eqnarray}
+	y'' = \beta^2 Y \\ 
+	\Rightarrow Y'' - \beta^2 Y = 0 
+	\end{eqnarray}
+\end{subequations}
+
+We are again using an anzats so that $Y = e^{\gamma y}$. This leaves us with the term
+
+\begin{subequations}
+	\begin{eqnarray}
+	\gamma^2 e^{\gamma y} - \beta^2 e^{\gamma y} &=& 0 \\ 
+	\Rightarrow \gamma^2 &=& \beta^2 \\ 
+	\Rightarrow \gamma &=& \pm \beta,
+	\end{eqnarray}
+\end{subequations}
+
+and we end up with the following expression
+
+\begin{eqnarray}
+Y_n(y) &=& C_ne^{-n\pi y} + D_ne^{n\pi y} \\ 
+&\Rightarrow & C_n\cosh(n\pi y) + D_n\sinh(n\pi y)
+\end{eqnarray}
+for the family of particular solutions.
+\\
+
+The fundamental solutions of the steady-state is the given by
+\begin{equation}
+U(x,y) = \sum_{n=1}^{\infty} X(x)Y(y) = \sum_{n=1}^{\infty} B_n\sin(n\pi x)\Big(C_n\cosh(n\pi y) + D_n\sinh(n\pi y)\Big)
+\end{equation}
+
+Applying the the boundary of $U(x,0)$ to the equation above we get that $C_n$ must be zero. We are then left with the expression
+
+\begin{equation}
+U(x,y) = \sum_{n=1}^{\infty} c_n \sin(n\pi x)\sinh(n\pi y)
+\label{eqn:UsteadyStatefundamentalSolutions}
+\end{equation}
+
+Applying the last boundary $U(x,1) = 1$ we must have that
+
+\begin{equation}
+1 = \sum_{n=1}^{\infty} c_n \sin(n\pi x)\sinh(n\pi)
+\end{equation}
+
+setting $d_n = c_n\sinh(n\pi)$ we get that 
+
+\begin{equation}
+1 = \sum_{n=1}^{\infty} d_n \sin(n\pi x)
+\end{equation}
+
+Using again that the functions $\sin(n\pi x)$ is orthogonal (\ref{eqn:orhogonalSine}), as in the 1D case, multiplying the above equation with $ \sin(m\pi x)$ and  then integrating over $x$ over the domain, we get that 
+
+\begin{subequations}
+	\begin{eqnarray}
+	d_n = 2\int_0^1 \sin(m\pi x) dx = \frac{2}{m\pi}\Big(1-(-1)^m\Big)\\
+	\Rightarrow c_n = \frac{2}{m\pi \sinh(m\pi)}\Big(1-(-1)^m\Big).
+	\end{eqnarray}
+\end{subequations}
+
+Putting the coefficients $c_n$ back into the expression for the fundamental solutions (\ref{eqn:UsteadyStatefundamentalSolutions}), we end up with the following expression for the steady-state
+\begin{subequations}
+	\begin{eqnarray}
+	U(x,y) &=& \frac{2}{\pi} \sum_{m=1}^{\infty} \frac{\sin(m\pi x)\sinh(m\pi y)}{\pi \sinh(m\pi)}\Big(1-(-1)^m \Big)\\ 
+	&\Rightarrow & U(x,y) = \frac{4}{\pi} \sum_{m=1}^{\infty} \frac{\sin((2m-1)\pi x)\sinh((2m-1)\pi y)}{\pi \sinh((2m-1)\pi)}.
+	\end{eqnarray}
+\end{subequations}
+
+For the transient problem we once again use the anzats that $V(x,y,t) = X(x)Y(y)T(t)$ in order to write the problem as
+
+\begin{subequations}
+	\begin{eqnarray}
+	XYT' = YTX'' + XTY'' \\
+	\Rightarrow \frac{T'}{T} = \frac{X''}{X} + \frac{Y''}{Y} = -k^2.
+	\end{eqnarray}
+\end{subequations}
+
+Starting by solving the $t$ dependent term, which is solved in the same way as for the one-dimensional term (\ref{eqn:solvingTdependentTransientTerm1D}), we end up with the expression
+
+\begin{equation}
+T=Ae^{-k^2t}.
+\label{eqn:2DtransientTdependentGeneralTerm}
+\end{equation}
+
+For the $x$ dependent part we have 
+
+\begin{subequations}
+	\begin{eqnarray}\label{eq:xOde}
+	\frac{X''}{X} = -\frac{Y''}{Y} - k^2\\
+	\Rightarrow \frac{X''}{X} = -\gamma^2,
+	\end{eqnarray}
+\end{subequations}
+
+where 
+
+\begin{equation}\label{eq:gamma}
+	-\gamma^2 = \frac{Y^{''}}{Y} - k^2.
+\end{equation}
+
+(\ref{eq:xOde}) has the same solution form as the $x$ dependent transient one-dimensional term (\ref{eqn:xDependenttransientTerm1D}), as well as the steady state two-dimensional term (\ref{eqn:xDependenSteadyState2D}), so we end up with 
+
+\begin{equation}
+X(x) = B\cos(\gamma x) + C\sin(\gamma x)
+\end{equation}
+
+For the above equation to hold on the boundaries, we get  $B=0$ and $\gamma = n\pi, n=1,2,...,\infty$, so we end up with
+
+\begin{equation}
+X_n(x) = c_n\sin(n\pi x)
+\label{eqn:2DtransientXdependentTerm}
+\end{equation}
+
+We are left with the $y$ dependent term, which is written as 
+
+\begin{subequations}
+	\begin{equation}
+	\frac{Y''}{Y} = k^2 - \gamma^2\\
+	\end{equation}
+\end{subequations}
+
+Solving for $Y$ we again use the anzats $Y=e^{\alpha y}$ and obtain the term
+
+\begin{subequations}
+	\begin{eqnarray}
+	\alpha^2 e^{\alpha y} + (\gamma^2 - k^2)e^{\alpha y} = 0 \\
+	\alpha^2 + \gamma^2 - k^2 = 0 \\
+	\Rightarrow \alpha = \pm \sqrt{k^2 - \gamma^2} 
+	\end{eqnarray}
+\end{subequations}
+
+We are looking for a solution on the form that satisfies the homogenupus BCs for the transient term, resulting in
+
+\begin{equation}
+Y = D\cos(\sqrt{k^2 - \gamma^2}y) + E\sin(\sqrt{k^2 - \gamma^2}y)
+\end{equation}
+
+For the above equation to satisfy the boundary conditions $Y(0) = 0$ and $Y(1) = 0$, we get that $D = 0$ and that $\sqrt{k^2 - \gamma^2} = m\pi,\; m = 1,2,...\infty$. The $Y$ term is then given by
+
+\begin{equation}
+Y_m(y) = E_m\sin(m\pi y)
+\label{eqn:2DtransientYdependentTerm}
+\end{equation}
+
+We can now calculate the constant $k^2$,  $k^2 = \gamma^2 + (m\pi)^2 = (n\pi)^2 + (m\pi)^2$. Putting this back into the $t$ dependent transient term (\ref{eqn:2DtransientTdependentGeneralTerm}) we have that 
+
+\begin{equation}
+T = A_{nm}e^{-\pi^2(m^2+n^2)t}.
+\label{eqn:2DtransientTdependentTerm}
+\end{equation}
+
+Combining the $x,y$ and $t$ dependent terms ((\ref{eqn:2DtransientXdependentTerm}), (\ref{eqn:2DtransientYdependentTerm}) and (\ref{eqn:2DtransientTdependentTerm}) respectively), we end up with the fundamental solution
+
+\begin{equation}
+V(x,y,t) = \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}\sin(n\pi x)\sin(m\pi y)e^{-\pi^2(m^2+n^2)t}.
+\end{equation}
+
+To find the coefficients $A_{nm}$, we use the initial condition
+
+\begin{equation}
+-U(x,y) =  \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}\sin(n\pi x)\sin(m\pi y)
+\end{equation}
+
+We can solve for the coefficient by again using the orthogonality from (\ref{eqn:orhogonalSine}), multiplying the equation above by $ \sin(p\pi x) \sin(q\pi y)$, and integrating over the $x$ and $y$ domain to get
+
+\begin{subequations}
+	\begin{eqnarray}
+	\int_0^1 \int_0^1 -U(x,y) \sin(p\pi x)\sin(q\pi y) dxdy =  \frac{A_{pq}}{4}\\
+	\Rightarrow A_{pq} = -4 \int_0^1 \int_0^1 U(x,y) \sin(p\pi x)\sin(qn\pi y)\; dxdy.
+	\end{eqnarray}
+\end{subequations}
+
+Finally we can combine the steady-state solution and the transient solution in order to get the analytical expression
+
+\begin{eqnarray}
+u(x,y,t) &=& U(x,y) + V(x,y,t)\\ \nonumber
+&=& U(x,y) + \sum_{n=1}^{\infty} \sum_{m=1}^{\infty} A_{mn}\sin(n\pi x)\sin(m\pi y)e^{-\pi^2(m^2+n^2)t},
+\end{eqnarray}
+
+where
+
+\begin{equation}
+U(x,y) = \frac{4}{\pi} \sum_{m=1}^{\infty} \frac{\sin((2m-1)\pi x)\sinh((2m-1)\pi y)}{\pi \sinh((2m-1)\pi)}
+\end{equation}
+
+and 
+
+\begin{equation}
+A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) \sin(m\pi x)\sin(n\pi y) dxdy.
+\end{equation}
+
+
+
 \section{5a}
 
 \subsection{Derivation of schemes with truncation errors}
