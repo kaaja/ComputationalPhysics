@@ -1443,6 +1443,67 @@ Central assumptions behind the resulting heat equation is that there is no exter
 
 From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. We also observe that both the Crank-Nicolson schemes seems to produce results closer to the analytical solution also when Forward Euler's stability requirement is satisfied. Hence Backward Euler and Crank Nicolson is prefererred over Forward Euler. From Figure \ref{fig:fig3} we see that Crank-Nicolson is closer to the analytic solution compared to the Backward Euler scheme. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
+\subsection{2D}
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{Analytical solution seems correct.}}
+		\label{fig:fig2d1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution.}}
+		\label{fig:fig2d2}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0030out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Analytical Solution.\\ \textit{Analytical solution seems correct.}}
+		\label{fig:fig2d4}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0030out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution.}}
+		\label{fig:fig2d5}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
+
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0043out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Analytical Solution.\\ \textit{}}
+		\label{fig:fig2d6}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0043out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Explicit scheme.\\ \textit{The explicit scheme is unstable when the stability requirement is not met.}}
+		\label{fig:fig2d7}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 
 	Hjorth-Jensen, M.(2015)

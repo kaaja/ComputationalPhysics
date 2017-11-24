@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
         normMatrix.save(outfileName + ".txt", raw_ascii);
     }
-    else if (scenario == "2DExplicit"){
+    else if (scenario == "2D"){
         string outfileName2DExplicit;
         string outfileName2DImplicit;
 

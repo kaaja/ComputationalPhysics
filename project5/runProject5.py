@@ -187,10 +187,11 @@ class Project5:
 
     def project5f(self):
             dxValues = [0.1]#, 0.01]
-            safetyFacors = [1.04]#[0.96, 1.04]
+            safetyFacors = [0.9]#, 1.04]
             movieCounter = 0
-            dimension = "2DExplicit"
+            dimension = "2D"
             threadNumber = 8
+            FontSizeUniversal = 22
             for dx in dxValues:
                 nx = int(round(1./dx + 1))
                 x = np.linspace(0,1,nx)
@@ -205,7 +206,7 @@ class Project5:
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = .1
+                    T = .3
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -222,6 +223,7 @@ class Project5:
                     yv = y.reshape((1,y.size))#y[np.newaxis, :]
                         #data[scenario] = OrderedDict()
                     fileCounter = 1
+                    st.setp(interactive=False)
                     for fileCounter in xrange(1, nT):
                         data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
                         
@@ -240,23 +242,23 @@ class Project5:
                         
                         st.surfc(xv, yv, data2, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat')  #
+                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                         st.savefig('movie/tmpExplicit_%04d' %fileCounter + outfileName + '.png')  
                         
                         data3 = pd.read_csv(outfileName2 + 'AnalyticalSolutionMatrixU2D%d.txt' %fileCounter, delim_whitespace=True, header=None)
                         st.surfc(xv, yv, data3, title='Analytical Time = %.4f' % ((fileCounter-1)*dt), zlim=[-0.1, 1.1],
                               colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat')  #
+                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                         st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
                         
-                        st.surfc(xv, yv, data-data3, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat')  #
+                        st.surfc(xv, yv, (data/data3-1)*100, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
+                              colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
+                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                         st.savefig('movie/tmpErrorImplicit_%04d' %fileCounter + outfileName + '.png')
                         
-                        st.surfc(xv, yv, data2-data3, title='Explicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-.1, 1.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat')  #
+                        st.surfc(xv, yv, (data2/data3-1)*100, title='Explicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
+                              colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
+                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                         st.savefig('movie/tmpErrorExplicit_%04d' %fileCounter + outfileName + '.png')
                         
                         
@@ -278,7 +280,7 @@ class Project5:
     def project5g(self):
         dx = 0.1#, 0.01]
         safetyFactor = 1.04#[0.96, 1.04]
-        dimension = "2DExplicit"
+        dimension = "2D"
         threadNumbers = [1,8]
         dt = dx**2/4.0*(1/safetyFactor)
         alpha = dt/dx**2
