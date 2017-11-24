@@ -36,11 +36,13 @@ class Project5:
         call(["./AllrunVectorized", outfileName, dt, dx, theta, T, scenario, threadNumber])
         
     def project5c(self):
-        dxValues = [0.1]#, 0.01]
+        dxValues = [0.1, 0.01]
         safetyFacors = [0.96, 1.04]
         movieCounter = 0
         dimension = "1D"
         threadNumber = 8
+        showMovie = False
+        ForwardEulerInFigures = False
         for dx in dxValues:
             for safetyFactor in safetyFacors:
                 movieCounter += 1
@@ -58,6 +60,7 @@ class Project5:
                 # Read data
                 data = OrderedDict()
                 scenerios = ['BackwardEuler', 'ForwardEuler', 'CrancNicholson', 'Analytical']
+                scenariosWithoutForwardEuler = ['BackwardEuler', 'CrancNicholson', 'Analytical']
                 x = np.zeros(int(round(1./dx+1)))
                 t = np.zeros(int(round(T/dt +1)))
                 for scenario in scenerios:    
@@ -71,42 +74,49 @@ class Project5:
                 counter =1
                 figureNumber = 1
                 fig2,ax2 = plt.subplots()
-                ax2.hold(True)
+                #ax2.hold(True)
                 ax2Title = []
                 
                 for times in t:
-                    fig,ax = plt.subplots()
-                    ax.set_xlim([0, 1])
-                    ax.set_ylim([0, 1])
-                    ax.hold(True)
-                    if counter%saveEveryNSolution == 0 or counter == 1:
-                        for scenario in scenerios:
-                             ax.plot(x,data[scenario].ix[1:,counter])
-                        figureNumber += 1        
-                        ax.set_xlabel(r'$x$')
-                        ax.set_ylabel(r"$u(x,t)$")
-                        ax.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %g $ ' %alpha + '\n' + 't = %.5g' %times+ '\n')
-                        ax.legend(scenerios, loc=2)
-                        fig.tight_layout()
-                        fig.savefig('movie/%1dtmp_%04d' %(movieCounter, figureNumber) + outfileName + '.png') 
-                        plt.close()
+                    if showMovie:
+                        fig,ax = plt.subplots()
+                        ax.set_xlim([0, 1])
+                        ax.set_ylim([0, 1])
+                        #ax.hold(True)
+                        if counter%saveEveryNSolution == 0 or counter == 1:
+                            for scenario in scenerios:
+                                 ax.plot(x,data[scenario].ix[1:,counter])
+                            figureNumber += 1        
+                            ax.set_xlabel(r'$x$')
+                            ax.set_ylabel(r"$u(x,t)$")
+                            ax.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %g $ ' %alpha + '\n' + 't = %.5g' %times+ '\n')
+                            ax.legend(scenerios, loc=2)
+                            fig.tight_layout()
+                            fig.savefig('movie/%1dtmp_%04d' %(movieCounter, figureNumber) + outfileName + '.png') 
+                            plt.close()
                     counter += 1
         
-                    if counter == 2 or counter == len(t)/6 or counter == len(t):
-                        for scenario in scenerios:
+                    if ForwardEulerInFigures:
+                            scenariosLoop = scenarios
+                    else:
+                            scenariosLoop = scenariosWithoutForwardEuler
+        
+                    if  counter == len(t)/30 or counter == len(t)/3 :
+                        for scenario in scenariosLoop:
                             if scenario == 'ForwardEuler':
-                                markerType = 'r-+'
+                                markerType = 'r-'
                             elif scenario == 'BackwardEuler':
-                                markerType = 'b-o'
+                                markerType = 'b-'
                             elif scenario == 'CrancNicholson':
-                                markerType = 'g-^'
+                                markerType = 'g-'
                             else:
                                 markerType = 'y-'
                             ax2.plot(x,data[scenario].ix[1:,counter], markerType)
                         ax2Title.append(round(times,4))
+
         
                 ax2.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %g $ ' %alpha + '\n' + 't = %s' %ax2Title + '\n')
-                ax2.legend(scenerios, loc=2)
+                ax2.legend(scenariosLoop, loc=2)
                 ax2.set_xlabel(r'$x$')
                 ax2.set_ylabel(r"$u(x,t)$")
                 fig2.tight_layout()

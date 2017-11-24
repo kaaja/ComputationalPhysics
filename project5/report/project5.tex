@@ -1396,6 +1396,52 @@ We model the flow with the heat equation. This equation can be derived from the 
 
 Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. 
 
+\section{Results}
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber1.png}
+		\caption{1D. Coarse mesh. Stability requirement Forward not satisfied.\\ \textit{Forward Euler is unstable, while the other schemes are stable. Backward Euler and Crank-Nicolson produce results close to the anlytical solution for all time steps. Steady state is approached for Backward Euler and Crank-Nicolson.}}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber2.png}
+		\caption{1D. Coarse mesh. Stability requirement Forward satisfied.\\ \textit{Forward Euler is now stable. All schemes produce results looking qualitively like the analytical solution. Forward Euler has the largest error.}.}
+		\label{1}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber3.png}
+		\caption{1D. Fine mesh. Stability requirement Forward Euler not satisfied.\\ \textit{As for the coarse mesh, Forward Euler is unstable.}}
+		\label{fig:fig3}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber4.png}
+		\caption{1D. Fine mesh. Stability requirement Forward satisfied.\\ \textit{Forward Euler is stable. All methods give solutions close to the analytical solution.}}
+		\label{fig:1dFineMeshAll}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber5.png}
+	\caption{Same as Figure \ref{fig:1dFineMeshAll} without Forward Euler. \\ \textit{Backward Euler and Crank-Nicolson produces very good results below also when the stability limit for Forward Euler is not satisfied.}}
+	\label{1}
+\end{figure}
+
+From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. We also observe that both the Crank-Nicolson schemes seems to produce results closer to the analytical solution also when Forward Euler's stability requirement is satisfied. Hence Backward Euler and Crank Nicolson is prefererred over Forward Euler. From Figure \ref{fig:fig3} we see that Crank-Nicolson is closer to the analytic solution compared to the Backward Euler scheme. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
 \begin{thebibliography}{9}
 	\bibitem{MHJ} 

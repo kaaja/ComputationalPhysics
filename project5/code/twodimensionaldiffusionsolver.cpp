@@ -109,6 +109,8 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
         diff /= (Nx*Ny);
         iterations += 1;
     }
+    if ((iterations == maxIterations) && (diff > maxDifference))
+        cout << "Iteration limit reached without convergence. |u^(k+1) - u^k| = " << diff << endl;
     setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
     DestroyMatrix(uTemp, Nx, Ny);
 }
