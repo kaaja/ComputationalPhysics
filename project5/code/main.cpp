@@ -9,7 +9,7 @@ void read_input (string& outfileName, double& dt, double& dx, double& theta, dou
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
 void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
 void output_scalars(double computed_error, double dt, double dx);
-double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, int numberOfIntegrationPoints);
+double gaussQuad(int numberOfSummationPoints, int n, int m, int numberOfIntegrationPoints);
 
 ofstream ofile1; // File for scalars
 
@@ -89,13 +89,13 @@ int main(int argc, char* argv[])
 
         outfileName2DExplicit = outfileName + "Explicit";
         wtime = omp_get_wtime ( );
-        explicit2D.solve(outfileName2DExplicit, "Explicit");
+        explicit2D.solve(outfileName2DExplicit, "Explicit", threadNumberFromUser);
         wtime = omp_get_wtime ( ) - wtime;
         cout << "Time used explicit: " << wtime << endl;
 
         outfileName2DImplicit = outfileName + "Implicit";
         wtime2 = omp_get_wtime ( );
-        implicit2D.solve(outfileName2DImplicit, "Implicit");
+        implicit2D.solve(outfileName2DImplicit, "Implicit", threadNumberFromUser);
         wtime2 = omp_get_wtime ( ) - wtime2;
         cout << "Time used implicit: " << wtime2 << endl;
 
@@ -176,7 +176,7 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
                 //#pragma omp parallel for default(shared) private(n,m) reduction(+:tempSum)
                 for (n = 1; n < sumLimit; n++){
                     for (m = 1; m < sumLimit; m++){
-                        integral = gaussQuad(sumLimit, n, m, i*dx, j*dy, integrationPoints);
+                        integral = gaussQuad(sumLimit, n, m, integrationPoints);
                         tempSum += integral*sin(n*M_PI*i*dx)*sin(m*M_PI*j*dy)*exp(-pow(M_PI,2)*(n*n + m*m)*t*dt);
                     }
                 }
@@ -190,7 +190,7 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
     }
 }
 
-double gaussQuad(int numberOfSummationPoints, int n, int m, double x, double y, int numberOfIntegrationPoints){
+double gaussQuad(int numberOfSummationPoints, int n, int m, int numberOfIntegrationPoints){
     int k=0;
     int integrationCounter=0;
     double leftIntegrationLimit = 0.;

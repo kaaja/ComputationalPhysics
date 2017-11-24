@@ -12,9 +12,14 @@ TwoDimensionalDiffusionSolver::TwoDimensionalDiffusionSolver(double dt_, double 
     Ny = Ny_;
 }
 
-void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_)
+void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, int thread_num_)
 {
     outfileName = outfileName_;
+
+    int thread_num;
+    omp_set_num_threads(thread_num_);
+    thread_num = omp_get_max_threads ();
+
     mat solutionMatrixU = zeros<mat>(Nx,Ny);
     int maxIterations = 100000;
     double maxDifference = 0.001;
@@ -54,7 +59,7 @@ double TwoDimensionalDiffusionSolver::uSteadyState(double x, double y)
     int k;
     double uSs = 0.0;
     double fourOverPi = 4.0/M_PI;
-    //#pragma omp parallel for default(shared) private(k) reduction(+:uSs)
+    #pragma omp parallel for default(shared) private(k) reduction(+:uSs)
     for (k = 1; k < 15; k++){
         double beta = 2*k-1;
         uSs += sin(beta*M_PI*x)*sinh(beta*M_PI*y)/(beta*sinh(beta*M_PI));
@@ -65,12 +70,13 @@ double TwoDimensionalDiffusionSolver::uSteadyState(double x, double y)
 
 void TwoDimensionalDiffusionSolver::explicitScheme(double **u, double **uOld, int Nx, int Ny)
 {
-    for (int i = 0 ; i < Nx; i++){
+    int i; int j;
+    for (i = 0 ; i < Nx; i++){
         u[i][0] = u[0][i] = u[i][Nx-1] = u[Nx-1][i] = 0.0;
     }
-
-    for (int i = 1; i < Nx-1; i++){
-        for (int j = 1; j < Ny-1; j++){
+    #pragma omp parallel for default(shared) private(i,j)
+    for (i = 1; i < Nx-1; i++){
+        for (j = 1; j < Ny-1; j++){
             u[i][j] = uOld[i][j] + alpha*(uOld[i+1][j] + uOld[i-1][j] + uOld[i][j+1] + uOld[i][j-1] - 4*uOld[i][j]);
         }
     }
@@ -82,7 +88,9 @@ void TwoDimensionalDiffusionSolver::explicitScheme(double **u, double **uOld, in
 // Backward Euler, 2D, Jacobi
 void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int Nx, int Ny,
                                                   int maxIterations, double maxDifference){
-    for (int i = 0 ; i < Nx; i++){
+    int i; int j;
+
+    for (i = 0 ; i < Nx; i++){
         u[i][0] = u[0][i] = u[i][Nx-1] = u[Nx-1][i] = 0.0;
     }
     double **uTemp = CreateMatrix(Nx, Ny);
@@ -91,8 +99,9 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
     while ((iterations < maxIterations) && (diff > maxDifference)){
         diff = 0.;
         setMatrixAEqualMatrixB(uTemp, u, Nx, Ny);
-        for (int i = 1; i < Nx-1; i++){
-            for (int j = 1; j < Ny-1; j++){
+        #pragma omp parallel for default(shared) private(i,j) reduction(+:diff)
+        for (i = 1; i < Nx-1; i++){
+            for (j = 1; j < Ny-1; j++){
                 u[i][j] =   1./(1+4.*alpha)*(alpha*(uTemp[i+1][j] + uTemp[i-1][j] + uTemp[i][j+1] + uTemp[i][j-1]) + uOld[i][j]);
                 diff += fabs(u[i][j] - uTemp[i][j]);
             }

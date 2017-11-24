@@ -40,7 +40,6 @@ mat Solver::solve(string outfileName_)
         generate_right_hand_side( computed_right_hand_side, uOld, offDiagonalRhs, diagonalRhs, Nx);
         gassianTridiagonalSymmetricSolver( computed_right_hand_side,  u, uOld, offDiagonalLhs, diagonalLhs, Nx);
         // Change of variables
-        double uANalytical;
         for(int i = 0; i < Nx; i++){
             u[i] += dx*i;
             solutionMatrixU(0,t+1) = t*dt;

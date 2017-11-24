@@ -195,7 +195,7 @@ class Project5:
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = .3
+                    T = .1
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
