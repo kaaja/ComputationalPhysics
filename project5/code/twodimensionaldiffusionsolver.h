@@ -8,6 +8,7 @@
 #include <string>
 #include "time.h"
 #include <armadillo>
+#include <omp.h>
 
 
 using namespace std;
@@ -29,7 +30,7 @@ private:
 
 public:
     TwoDimensionalDiffusionSolver(double dt_, double dx_, double dy_, double theta_, double T_, int Nx_, int Ny_, int Nt_);
-    void solve(string outfileName_, string method_);
+    void solve(string outfileName_, string method_, int thread_num_);
     double uSteadyState(double x, double y);
 
 };
