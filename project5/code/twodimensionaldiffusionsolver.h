@@ -23,7 +23,8 @@ private:
 
     // Steady state solution
     void explicitScheme( double ** u, double ** uOld, int Nx, int Ny);
-    void backwardEuler(double **u, double **uOld, int Nx, int Ny, int maxIterations, double maxDifference, double &iterationNumber);
+    void backwardEulerJacobi(double **u, double **uOld, int Nx, int Ny, int maxIterations, double maxDifference, double &iterationNumber);
+    void backwardEulerGaussSeidel(double **u, double **uOld, int Nx, int Ny, int maxIterations, double maxDifference, double &iterationNumber);
     double ** CreateMatrix(int m, int n);
     void DestroyMatrix(double ** mat, int m, int n);
     void setMatrixAEqualMatrixB(double ** matrixA, double ** matrixB, int m, int n);

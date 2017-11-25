@@ -139,9 +139,16 @@ class Project5:
         
     def project5d(self):
         dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
+        
+        dtStart = .005
+        #dtStart = dtStart*(1./2)**7
+        dtStart = dtStart*(1./2)**5
+        numberOfDts = 2
+        dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
+        
         safetyFactor = 1.05
         #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
-        T = 0.25
+        T = 0.03
         theta = 0.5
         dimension = "1D"
         threadNumber = 8
@@ -150,8 +157,8 @@ class Project5:
         
         counter = 1
         data = OrderedDict()
-        for dx in dxValues:
-            dt = 1./2.*dx**2
+        for dt in dtValues:
+            dx = dt
             alpha = dt/dx**2
             self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)            
             # Read data
@@ -161,23 +168,33 @@ class Project5:
         #Plots
         numberOfScenarios = 3
         numerOfDx = len(dxValues)
-        scenarioNr = range(1,numerOfDx+1)
+
+        numerOfDt = len(dtValues)
+        scenarioNr = range(1,numerOfDt+1)
         scenerios = ['BackwardEuler', 'ForwardEuler', 'CrancNicholson']#, 'Analytical']
         errorFe = [data[i].ix[0,2] for i in scenarioNr]
         errorBe = [data[i].ix[1,2] for i in scenarioNr]
         errorCn = [data[i].ix[2,2] for i in scenarioNr]
         errors = [errorFe, errorBe, errorCn]
         
+        rFe = [np.log(errorFe[i+1]/errorFe[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
+        rBe = [np.log(errorBe[i+1]/errorBe[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
+        rCn = [np.log(errorCn[i+1]/errorCn[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
+        errors2 = [rFe, rBe, rCn]
+        
+        
+        
         fig2,ax2 = plt.subplots()
         logDxValues = []
         for i in xrange(numerOfDx):
             logDxValues.append(np.log2(dxValues[i])) 
 
-        for error in errors:
-            ax2.plot(logDxValues, error, '-o')
-        ax2.set_xlabel(r'$\log_2 \Delta x$')
-        ax2.set_ylabel(r"$\log_2 |Error|_{\infty}$")
-        ax2.set_title('Sup norm x')
+        for error in errors2:
+            if error == errors2[2]:
+                ax2.plot(np.log2(dtValues[1:]), error, '-o')
+        ax2.set_xlabel(r'$\Delta t$')
+        ax2.set_ylabel(r"Convergence rate")
+        ax2.set_title('Convergence rate L2')
         ax2.legend(scenerios, loc=2) 
         fig2.tight_layout()
         fig2.savefig(outfileName2+ '.png')
@@ -192,7 +209,7 @@ class Project5:
             dimension = "2D"
             threadNumber = 8
             FontSizeUniversal = 22
-            showMovie = False
+            showMovie = True
             for dx in dxValues:
                 nx = int(round(1./dx + 1))
                 x = np.linspace(0,1,nx)
@@ -313,38 +330,53 @@ class Project5:
         return data
     
     def project5h(self):
-         dxValues = [0.1, 0.02, 0.01, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
+         dxValues = [0.1, 0.02]#, 0.01]#, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
          safetyFactor = 0.9#, 1.04]
          movieCounter = 0
          scenario = "2DJacobiIterations"
-         threadNumber = 8
+         threadNumber = 1
          FontSizeUniversal = 22
          theta = 0.5
          T = .3
          data = OrderedDict()
+         data2 = OrderedDict()
          counter = 1
-         iterationArray = []
+         iterationArrayJacobi = []
+         iterationArrayGaussSeidel = []
          NValues = []
          for dx in dxValues:
              nx = int(round(1./dx + 1))
              NValues.append(nx)
              dt = dx**2/4.0*(1/safetyFactor)
              alpha = dt/dx**2
-             outfileName ='out5Jacobi'
+             outfileName ='out5h'
              outfileName2 = os.getcwd() + '/results/' + outfileName
              self.runCpp(outfileName2, dt, dx, theta, T, scenario, threadNumber)
-             data[counter] = pd.read_csv(outfileName2 + 'IterationNumber.txt', header=None)# , delimiter=',')
-             iterationArray.append(np.asscalar(data[counter].values))
+             data[counter] = pd.read_csv(outfileName2 + 'JacobiIterationNumber.txt', header=None)# , delimiter=',')
+             data2[counter] = pd.read_csv(outfileName2 + 'GaussSeidelIterationNumber.txt', header=None)# , delimiter=',')
+             iterationArrayJacobi.append(np.asscalar(data[counter].values))
+             iterationArrayGaussSeidel.append(np.asscalar(data2[counter].values))
              counter +=1
          fig, ax = plt.subplots()
-         ax.plot(NValues, iterationArray, '-o')
+         ax.plot(NValues, iterationArrayJacobi, '-o', NValues, iterationArrayGaussSeidel, '-x')
          ax.set_xlabel('N')
          ax.set_ylabel('k/N')
-         ax.set_title('Jacobi iterations')
-         #ax.legend(scenerios, loc=2) 
+         ax.set_title('Comparison iterative methods')
+         ax.legend(['Jacobi', 'Gauss Seidel'], loc=0) 
          fig.tight_layout()
          fig.savefig(outfileName2+ '.png')
          plt.close()
+         
+         fig, ax = plt.subplots()
+         ax.plot(NValues, np.asarray(iterationArrayGaussSeidel)/np.asarray(iterationArrayJacobi), '-o')
+         ax.set_xlabel('N')
+         ax.set_ylabel(r'$k_{GS}/k_{Jacobi}$')
+         ax.set_title('Comparison iterative methods')
+         #ax.legend(['Jacobi', 'Gauss Seidel'], loc=0) 
+         fig.tight_layout()
+         fig.savefig(outfileName2+ '2.png')
+         plt.close()
+         
          return data
                 
 

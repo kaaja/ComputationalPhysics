@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
         outfileName2DImplicit = outfileName + "Implicit";
         wtime2 = omp_get_wtime ( );
-        implicit2D.solve(outfileName2DImplicit, "Implicit", threadNumberFromUser);
+        implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
         wtime2 = omp_get_wtime ( ) - wtime2;
         cout << "Time used implicit: " << wtime2 << endl;
 
@@ -113,14 +113,23 @@ int main(int argc, char* argv[])
         ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
     }
     else if (scenario == "2DJacobiIterations"){
-        string outfileName2DImplicit;
-        TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+        string outfileName2DImplicitJacobi;
+        TwoDimensionalDiffusionSolver implicit2DJacobi = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
 
-        outfileName2DImplicit = outfileName ;
+        outfileName2DImplicitJacobi = outfileName +"Jacobi";
+        wtime = omp_get_wtime ( );
+        implicit2DJacobi.solve(outfileName2DImplicitJacobi, "ImplicitJacobi", threadNumberFromUser);
+        wtime = omp_get_wtime ( ) - wtime;
+        cout << "Time used implicit Jacobi: " << wtime << endl;
+
+        string outfileName2DImplicitGaussSeidel;
+        TwoDimensionalDiffusionSolver implicit2DGaussSeidel = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+
+        outfileName2DImplicitGaussSeidel = outfileName + "GaussSeidel";
         wtime2 = omp_get_wtime ( );
-        implicit2D.solve(outfileName2DImplicit, "Implicit", threadNumberFromUser);
+        implicit2DGaussSeidel.solve(outfileName2DImplicitGaussSeidel, "ImplicitGaussSeidel", threadNumberFromUser);
         wtime2 = omp_get_wtime ( ) - wtime2;
-        cout << "Time used implicit: " << wtime2 << endl;
+        cout << "Time used implicit Gauss-Seidel: " << wtime2 << endl;
     }
     return 0;
 }
@@ -150,7 +159,7 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
    for (int t = 1; t < Nt; t++){
         for(int xj = 0; xj < Nx; xj++){
             uANalytical = 0.;
-            for (int k = 1; k < 100; k++){
+            for (int k = 1; k < 1000; k++){
                 uANalytical += exp(-pow(k*M_PI, 2)*(dt*t))*2./(k*M_PI)*pow((-1.), k)*sin(k*M_PI*dx*xj);
             }
             uANalytical += dx*xj;

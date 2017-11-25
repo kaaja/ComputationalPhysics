@@ -40,7 +40,8 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, i
     int counter = 1;
     for (int t = 1; t < Nt; t++){
         if (method_ =="Explicit") explicitScheme(u, uOld, Nx, Ny);
-        else if (method_ == "Implicit") backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference, iterationNumber);
+        else if (method_ == "ImplicitJacobi") backwardEulerJacobi(u, uOld, Nx, Ny, maxIterations, maxDifference, iterationNumber);
+        else if (method_ == "ImplicitGaussSeidel") backwardEulerGaussSeidel(u, uOld, Nx, Ny, maxIterations, maxDifference, iterationNumber);
         for(int i = 0; i < Nx; i++){
             for (int j = 0; j < Ny; j++){
                 u[i][j] += uSteadyState(i*dx,j*dy);
@@ -88,7 +89,7 @@ void TwoDimensionalDiffusionSolver::explicitScheme(double **u, double **uOld, in
 }
 
 // Backward Euler, 2D, Jacobi
-void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int Nx, int Ny,
+void TwoDimensionalDiffusionSolver::backwardEulerJacobi(double **u, double **uOld, int Nx, int Ny,
                                                   int maxIterations, double maxDifference, double& iterationNumber){
     int i; int j;
     for (i = 0 ; i < Nx; i++){
@@ -113,10 +114,37 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
     iterationNumber = iterations/double(Nx);
     if ((iterations == maxIterations) && (diff > maxDifference))
         cout << "Iteration limit reached without convergence. |u^(k+1) - u^k| = " << diff << endl;
-    //setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
+    setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
     DestroyMatrix(uTemp, Nx, Ny);
 }
 
+void TwoDimensionalDiffusionSolver::backwardEulerGaussSeidel(double **u, double **uOld, int Nx, int Ny,
+                                                  int maxIterations, double maxDifference, double& iterationNumber){
+    int i; int j;
+    for (i = 0 ; i < Nx; i++){
+        u[i][0] = u[0][i] = u[i][Nx-1] = u[Nx-1][i] = 0.0;
+    }
+    double **uTemp = CreateMatrix(Nx, Ny);
+    double diff = 1.;
+    int iterations = 1;
+    while ((iterations < maxIterations) && (diff > maxDifference)){
+        diff = 0.;
+        setMatrixAEqualMatrixB(uTemp, u, Nx, Ny);
+        for (i = 1; i < Nx-1; i++){
+            for (j = 1; j < Ny-1; j++){
+                u[i][j] =   1./(1+4.*alpha)*(alpha*(u[i+1][j] + u[i-1][j] + u[i][j+1] + u[i][j-1]) + uOld[i][j]);
+                diff += fabs(u[i][j] - uTemp[i][j]);
+            }
+        }
+        diff /= (Nx*Ny);
+        iterations += 1;
+    }
+    iterationNumber = iterations/double(Nx);
+    if ((iterations == maxIterations) && (diff > maxDifference))
+        cout << "Iteration limit reached without convergence. |u^(k+1) - u^k| = " << diff << endl;
+    setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
+    DestroyMatrix(uTemp, Nx, Ny);
+}
 double ** TwoDimensionalDiffusionSolver:: CreateMatrix(int m, int n){
   double ** mat;
   mat = new double*[m];
