@@ -1434,14 +1434,17 @@ end time-loop
 
 
 \section{Results}
+The results following results are displayed in this section: 1D, 2D explicit, 2D implicit, Parallelization, Iterations.
 
 \subsection{1D}
+
+The two figures below show the 1D solutions for the three schemes for the coarse mesh case, $\Delta x = 0.1$, for two different discretization, one discretization satisyfing the stability requirement for Forward Euler and one discretization not satisfying the stability requirement.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber1.png}
-		\caption{1D. Coarse mesh. Stability requirement Forward not satisfied.\\ \textit{Forward Euler is unstable, while the other schemes are stable. Backward Euler and Crank-Nicolson produce results close to the anlytical solution for all time steps. Steady state is approached for Backward Euler and Crank-Nicolson.}}
+		\caption{1D. Coarse mesh. Stability requirement Forward Euler not satisfied.\\ \textit{Forward Euler is unstable, while the other schemes are stable. Backward Euler and Crank-Nicolson produce results close to the anlytical solution for all time steps. Steady state is approached for Backward Euler and Crank-Nicolson.}}
 		\label{1}
 	\end{figure}
 \end{minipage}\hfill
@@ -1454,6 +1457,10 @@ end time-loop
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
+
+From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results for Forward Euler. We also see that the Backward Euler scheme and the Crank-Nicolson scheme are stable regardless of the stability requirement for Forward Euler being satisfied or not. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. All these observations fit well with our numerical findings, that except for Forward Euler, the other schemes are unconditionally stable.\\
+
+The next two figures show the same teo types of discretizations with respect tot he stability requuirement as the figures above, but now the mesh is finer, $\Delta x= 0.01$.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
@@ -1473,12 +1480,20 @@ end time-loop
 \end{minipage}\hfill
 \vspace{2ex}
 
+Again we see the sensitivity of Forward Euler to the stability requirement. A small breach of the stability requirement gives large oscillations, making the solution non-physical. So even if the mesh is much finer compared to the previous figures, this is not enough to avoid unphysical oscillations in the Forward Euler scheme when the stability requirement for Forward Euler is violated. On the other hand, the figure to the right shows that Forward Euler, and the other methods, gives very good fit to the analytical solution when the stability requirement is met.\\
+
+The next figure shows the same as the figure to the right above, with the difference that the results for Froward Euler is removed. Forward Euler is removed so that we can see the solutions of the other two schemes more clearly.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber5.png}
 	\caption{Same as Figure \ref{fig:fig3} without Forward Euler. \\ \textit{Backward Euler and Crank-Nicolson produces very good results below also when the stability limit for Forward Euler is not satisfied.}}
 	\label{1}
 \end{figure}
+
+From the figure above we see that both Backward Euler and Crank-Nicolson produces very good results in the case where the stability requirement of Forward Euler is violated.\\
+
+In order to compare Backward Euler to Crank-Nicolson, we study the coarse case in more detail making a zoom of Figure \ref{fig:unzoomed}:
 
 \begin{figure}[H]
 	\centering
@@ -1488,13 +1503,13 @@ end time-loop
 \end{figure}
 
 
-
-
-From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. We also observe that both the Crank-Nicolson schemes seems to produce results closer to the analytical solution also when Forward Euler's stability requirement is satisfied. Hence Backward Euler and Crank Nicolson is prefererred over Forward Euler. From Figure \ref{fig:fig3} we see that Crank-Nicolson is closer to the analytic solution compared to the Backward Euler scheme. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
+From the above figure we see that, compared to the Backward Euler scheme, the Crank-Nicolson scheme is closer to the analytic solution. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
 \subsection{2D}
 
 \subsubsection{Explicit scheme}
+The next four figures show the 2D results for the explicit scheme, at two different points in time, when the stability requirement is met.
+
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -1532,7 +1547,9 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \end{minipage}\hfill
 \vspace{2ex}
 
+From the figures above, we see that when the stability requirement of the explicit scheme is met, the analytical solution is well approximated by the explicit scheme both in the early time of simulations and at a time closer to the steady state.\\
 
+The next two figures show the analytical and numerical solution from the explicit scheme when the stability requirement of the explicit scheme is violated.
 
 
 \begin{minipage}{.45\textwidth} 
@@ -1553,8 +1570,10 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \end{minipage}\hfill
 \vspace{2ex}
 
-\subsubsection{Implicitc scheme}
+From the above two figures we see once again the sensitivity of the explicit scheme to the stability requirement we derived. We see that a small violation of the stability requirement gives unphysical oscillations in the explicit solution, just as in the 1D case.
 
+\subsubsection{Implicit scheme}
+The four figures below show the 2D results for the implicit scheme at two points in time, one time being close to the starting time and one time closer to the steady state. The discretization violates the stability requirement for the explicit scheme.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
@@ -1592,13 +1611,17 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \end{minipage}\hfill
 \vspace{2ex}
 
+From the figures above, we see that the implicit scheme gives good approximatinos of the analytical solution, both for the early time and for the later time. We also not that the results are produced for the same discretization that gave oscillations from the explicit scheme, implying that the implicit scheme is less costly computational wise compared to the explicit scheme. With the implicit scheme, for a given space discreatization, a coarser time discretization can be chosen wihout getting bad unphysical results as in the explicit scheme. Once again we observe the good fit with our theoretical derivations that gave that the implicit scheme is unconditinally stable and the explicit scheme being conditionally stable.
+
+
 \subsection{Parallelization}
+The below two figures show the relation between solution times for the implicit method and the analytical solution. Also the effect of parallization of the analytical solution is shown.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/out5fTiming.png}
-		\caption{2D. Timing. Analytical Solution using 30 points in Gaussian quadrature.\\ \textit{The evaluation of the analytical solution takes 1000 times longer than the numerical solution of the implicit 2D scheme.}}
+		\caption{2D. Timing. Numerical scheme: Implicit Jacobi iteration. Analytical solution using 30 points in Gaussian quadrature. \\ \textit{The evaluation of the analytical solution takes 1000 times longer than the numerical solution of the implicit 2D scheme.}}
 		\label{fig:figParallel1}
 	\end{figure}
 \end{minipage}\hfill
@@ -1612,7 +1635,27 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \end{minipage}\hfill
 \vspace{2ex}
 
+The figure to the left above shows that the evaluation of the analytical solution takes up considerably more time than the solution of the numerical scheme. The reason for this has to do with the analytical function involves a sum of a double integral of a double sum (yes, that is correct), resulting in many loops.\\
 
+We have tried implementing the anaytical solution in an efficient way, by using Gaussian Quadrature with Legendre polynomials. In the lectures we have seen that use of Gaussian quadratue is far less demanding compared to the standard Newton-Cotes integral methods like the trapezoidal and Simpson's rule when it comes to the number of necessary integration points. \\
+
+The huge computational cost of calculating the analytical solution made us parallelize this part of the code (in addition to the implicit Jacobi iteration scheme) using open MP. The figure to the right above shows that the effect of parallizing the analytical solution is a speed up by a factor of 4, which is considerable.
+
+\section{Iterations}
+
+\subsection{Jacobi}
+The figure below shows the number of iterations needed for convergence, when applying Jacobi's iteration method to the implicit 2D scheme, for different matrix sizes for the mcoefficient matrix of the linear system.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/iterations/out5Jacobi.png}
+	\caption{Number of Jacobi iterations at the last time step divided by $N$ ($A = N \times N$).\\ \textit{The number of iterations is considerable lower then $N$, making Jacobi's iteration method much faster than the classical direct solvers.}}
+	\label{1}
+\end{figure}
+
+The figure above shows that the number of iterations reduces to less than 10 per cent of the number of elements in one direction in the coefficient matrix, $N$. From our discussion of FLOP count in the theory section, we know that Jacobi's method is $\mathcal{O}(kN)$ with regards to FLOPS. With the figure above showing that $k < 0.1N$, we get that Jacobi's method is considerable more effiecient compared to LU, which goes like $\mathcal{O}(N^2)$ FLOPS, and even faster compared to Gaussian elimination, which goes like $\mathcal{O}(N^3)$ FLOPS.\\
+
+The results in the figure above are based on the iteration number for the last time period of simulations. We calcuated the iteration number for all time periods, and the variation in iteration number between time periods was very low, implying that the above figure is representable for all time periods.
 
 \section{Conclusions}
 Applying Taylor expansions, we have derived numerical finite difference schemes for both the 1D and the 2D diffusion equation. For the 1D diffusion equation we have derived the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D diffusion equation we derived an explicit scheme based on the Forward Euler time derivative approximation, and an implicit scheme, based on the Backward Euler approximation of the time derivative.\\
