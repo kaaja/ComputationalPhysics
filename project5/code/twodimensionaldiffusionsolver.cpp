@@ -19,7 +19,8 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, i
     int thread_num;
     omp_set_num_threads(thread_num_);
     thread_num = omp_get_max_threads ();
-
+    colvec iterationNumberArray= zeros<colvec>(1);
+    double iterationNumber = 0.0;
     mat solutionMatrixU = zeros<mat>(Nx,Ny);
     int maxIterations = 100000;
     double maxDifference = 0.001;
@@ -39,17 +40,18 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, i
     int counter = 1;
     for (int t = 1; t < Nt; t++){
         if (method_ =="Explicit") explicitScheme(u, uOld, Nx, Ny);
-        else if (method_ == "Implicit") backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference);
+        else if (method_ == "Implicit") backwardEuler(u, uOld, Nx, Ny, maxIterations, maxDifference, iterationNumber);
         for(int i = 0; i < Nx; i++){
             for (int j = 0; j < Ny; j++){
                 u[i][j] += uSteadyState(i*dx,j*dy);
                 solutionMatrixU(i,j) = u[i][j];
             }
-
         }
         solutionMatrixU.save(outfileName + "SolutionMatrixUTime" + to_string(counter) + ".txt", raw_ascii);
+        iterationNumberArray(0) = iterationNumber;
         counter += 1;
     }
+    iterationNumberArray.save(outfileName + "IterationNumber.txt", raw_ascii);
     DestroyMatrix(u, Nx, Ny);
     DestroyMatrix(uOld, Nx, Ny);
 }
@@ -87,9 +89,8 @@ void TwoDimensionalDiffusionSolver::explicitScheme(double **u, double **uOld, in
 
 // Backward Euler, 2D, Jacobi
 void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int Nx, int Ny,
-                                                  int maxIterations, double maxDifference){
+                                                  int maxIterations, double maxDifference, double& iterationNumber){
     int i; int j;
-
     for (i = 0 ; i < Nx; i++){
         u[i][0] = u[0][i] = u[i][Nx-1] = u[Nx-1][i] = 0.0;
     }
@@ -109,9 +110,10 @@ void TwoDimensionalDiffusionSolver::backwardEuler(double **u, double **uOld, int
         diff /= (Nx*Ny);
         iterations += 1;
     }
+    iterationNumber = iterations/double(Nx);
     if ((iterations == maxIterations) && (diff > maxDifference))
         cout << "Iteration limit reached without convergence. |u^(k+1) - u^k| = " << diff << endl;
-    setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
+    //setMatrixAEqualMatrixB(uOld, u, Nx, Ny);
     DestroyMatrix(uTemp, Nx, Ny);
 }
 

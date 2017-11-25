@@ -1435,6 +1435,8 @@ end time-loop
 
 \section{Results}
 
+\subsection{1D}
+
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -1448,7 +1450,7 @@ end time-loop
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber2.png}
 		\caption{1D. Coarse mesh. Stability requirement Forward satisfied.\\ \textit{Forward Euler is now stable. All schemes produce results looking qualitively like the analytical solution. Forward Euler has the largest error.}.}
-		\label{1}
+		\label{fig:unzoomed}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
@@ -1474,9 +1476,19 @@ end time-loop
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/out5CNumber5.png}
-	\caption{Same as Figure \ref{fig:1dFineMeshAll} without Forward Euler. \\ \textit{Backward Euler and Crank-Nicolson produces very good results below also when the stability limit for Forward Euler is not satisfied.}}
+	\caption{Same as Figure \ref{fig:fig3} without Forward Euler. \\ \textit{Backward Euler and Crank-Nicolson produces very good results below also when the stability limit for Forward Euler is not satisfied.}}
 	\label{1}
 \end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/zoomed.png}
+	\caption{Same as Figure \ref{fig:unzoomed} without Forward Euler. Zoomed. \\ \textit{Crank-Nicolson is almost identical with analytical solution and outperforms Backward Euler.}}
+	\label{1}
+\end{figure}
+
+
+
 
 From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. We also observe that both the Crank-Nicolson schemes seems to produce results closer to the analytical solution also when Forward Euler's stability requirement is satisfied. Hence Backward Euler and Crank Nicolson is prefererred over Forward Euler. From Figure \ref{fig:fig3} we see that Crank-Nicolson is closer to the analytic solution compared to the Backward Euler scheme. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
@@ -1495,7 +1507,7 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0005out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution.}}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution when the stability requirement is satisfied.}}
 		\label{fig:fig2d2}
 	\end{figure}
 \end{minipage}\hfill
@@ -1514,7 +1526,7 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0030out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution.}}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution when stability requirement is satisfied.}}
 		\label{fig:fig2d5}
 	\end{figure}
 \end{minipage}\hfill
@@ -1542,6 +1554,26 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \vspace{2ex}
 
 \subsubsection{Implicitc scheme}
+
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit. Early time. Analytical Solution. \\ \textit{}}
+		\label{fig:fig2d1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpImplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Implicit scheme.\\ \textit{Implicit scheme produces results very similar to analytical solution, when the stability requirement for Forward Euler is not satisfied.}}
+		\label{fig:fig2d2}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
 		\centering
@@ -1559,6 +1591,28 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
+
+\subsection{Parallelization}
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/out5fTiming.png}
+		\caption{2D. Timing. Analytical Solution using 30 points in Gaussian quadrature.\\ \textit{The evaluation of the analytical solution takes 1000 times longer than the numerical solution of the implicit 2D scheme.}}
+		\label{fig:figParallel1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/out5gTimingAnalytical.png}
+		\caption{2D. Analytical. Times parallelized and unparallelized.\\ \textit{Paralellization of the analytical solution gives a speed by a factor of 4.}}
+		\label{fig:figParalell2}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+
 
 \section{Conclusions}
 Applying Taylor expansions, we have derived numerical finite difference schemes for both the 1D and the 2D diffusion equation. For the 1D diffusion equation we have derived the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D diffusion equation we derived an explicit scheme based on the Forward Euler time derivative approximation, and an implicit scheme, based on the Backward Euler approximation of the time derivative.\\

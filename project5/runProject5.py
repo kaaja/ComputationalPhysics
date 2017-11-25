@@ -122,7 +122,7 @@ class Project5:
                 fig2.tight_layout()
                 fig2.savefig(outfileName2 + 'Number' + str(movieCounter) + '.png') 
                 plt.close()
-        
+                #plt.show()
                 
 #                # Make video file
 #                fps = 4  # frames per second
@@ -192,6 +192,7 @@ class Project5:
             dimension = "2D"
             threadNumber = 8
             FontSizeUniversal = 22
+            showMovie = False
             for dx in dxValues:
                 nx = int(round(1./dx + 1))
                 x = np.linspace(0,1,nx)
@@ -224,43 +225,44 @@ class Project5:
                         #data[scenario] = OrderedDict()
                     fileCounter = 1
                     st.setp(interactive=False)
-                    for fileCounter in xrange(1, nT):
-                        data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                        
-                        #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
-                        #rstride=1, cstride=1, linewidth=0, antialiased = False)
-                        
-                        st.surfc(xv, yv, data, title='Implicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat')  #
-                        st.savefig('movie/tmpImplicit_%04d' %fileCounter + outfileName + '.png')
-                        
-                        data2 = pd.read_csv(outfileName2 + 'ExplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                        
-                        #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
-                        #rstride=1, cstride=1, linewidth=0, antialiased = False)
-                        
-                        st.surfc(xv, yv, data2, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
-                        st.savefig('movie/tmpExplicit_%04d' %fileCounter + outfileName + '.png')  
-                        
-                        data3 = pd.read_csv(outfileName2 + 'AnalyticalSolutionMatrixU2D%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                        st.surfc(xv, yv, data3, title='Analytical Time = %.4f' % ((fileCounter-1)*dt), zlim=[-0.1, 1.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
-                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
-                        st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
-                        
-                        st.surfc(xv, yv, (data/data3-1)*100, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
-                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
-                        st.savefig('movie/tmpErrorImplicit_%04d' %fileCounter + outfileName + '.png')
-                        
-                        st.surfc(xv, yv, (data2/data3-1)*100, title='Explicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
-                              colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
-                              shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
-                        st.savefig('movie/tmpErrorExplicit_%04d' %fileCounter + outfileName + '.png')
-                        
+                    if showMovie:
+                        for fileCounter in xrange(1, nT):
+                            data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                            
+                            #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
+                            #rstride=1, cstride=1, linewidth=0, antialiased = False)
+                            
+                            st.surfc(xv, yv, data, title='Implicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpImplicit_%04d' %fileCounter + outfileName + '.png')
+                            
+                            data2 = pd.read_csv(outfileName2 + 'ExplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                            
+                            #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
+                            #rstride=1, cstride=1, linewidth=0, antialiased = False)
+                            
+                            st.surfc(xv, yv, data2, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpExplicit_%04d' %fileCounter + outfileName + '.png')  
+                            
+                            data3 = pd.read_csv(outfileName2 + 'AnalyticalSolutionMatrixU2D%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                            st.surfc(xv, yv, data3, title='Analytical Time = %.4f' % ((fileCounter-1)*dt), fontsize = 30,zlim=[-0.1, 1.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
+                            
+                            st.surfc(xv, yv, (data/data3-1)*100, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpErrorImplicit_%04d' %fileCounter + outfileName + '.png')
+                            
+                            st.surfc(xv, yv, (data2/data3-1)*100, title='Explicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpErrorExplicit_%04d' %fileCounter + outfileName + '.png')
+                            
                         
             
             data = pd.read_csv(outfileName2 + 'Timing.txt' , delimiter=',')
@@ -288,6 +290,7 @@ class Project5:
         T = .1
         nT = int(round(T/dt+1))
         
+        
         outfileName ='out5g'
         outfileName2 = os.getcwd() + '/results/' + outfileName
         
@@ -308,6 +311,44 @@ class Project5:
         fig.tight_layout()
         plt.savefig( outfileName2 + 'TimingAnalytical.png')
         return data
+    
+    def project5h(self):
+         dxValues = [0.1, 0.02, 0.01, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
+         safetyFactor = 0.9#, 1.04]
+         movieCounter = 0
+         scenario = "2DJacobiIterations"
+         threadNumber = 8
+         FontSizeUniversal = 22
+         theta = 0.5
+         T = .3
+         data = OrderedDict()
+         counter = 1
+         iterationArray = []
+         NValues = []
+         for dx in dxValues:
+             nx = int(round(1./dx + 1))
+             NValues.append(nx)
+             dt = dx**2/4.0*(1/safetyFactor)
+             alpha = dt/dx**2
+             outfileName ='out5Jacobi'
+             outfileName2 = os.getcwd() + '/results/' + outfileName
+             self.runCpp(outfileName2, dt, dx, theta, T, scenario, threadNumber)
+             data[counter] = pd.read_csv(outfileName2 + 'IterationNumber.txt', header=None)# , delimiter=',')
+             iterationArray.append(np.asscalar(data[counter].values))
+             counter +=1
+         fig, ax = plt.subplots()
+         ax.plot(NValues, iterationArray, '-o')
+         ax.set_xlabel('N')
+         ax.set_ylabel('k/N')
+         ax.set_title('Jacobi iterations')
+         #ax.legend(scenerios, loc=2) 
+         fig.tight_layout()
+         fig.savefig(outfileName2+ '.png')
+         plt.close()
+         return data
+                
+
+    
 #%%
 if __name__ == "__main__":
     # Clean results and movie directory
@@ -347,6 +388,10 @@ if __name__ == "__main__":
     if args.task  == '5g':
        project5g = Project5()
        data = project5g.project5g()
+
+    if args.task  == '5h':
+       project5h = Project5()
+       data = project5h.project5h()
        
 #%%
 

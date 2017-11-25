@@ -112,6 +112,16 @@ int main(int argc, char* argv[])
         ofile1 << setw(15) << setprecision(16) << wtime2<< ", ";
         ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
     }
+    else if (scenario == "2DJacobiIterations"){
+        string outfileName2DImplicit;
+        TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+
+        outfileName2DImplicit = outfileName ;
+        wtime2 = omp_get_wtime ( );
+        implicit2D.solve(outfileName2DImplicit, "Implicit", threadNumberFromUser);
+        wtime2 = omp_get_wtime ( ) - wtime2;
+        cout << "Time used implicit: " << wtime2 << endl;
+    }
     return 0;
 }
 
