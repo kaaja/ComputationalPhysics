@@ -87,6 +87,9 @@
 If the above Github-link does not work, it is eighter because you have not yet accepted our invite to the repository, or you have not yet provided us with an e-mail addres available at Github so that we can invite you. The Github user you will be invited from is "kaaja". If the latter applies to you, please send us an e-mail with an e-mailadress available in Github or your Github username so that we can send you an invite. Our e-mailadresses: peter.killingstad@hotmail.com, karljaco@gmail.com.
 
 
+\section*{Abstract}
+Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm. The Jacobi algorithm is showm to be very efficient compared to direct schemes like Gaussian elimination. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive aorund the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
+
 \section{Analytical solution 1D}
 The one-dimensional problem is written as 
 
@@ -1523,6 +1526,34 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 \end{minipage}\hfill
 \vspace{2ex}
 
+\section{Conclusions}
+Applying Taylor expansions, we have derived numerical finite difference schemes for both the 1D and the 2D diffusion equation. For the 1D diffusion equation we have derived the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D diffusion equation we derived an explicit scheme based on the Forward Euler time derivative approximation, and an implicit scheme, based on the Backward Euler approximation of the time derivative.\\
+
+Truncation errors are derived for all schemes. We find that all schemes have truncation errors that are second order in the space variables, so the truncation error goes like $\mathcal{O}(\Delta h^2)$, where $h$ is a spatial step size. Exepct for the Crank-Nicolson scheme, which is second order also in time, all the other schemes are first order in time.\\
+
+We have performed stability analysis of all schemes, using Neumann stability analysis. Except for the Forward Euler scheme, all schmes are unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case.\\
+
+Analytical solutions for the 1D and the 2D diffusion equation are derived using the separation of variables technique. \\
+
+The 1D cases are implemented in c++ by using one single scheme, the $\theta$-scheme. We show how all the schemes in the 1D case are special cases of the $\theta$-scheme.\\
+
+Linear system formulations are derived for all schemes. In the 1D case, using the $\theta$-scheme, we find that all the schemes corresponds to versions of a tridiagonal linear systems. For tridiagonal systems, the Thomas algorithm, which is much more efficient with regard to FLOPS compared to Gaussian elimination and LU-decomposition, can, and is, used. We utilize the fact that the coefficients in the coefficient matrix are constants by creating a version of the Thomas algorithm that is more efficient than the original Thomas algorithm. \\
+
+In the 2D case, the linear system is still sparse, but it is no longer tridiagonal. The exlicit scheme is still straight forward to implement, while the implicit scheme no longer can be solved by the Thomas algorithm. Other methods are necessary for obtaining efficient solutions of the implicit 2D scheme.\\ 
+
+Iterative method are potentially very efficient methods solving the kind of system we have in the 2D implicit scheme. We present a general iterative scheme, the fixed point iteration scheme. Conditions for convergence of the iterative systems to the true solutions are presented. We derive a FLOP count of the iterative scheme, and find that it goes like $\mathcal{O}(k N)$ FLOPS, where $k$ is the number of iterations and $N$ is the dimension of the matrix $A$ of the linear system. \\
+
+We present one version of the general fixed point iteration scheme: the Jacobi method. It is shown how the Jacobi method relates to the iterative fixed point scheme. We derive a Jacobi-algorithm for the 2D implicit scheme, which is implemented. The number of iterations needed for convergence of the Jacobi schemes reveals huge savings regards to FLOPS compared to direct methods like Gaussian elimination and LU-decomposition.\\
+
+In order to speed up the calculations further, we use parallel computing by applying Open MP. Open MP is applied to the Jacobi solver for the 2D implicit scheme and for the numerical evaluation of the analytical solution. We find that Open MP gives a speed up of these parts of the code by a factor of four.\\
+
+We find that the numerical evaluation of the anlytical solution in 2D takes up considerable more time than evaluation of the numerical schemes! The numerical implementation involves mixes of double sums and double integrals, resulting in many FLOPS. In order to increase the efficiency of the numerical evaluation of the analytical solution, we apply Gaussian quadrature with Legendre polynomials, which is known to be much more efficient compared to standard integral methods like e.g. Simpson's rule, for evaluation of the integral. \\
+
+Our numerical results confirms the theoretical derivations. Forward Euler is sensitive aorund the stability limit, both in the 1D case and in the 2D case. A slight increase of the time step parameter above the stability limit gives unstable solutions, while a slight decrease of the time step parameter below the stability limit gives stable solutions.\\
+
+For 1D the Backward Euler and Crank-Nicolson seems to perform better compared to the Forward Euler scheme, also when the stability condition for the Forward Euler scheme is satisfied. The Crank-Nicolson scheme looks more precise, giving results closer to the analytical solution, compared to the Backward Euler scheme. This last point was not unexpected, knowing from the theoretical derivations that the truncation error of the Crank-Nicolson scheme is one order higher in time compared to the Backward Euler scheme.\\
+
+Interesting extension to this analysis would be calculations of the numerical truncation errors, comparing these to the analytical derivations. A more detailed analysis of the Gaussian qadrature, comparing it with other integration methods with regards to number of needed points, would be interesting. Introduction of relaxation parameters to the iterative scheme and studying the effect of this on the efficiency is another potential direction of future work.
 
 
 
