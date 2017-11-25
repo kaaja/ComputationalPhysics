@@ -88,9 +88,33 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
-Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm. The Jacobi algorithm is showm to be very efficient compared to direct schemes like Gaussian elimination. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive aorund the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
+Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm. The Jacobi algorithm is showm to be very efficient compared to direct schemes like Gaussian elimination. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive around the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
 
-\section{Analytical solution 1D}
+\section{Introduction}
+Partial differential equations (PDEs) describes most physical processes. Analytical solutions to PDEs are only known in a few special cases. Numerical solutions of PDEs are indespensable in modelling of physical processes. In this report we will derive the most used schemes for one of the most used PDEs, the diffusion equation. We will develop finite difference schemes for solution of the 1D and the 2D diffusion equation. For the 1D case we derive and implement the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D case we derive and implement an explicit scheme and an implicit scheme.\\
+
+Numerical schemes involves approximations, and this implies errors. Knowledge about a numerical methods error is of great importance. All schemes we derive, will be derived from Taylor expansions, implying that we get terms representing the order of the truncation errors (the errors that is made by leaving out terms in the Taylor series). \\
+
+Numerical instability is another type of error that may occour due to approximations. A numerical scheme can give unphysical results, being unstable by e.g. producing unphysical oscillations. We perform Neuman stability analysis on all the derived schemes, identifying which schemes that are conditionally stable and what the stability requirements are.\\
+
+Calculation of errors can be done in many ways. A very good method to calculate errors, is to compare the numerical solutions to analytical solutions. In our special case, we are so lucky that there exists known analytical solutions. Knowledge about how to derive these analytical solutions in itself is important. We derive, in full detail, the analytical solutions for both the 1D and 2D case.\\
+
+The word "error" always comes up when discussing numerical schemes, and it is very often mentioned along with another word: "efficiency". A scheme can produce as small an error as possible, but it is worth little if it cannot produce the results in a reasonable amount of time. Hence methods improving the efficiency of the schemes are very central when dealing with numerical simulations. Our schemes can be, and ars, written as linear systems. Typicall for PDEs, these systems involve large and sparse matrices. Standard methods like Gaussian elimination for solving linear system becomes very time consuming. Alternatives are needed. \\
+
+We improve the efficiency of the 1D schemes by utilizing that the schemes, when written as the general $\theta$-scheme, are tridiagonal linear systems. The Thomas algorithm, which is much more efficient than e.g. Gaussian elimination and LU-decomposition, can be used for these systems. We further improve the efficiency of the Thomas algorithm by taking into account that all coefficients in the coefficient matrix of the linear system are constant.\\
+
+For the 2D implicit scheme, the matrix is no longer tridiagonal, so the Thomas algorithm cannot be used anymore. Other efficient alternatives to direct methods like Gaussian elimination and LU-decomposition are necessary. Iterative methods is one answer. We set up a general iterative method, the fixed point iteration method, and present convergence conditions and FLOP counts for this method. It is seen that this method quickly has the potential of being much more efficient than e.g. Gaussian elimination. Further the Jacobi method is related to the fixed point iteration method, and then implemented to the implicit 2D scheme.\\
+
+Improving the efficiency further, we parallize parts of our code, using open MP. A timing analysis reveals that evaluation of the analytical solution takes up considerably more time than the numerical schemes! As a result, we parallize the analytical solution. We also parallelize that Jacobi solver. \\
+
+One reason for the high computational demands from evaluation of the analytical solution, is that there is a double integral that needs to be evaluated many times. In order to speed up the evaluation of this integral, we apply Gaussian quadrature with Legendre polynomials. Gaussian quadrature is known to be much more efficient compared to standard integration rules like e.g. Simpson's rule.\\
+
+In the next section the analytical solution is derived, before we turn to derivation and error analysis of the numerical schemes. Finally results and conlcusions follows.
+
+\section{Theory}
+This section contains derivations of analytical solutions and derivation and error analysis of the numerical schemes. But first, the physical problems are presented.
+
+\subsection{1D problem}
 The one-dimensional problem is written as 
 
 \begin{subequations}
@@ -105,9 +129,42 @@ The one-dimensional problem is written as
 
 where the length has been scaled by the lenght of the $x$-domain, $L$.\\
 
-The problem consists of non-homogeneous boundary conditions, and it is not trivial to find a closed form solution. The problem can be seen as a physical problem such as a temperature gradient in a rod or flow between two infinite flat plates, where the fluid is initially at rest and the plate at $x=1$ is given a sudden movement. \\
+The problem consists of non-homogeneous boundary conditions, and it is not trivial to find a closed form solution. The problem can be seen as a physical problem such as a temperature gradient in a rod or flow between two infinite flat plates, where the fluid is initially at rest and the plate at $x=1$ is given a sudden movement. 
 
-From physical observations we know that as time goes, i.e. when $t\rightarrow \infty$,  the problem coinsides whith its surroundings and becomes steady.It is reasonable to introduce a solution consisting of the sum of two parts, a steady-state solution, and a transient solution that depends on the initial conditions:
+\subsection{2D problem}
+In the 2D case, we choose to model a laminar flow inside an infinite tunnel with a finite quadratic cross section. We only model a single cross section, the problem being identical for all cross sections because of the homogenity assumption in the flow direction. \\
+
+There will be no slip boundary conditions on all four walls. The floor and the sides will be fixed, while the roof will be moving in the flow direction. With these boundary conditions we have zero velocity on the floor and the side walls, while we have a non-zero velcocity in the flow direction. The figure below shows our problem.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5e/boxDrawing2-0.png}
+	\caption{2D problem sketch}
+	\label{1}
+\end{figure}
+
+With our choise of coordinate system, positive flow represents flow out of the paper. \\
+
+We choose $u(x,y=1) = 1$, and $u(x=0, y) = u(x=1,y) = u(x,y=0) = 0$. \\
+
+We model the flow with the heat equation. This equation can be derived from the equations of incompressible flow, the Navier-Stokes equations, by assuming laminar flow and a flow profile of type $u = u(x,y)$:
+
+\begin{subequations}
+	\begin{align}
+	\mathbf{u}_t + (\mathbf{u} \cdot \nabla) \mathbf{u} &= -\frac{\nabla p}{\rho} + \nabla^2 \mathbf{u}\\
+	w(x,y)_t + (w \frac{\partial}{\partial z}) w(x,y) &\stackrel{\text{Zero pressure gradient}}{=} (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} ) w(x,y)\\
+	w(x,y)_t &= (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} )w(x,y)\label{eq:ns}
+	\end{align}
+\end{subequations}
+
+Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. 
+
+\subsection{Analytical solutions}
+
+\subsubsection{Analytical solution 1D}
+
+
+From physical observations we know that as time goes, i.e. when $t\rightarrow \infty$,  the problem coinsides whith its surroundings and becomes steady. It is reasonable to introduce a solution consisting of the sum of two parts, a steady-state solution, and a transient solution that depends on the initial conditions:
 
 \begin{equation}
 u(x,t) = U(x) + V(x,t)
@@ -118,7 +175,7 @@ Since the steady-state problem is not changing in time, i.e. $\partial_ t = 0$, 
 \begin{subequations}
 	\begin{eqnarray}
 	\label{eqn:steadyStateSODE}
-	U_{xx} &=& 0 \textit{ , } x \in [0,1]\\ \nonumber
+	U_{xx} &=& 0 \textit{ , } x \in (0,1)\\ \nonumber
 	\\
 	U(0) &=& 0 \textit{  } \\
 	U(L) &=& 1
@@ -304,7 +361,7 @@ u(x,t) = U(x) + V(x,t) = x + 2\sum_{n=1}^{\infty}e^{-(n\pi)^2 t} \frac{(-1)^k}{n
 \label{eqn:solution1D}
 \end{equation}
 
-\section{Analytical solution 2D}
+\subsubsection{Analytical solution 2D}
 In the two-dimensional case the differential equation becomes
 \begin{subequations}
 	\begin{eqnarray}
@@ -591,12 +648,10 @@ A_{mn} = -4 \int_0^1 \int_0^1 U(x,y) \sin(m\pi x)\sin(n\pi y) dxdy.
 
 
 
-\section{5a}
-
-\subsection{Derivation of schemes with truncation errors}
+\subsection{Numerical schemes}
 All the schemes will be derived from Taylor series expansions, and the truncation error will be related to the remainder in the Taylor-series expansions. This remainder is the error we get when truncating the series by leaving out the remainder.\\
 
-\subsection{Forward Euler}
+\subsubsection{Forward Euler}
 For the time derivative, we expand $u(x, t + \Delta t)$ around $t$
 
 \begin{subequations}
@@ -684,7 +739,7 @@ From (\ref{eq:neumanFe1}) we get
 (\ref{eq:neumanFe2}) gives that the Forward Euler scheme is conditionally stable, and the condition that ensures stability.
 
 
-\subsection{Backward Euler}
+\subsubsection{Backward Euler}
 Here we will do the same as we did for Forward Euler above: Derive the scheme, including truncation errors, and analyze stability.\\
 
 The only change compared to Forward Euler, is the time discretization, which now becomes
@@ -743,7 +798,7 @@ From (\ref{eq:neumanBe}) we see that, in contrast to the Forward Euler scheme, t
 
 We see from (\ref{eq:beLinSys}) that solving Backward Euler corresponds to solving a linear system $A U = \tilde{b}$, where $A$ is a trdiagonal matrix. 
 	
-\subsection{Crank-Nicolson}
+\subsubsection{Crank-Nicolson}
 Here we Taylor expand $u(x+\Delta x, t+\Delta t)$ and $u(x-\Delta x, t+\Delta t)$ around $t'=t+\Delta t/2$ to get
 
 \begin{subequations}
@@ -911,7 +966,7 @@ We study the stability of the Crank-Nicolson scheme using the same method as for
 
 Based on the analyzis of the different schemes, we expect the Crank-Nicolson scheme to be the best scheme with respect to convergence and stability. 
 
-\subsection{$\theta$-rule}
+\subsubsection{$\theta$-rule}
 All the schemes derived above can be derived from a more general scheme, called the $\theta$-rule scheme. To see this, first notice that the Crank-Nicolson scheme (\ref{eq:cn1d}) is the average of the Forward Euler scheme (\ref{eq:fe}) and the Backward Euler scheme (\ref{eq:be1}). If we think of the $\theta$-rule as a weighted average with weights $\theta$ and $1-\theta$ so that $u_{t} = \theta u_{xx,BE} + (1- \theta) u_{xx,FE}$, we see that the Crank-Nicolson shceme is just a special case of the $\theta$-scheme with equal weights, $\theta = 1/2$. Based on this reasoning, we get the $\theta$-rule
 
 \begin{subequations}
@@ -934,7 +989,7 @@ From the $\theta$-scheme (\ref{eq:thetaRule}) we see that $\theta = 0,\;1/2,\;1$
 
 When implementing the 1D-schemes, we will use the $\theta$-scheme. Using the $\theta$-scheme, we need only write one scheme instead of three.
 
-\subsection{Implementation of 1D problem}
+\subsubsection{Implementation of 1D problem}
 As mentioned in the previous paragraph, we implement the 1D schemes using the $\theta$-scheme. We will now rewrite (\ref{eq:thetaRule}) to a linear system, and then we will apply the Thomas algorithm to this system.\\
 
 To ease the notation, we introduce 
@@ -1097,10 +1152,9 @@ for time in times:
 end time loop
 \end{lstlisting}
 
-\subsection{2D schemes}
-We will derive and apply a Forward Euler (explicit) scheme and a Backward Euler (implicit) scheme for the 2D case.
-
 \subsubsection{2D explicit scheme}
+We will derive and apply a Forward Euler (explicit) scheme and a Backward Euler (implicit) scheme for the 2D case.\\
+
 Compared to the 1D case, we get an extra term for $u_{yy}$ in (\ref{eq:fe}) for the explicit scheme. $u_{yy}$ is approximated in exactly the same way as $u_{xx}$ (\ref{eq:feSpace3}), so we get
 
 \begin{equation}
@@ -1361,43 +1415,23 @@ in (\ref{eq:jacobi2D}) we see that (\ref{eq:jacobi2D}) corresponds to the Jacobi
 
 Following Hjorth-Jensen \cite{MHJ} p. 319, we get the following main algorithm for the Jacobi-solver
 
-\begin{itemize}
-	\item{1: Make intial guess for $u_{i,j}$ for all internal points.}
-	\item{2: Caclulate iteration $k$ of $u$, $u^k$ using (\ref{eq:2dBe})}.
-	\item{3: Stop if wanted convergence reached, else continue next iteration.}
-	\item{4: Set previous $u$-value equal to new $u$.}
-	\item{5: Repeat all steps from step 2.}
-\end{itemize}
+\begin{lstlisting}
+for time in times:
+	Guess starting values u_{new} (Alternatively set equal previous time step)
+    while ((iterations < maxIterations) && (error > allowedError))
+	    u_{Old} = u_{new}
+		for x in xPoints:
+			for y in yPoints:
+				Calculate u_{new} = f(u_Old) (Jacobi expression)
+				Cacalucate error: error += u_{New}(x,y) - u_{Old}(x,y)
+			end y-loop
+		end x-loop
+		Caclculate average error: error /= (Nx*Ny);
+	end while-loop
+end time-loop
+\end{lstlisting}
 
-The above algorithm is used for all time steps, starting with the first internal time step, solving one step at the time before moving to the next step.
 
-\subsection{2D Physical problem with boundary conditions}
-We choose to model a laminar flow inside an infinite tunnel with a finite quadratic cross section. We only model a single cross section, the problem being identical for all cross sections because of the homogenity assumption in the flow direction. \\
-
-There will be no slip boundary conditions on all four walls. The floor and the sides will be fixed, while the roof will be moving in the flow direction. With these boundary conditions we have zero velocity on the floor and the side walls, while we have a non-zero velcocity in the flow direction. The figure below shows our problem.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5e/boxDrawing2-0.png}
-	\caption{2D problem sketch}
-	\label{1}
-\end{figure}
-
-With our choise of coordinate system, positive flow represents flow out of the paper. \\
-
-We choose $u(x,y=1) = 1$, and $u(x=0, y) = u(x=1,y) = u(x,y=0) = 0$. \\
-
-We model the flow with the heat equation. This equation can be derived from the equations of incompressible flow, the Navier-Stokes equations, by assuming laminar flow and a flow profile of type $u = u(x,y)$:
-
-\begin{subequations}
-	\begin{align}
-		\mathbf{u}_t + (\mathbf{u} \cdot \nabla) \mathbf{u} &= -\frac{\nabla p}{\rho} + \nabla^2 \mathbf{u}\\
-		w(x,y)_t + (w \frac{\partial}{\partial z}) w(x,y) &\stackrel{\text{Zero pressure gradient}}{=} (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} ) w(x,y)\\
-		w(x,y)_t &= (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial x^2} )w(x,y)\label{eq:ns}
-	\end{align}
-\end{subequations}
-
-Central assumptions behind the resulting heat equation is that there is no external pressure gradient and that the flow is laminar. 
 
 \section{Results}
 
@@ -1549,7 +1583,7 @@ In order to speed up the calculations further, we use parallel computing by appl
 
 We find that the numerical evaluation of the anlytical solution in 2D takes up considerable more time than evaluation of the numerical schemes! The numerical implementation involves mixes of double sums and double integrals, resulting in many FLOPS. In order to increase the efficiency of the numerical evaluation of the analytical solution, we apply Gaussian quadrature with Legendre polynomials, which is known to be much more efficient compared to standard integral methods like e.g. Simpson's rule, for evaluation of the integral. \\
 
-Our numerical results confirms the theoretical derivations. Forward Euler is sensitive aorund the stability limit, both in the 1D case and in the 2D case. A slight increase of the time step parameter above the stability limit gives unstable solutions, while a slight decrease of the time step parameter below the stability limit gives stable solutions.\\
+Our numerical results confirms the theoretical derivations. Forward Euler is sensitive around the stability limit, both in the 1D case and in the 2D case. A slight increase of the time step parameter above the stability limit gives unstable solutions, while a slight decrease of the time step parameter below the stability limit gives stable solutions.\\
 
 For 1D the Backward Euler and Crank-Nicolson seems to perform better compared to the Forward Euler scheme, also when the stability condition for the Forward Euler scheme is satisfied. The Crank-Nicolson scheme looks more precise, giving results closer to the analytical solution, compared to the Backward Euler scheme. This last point was not unexpected, knowing from the theoretical derivations that the truncation error of the Crank-Nicolson scheme is one order higher in time compared to the Backward Euler scheme.\\
 
