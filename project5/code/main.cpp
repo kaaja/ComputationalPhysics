@@ -197,7 +197,6 @@ mat analytical2D(string outfileName, double dt, double dx, double dy, int Nt, in
             for (j = 0; j < Ny; j++){
                 #pragma omp critical
                 tempSum = 0.;
-                //#pragma omp parallel for default(shared) private(n,m) reduction(+:tempSum)
                 for (n = 1; n < sumLimit; n++){
                     for (m = 1; m < sumLimit; m++){
                         integral = gaussQuad(sumLimit, n, m, integrationPoints);

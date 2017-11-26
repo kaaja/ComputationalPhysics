@@ -174,24 +174,15 @@ void TwoDimensionalDiffusionSolver::setMatrixAEqualMatrixB(double ** matrixA, do
 
 void TwoDimensionalDiffusionSolver::calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_)
 {
-    // Calculates sup-norm for relative error
+    // L2 norm
     double temp_relative_error = 0.0;
     *computed_error = 0.0;
-    //*computed_error = log2(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))
-      //                            /computed_exact_solution(2,2)));
-    //*computed_error = log2(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))));
     double sum = 0.;
     for (int i = 0; i < Nx_; i++){
         for (int j = 0; j < Nx_; j++){
-            /*
-            temp_relative_error = log2(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))
-                                            /computed_exact_solution(i, tj)));*/
-            //temp_relative_error = log2(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))));
-            //if(temp_relative_error > *computed_error) *computed_error = temp_relative_error;
             sum += pow((computed_numerical_solution(i, j) - computed_exact_solution(i, j)),2);
         }
     }
     sum = sqrt(dx*dx*sum);
     *computed_error = sum;
 }
-

@@ -36,6 +36,7 @@ class Project5:
         call(["./AllrunVectorized", outfileName, dt, dx, theta, T, scenario, threadNumber])
         
     def project5c(self):
+        ''' 1D '''
         dxValues = [0.1, 0.01]
         safetyFacors = [0.96, 1.04]
         movieCounter = 0
@@ -67,9 +68,7 @@ class Project5:
                     data[scenario] = pd.read_csv(outfileName2 + scenario + 'SolutionMatrixU.txt', delim_whitespace=True, header=None)
                 x = data[scenario].ix[1:,0]
                 t = data[scenario].ix[0,1:]
-                
-                #results4b.columns = ["acceptedMoves","mcs", "temperature", "Eavg", "sigmaE", "Mavg", "sigmaM", "absMavg", "Cv", "chi"]
-                
+                                
                 #Plots
                 counter =1
                 figureNumber = 1
@@ -138,19 +137,12 @@ class Project5:
        
         
     def project5d(self):
-        #dx = 0.1#, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
-        
-        #dtStart = .005
-        #dtStart = dtStart*(1./2)**7
-        #dtStart = dtStart*(1./2)**5
-        #numberOfDts = 2
-        #dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
+        ''' Error estimates 1D'''
         
         safetyFacors = [0.96, 1.04]
         dxValues = [0.1, 0.01]
         times1 = [0.048 ,0.1587, 0.2, 0.25]
         times2 = [0.048,0.1587]
-        #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
         theta = 0.5
         dimension = "1D"
         threadNumber = 8
@@ -168,7 +160,6 @@ class Project5:
                 counter = 1
                 data = OrderedDict()
                 for T in endTimeValues:
-                    #dx = dt
                     dt = dx**2/2.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)            
@@ -191,11 +182,11 @@ class Project5:
                 fig2,ax2 = plt.subplots()
                 #logDxValues = []
         
-                ind = np.arange(numerOfEndTimes)  # the x locations for the groups
+                ind = np.arange(numerOfEndTimes)  
                 width = 0.25       # the width of the bars
-                rects1 = ax2.bar(ind, errors[0], width, color='r')#, yerr=men_std)
-                rects2 = ax2.bar(ind+width, errors[1], width, color='b')#, yerr=men_std)
-                rects3 = ax2.bar(ind+2*width, errors[2], width, color='g')#, yerr=men_std)
+                rects1 = ax2.bar(ind, errors[0], width, color='r')
+                rects2 = ax2.bar(ind+width, errors[1], width, color='b')
+                rects3 = ax2.bar(ind+2*width, errors[2], width, color='g')
                 ax2.set_xlabel(r'$Time$')
                 ax2.set_ylabel(r"$L_2$ norm")
                 if dx == 0.1:
@@ -216,19 +207,11 @@ class Project5:
         return data
     
     def project5d2D(self):
-        #dx = 0.1#, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
-        
-        #dtStart = .005
-        #dtStart = dtStart*(1./2)**7
-        #dtStart = dtStart*(1./2)**5
-        #numberOfDts = 2
-        #dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
-        
+        ''' Error estimates 2D'''
         safetyFacors = [0.8, 1.04]
         dxValues = [0.1]#, 0.01]
-        times1 = [0.0125, 0.0625]#, 0.1167]
-        times2 = [0.0125, 0.0625]#, 0.1167]
-        #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
+        times1 = [0.0125, 0.0625]
+        times2 = [0.0125, 0.0625]
         theta = 0.5
         dimension = "2D"
         threadNumber = 8
@@ -260,20 +243,18 @@ class Project5:
         
                 numerOfDt = len(endTimeValues)
                 scenarioNr = range(1,numerOfEndTimes+1)
-                scenerios = ['Forward Euler', 'Backward Euler']#,'Crank-Nicolson']#, 'Analytical']
+                scenerios = ['Forward Euler', 'Backward Euler']
                 errorFe = [data[i].ix[0,2] for i in scenarioNr]
                 errorBe = [data[i].ix[1,2] for i in scenarioNr]
-                #errorCn = [data[i].ix[2,2] for i in scenarioNr]
-                errors = [np.asarray(errorFe), np.asarray(errorBe)]#, np.asarray(errorCn)]
+                errors = [np.asarray(errorFe), np.asarray(errorBe)]
                 
                 fig2,ax2 = plt.subplots()
-                #logDxValues = []
+                
         
-                ind = np.arange(numerOfEndTimes)  # the x locations for the groups
+                ind = np.arange(numerOfEndTimes)  
                 width = 0.25       # the width of the bars
-                rects1 = ax2.bar(ind, errors[0], width, color='r')#, yerr=men_std)
-                rects2 = ax2.bar(ind+width, errors[1], width, color='b')#, yerr=men_std)
-                #rects3 = ax2.bar(ind+2*width, errors[2], width, color='g')#, yerr=men_std)
+                rects1 = ax2.bar(ind, errors[0], width, color='r')
+                rects2 = ax2.bar(ind+width, errors[1], width, color='b')
                 ax2.set_xlabel(r'$Time$')
                 ax2.set_ylabel(r"$L_2$ norm")
                 '''if dx == 0.1:
@@ -294,6 +275,7 @@ class Project5:
         return data
 
     def project5f(self):
+            '''2D surface plots '''
             dxValues = [0.1]#, 0.01]
             safetyFacors = [1.04] #[0.8]
             movieCounter = 0
@@ -307,10 +289,6 @@ class Project5:
                 y = x
                 X, Y = np.meshgrid(x, y)
                 for safetyFactor in safetyFacors:
-#                    fig = plt.figure()
-#                    ax = fig.gca(projection='3d')
-                    
-                    #cv = u_box.grid.coorv  # vectorized mesh coordinates
                     movieCounter += 1
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
@@ -324,31 +302,20 @@ class Project5:
                     self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)
                     
                     # Read data
-                    #data = OrderedDict()
                     scenerios = ['Explicit', 'Analytical']
-                    #x = np.zeros(int(round(1./dx+1)))
-                    #t = np.zeros(int(round(T/dt +1)))
-                    xv = x.reshape((x.size,1)) #x[:, np.newaxis]          # for vectorized function evaluations
-                    yv = y.reshape((1,y.size))#y[np.newaxis, :]
-                        #data[scenario] = OrderedDict()
+                    xv = x.reshape((x.size,1)) 
+                    yv = y.reshape((1,y.size))
                     fileCounter = 1
                     st.setp(interactive=False)
                     if showMovie:
                         for fileCounter in xrange(1, nT):
-                            data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                            
-                            #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
-                            #rstride=1, cstride=1, linewidth=0, antialiased = False)
-                            
+                            data = pd.read_csv(outfileName2 + 'ImplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)    
                             st.surfc(xv, yv, data, title='Implicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
                                   colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                                   shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                             st.savefig('movie/tmpImplicit_%04d' %fileCounter + outfileName + '.png')
                             
                             data2 = pd.read_csv(outfileName2 + 'ExplicitSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
-                            
-                            #surf = ax.plot_surface(X, Y, data.values, cmap=cm.coolwarm,
-                            #rstride=1, cstride=1, linewidth=0, antialiased = False)
                             
                             st.surfc(xv, yv, data2, title='Explicit Time = %.4f' %((fileCounter-1)*dt) , zlim=[-0.1, 1.1],
                                   colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
@@ -394,6 +361,7 @@ class Project5:
             return data
         
     def project5g(self):
+        '''Timing Parallelization '''
         dx = 0.1#, 0.01]
         safetyFactor = 1.04#[0.96, 1.04]
         dimension = "2D"
@@ -427,7 +395,8 @@ class Project5:
         return data
     
     def project5h(self):
-         dxValues = [0.1, 0.02, 0.01, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
+         '''Comparison iterative methods '''
+         dxValues = [0.1, 0.02, 0.01, 0.005]
          safetyFactor = 0.9#, 1.04]
          movieCounter = 0
          scenario = "2DJacobiIterations"
