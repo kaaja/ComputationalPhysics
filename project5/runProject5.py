@@ -138,17 +138,17 @@ class Project5:
        
         
     def project5d(self):
-        dxValues = [0.1, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
+        dx = 0.1#, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
         
-        dtStart = .005
+        #dtStart = .005
         #dtStart = dtStart*(1./2)**7
-        dtStart = dtStart*(1./2)**5
-        numberOfDts = 2
-        dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
+        #dtStart = dtStart*(1./2)**5
+        #numberOfDts = 2
+        #dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
         
-        safetyFactor = 1.05
+        safetyFactor = 1.01
         #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
-        T = 0.03
+        endTimeValues = [0.03, 0.09]#, 0.2]
         theta = 0.5
         dimension = "1D"
         threadNumber = 8
@@ -157,8 +157,9 @@ class Project5:
         
         counter = 1
         data = OrderedDict()
-        for dt in dtValues:
-            dx = dt
+        for T in endTimeValues:
+            #dx = dt
+            dt = dx**2/2.0*(1/safetyFactor)
             alpha = dt/dx**2
             self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)            
             # Read data
@@ -167,38 +168,53 @@ class Project5:
             
         #Plots
         numberOfScenarios = 3
-        numerOfDx = len(dxValues)
+        numerOfEndTimes = len(endTimeValues)
 
-        numerOfDt = len(dtValues)
-        scenarioNr = range(1,numerOfDt+1)
-        scenerios = ['BackwardEuler', 'ForwardEuler', 'CrancNicholson']#, 'Analytical']
+        numerOfDt = len(endTimeValues)
+        scenarioNr = range(1,numerOfEndTimes+1)
+        scenerios = ['Forward Euler', 'Backward Euler','Crank-Nicolson']#, 'Analytical']
         errorFe = [data[i].ix[0,2] for i in scenarioNr]
         errorBe = [data[i].ix[1,2] for i in scenarioNr]
         errorCn = [data[i].ix[2,2] for i in scenarioNr]
-        errors = [errorFe, errorBe, errorCn]
+        errors = [np.asarray(errorFe), np.asarray(errorBe), np.asarray(errorCn)]
+        print errors[0]
+        print errors[1]
+        print errors[2]
         
+        '''
         rFe = [np.log(errorFe[i+1]/errorFe[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
         rBe = [np.log(errorBe[i+1]/errorBe[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
         rCn = [np.log(errorCn[i+1]/errorCn[i])/np.log(dtValues[i+1]/dtValues[i]) for i in xrange(numerOfDt-1)]
         errors2 = [rFe, rBe, rCn]
-        
+        '''
         
         
         fig2,ax2 = plt.subplots()
-        logDxValues = []
+        #logDxValues = []
+        '''
         for i in xrange(numerOfDx):
             logDxValues.append(np.log2(dxValues[i])) 
 
-        for error in errors2:
+        for error in errors:
             if error == errors2[2]:
                 ax2.plot(np.log2(dtValues[1:]), error, '-o')
-        ax2.set_xlabel(r'$\Delta t$')
-        ax2.set_ylabel(r"Convergence rate")
-        ax2.set_title('Convergence rate L2')
-        ax2.legend(scenerios, loc=2) 
+        '''
+        ind = np.arange(numerOfEndTimes)  # the x locations for the groups
+        width = 0.25       # the width of the bars
+        rects1 = ax2.bar(ind, errors[0], width, color='r')#, yerr=men_std)
+        rects2 = ax2.bar(ind+width, errors[1], width, color='b')#, yerr=men_std)
+        rects3 = ax2.bar(ind+2*width, errors[2], width, color='g')#, yerr=men_std)
+        ax2.set_xlabel(r'$Time$')
+        ax2.set_ylabel(r"$L_2$ norm")
+        ax2.set_title('L2')
+        ax2.set_xticks(ind + width / 2)
+        ax2.set_xticklabels(endTimeValues)
+        
+        ax2.legend(scenerios, loc=0) 
         fig2.tight_layout()
         fig2.savefig(outfileName2+ '.png')
-        plt.close()
+        plt.show()
+        #plt.close()
         
         return data
 
