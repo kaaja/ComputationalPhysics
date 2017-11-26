@@ -12,7 +12,7 @@ TwoDimensionalDiffusionSolver::TwoDimensionalDiffusionSolver(double dt_, double 
     Ny = Ny_;
 }
 
-void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, int thread_num_)
+mat TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, int thread_num_)
 {
     outfileName = outfileName_;
 
@@ -23,7 +23,7 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, i
     double iterationNumber = 0.0;
     mat solutionMatrixU = zeros<mat>(Nx,Ny);
     int maxIterations = 100000;
-    double maxDifference = 0.001;
+    double maxDifference = 0.000001;
 
     alpha = dt/pow(dx,2);
 
@@ -55,6 +55,7 @@ void TwoDimensionalDiffusionSolver::solve(string outfileName_, string method_, i
     iterationNumberArray.save(outfileName + "IterationNumber.txt", raw_ascii);
     DestroyMatrix(u, Nx, Ny);
     DestroyMatrix(uOld, Nx, Ny);
+    return solutionMatrixU;
 }
 
 double TwoDimensionalDiffusionSolver::uSteadyState(double x, double y)
@@ -169,5 +170,28 @@ void TwoDimensionalDiffusionSolver::setMatrixAEqualMatrixB(double ** matrixA, do
             matrixA[i][j] = matrixB[i][j];
         }
     }
+}
+
+void TwoDimensionalDiffusionSolver::calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_)
+{
+    // Calculates sup-norm for relative error
+    double temp_relative_error = 0.0;
+    *computed_error = 0.0;
+    //*computed_error = log2(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))
+      //                            /computed_exact_solution(2,2)));
+    //*computed_error = log2(fabs((computed_numerical_solution(2,2) - computed_exact_solution(2,2))));
+    double sum = 0.;
+    for (int i = 0; i < Nx_; i++){
+        for (int j = 0; j < Nx_; j++){
+            /*
+            temp_relative_error = log2(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))
+                                            /computed_exact_solution(i, tj)));*/
+            //temp_relative_error = log2(fabs((computed_numerical_solution(i, tj) - computed_exact_solution(i, tj))));
+            //if(temp_relative_error > *computed_error) *computed_error = temp_relative_error;
+            sum += pow((computed_numerical_solution(i, j) - computed_exact_solution(i, j)),2);
+        }
+    }
+    sum = sqrt(dx*dx*sum);
+    *computed_error = sum;
 }
 

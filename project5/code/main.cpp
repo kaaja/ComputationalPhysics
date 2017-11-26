@@ -7,7 +7,7 @@
 using namespace std;
 void read_input (string& outfileName, double& dt, double& dx, double& theta, double& T, string& scenario, int& threadNumberFromUser, int argc, char** argv);
 mat analyticalU (string outfileName, double dt, double dx, int Nt, int Nx);
-void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
+mat analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver);
 void output_scalars(double computed_error, double dt, double dx);
 double gaussQuad(int numberOfSummationPoints, int n, int m, int numberOfIntegrationPoints);
 
@@ -81,6 +81,14 @@ int main(int argc, char* argv[])
         normMatrix.save(outfileName + ".txt", raw_ascii);
     }
     else if (scenario == "2D"){
+        mat solutionMatrixExplicit2D = zeros<mat>(Nx,Nx);
+        mat solutionMatrixImplicit2D = zeros<mat>(Nx,Nx);
+        mat solutionMatrixAnalytical2D = zeros<mat>(Nx,Nx);
+        int numberOfSchemes = 2;
+        int numberOfVariablesNormMatrix = 3;
+        mat normMatrix= zeros<mat>(numberOfSchemes, numberOfVariablesNormMatrix);
+
+
         string outfileName2DExplicit;
         string outfileName2DImplicit;
 
@@ -89,18 +97,18 @@ int main(int argc, char* argv[])
 
         outfileName2DExplicit = outfileName + "Explicit";
         wtime = omp_get_wtime ( );
-        explicit2D.solve(outfileName2DExplicit, "Explicit", threadNumberFromUser);
+        solutionMatrixExplicit2D = explicit2D.solve(outfileName2DExplicit, "Explicit", threadNumberFromUser);
         wtime = omp_get_wtime ( ) - wtime;
         cout << "Time used explicit: " << wtime << endl;
 
         outfileName2DImplicit = outfileName + "Implicit";
         wtime2 = omp_get_wtime ( );
-        implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
+        solutionMatrixImplicit2D = implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
         wtime2 = omp_get_wtime ( ) - wtime2;
         cout << "Time used implicit: " << wtime2 << endl;
 
         wtime3 = omp_get_wtime ( );
-        analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
+        solutionMatrixAnalytical2D = analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
         wtime3 = omp_get_wtime ( ) - wtime3;
         cout << "Time used analytic: " << wtime3 << endl;
 
@@ -111,6 +119,18 @@ int main(int argc, char* argv[])
         ofile1 << setw(15) << setprecision(16) << wtime<< ", ";
         ofile1 << setw(15) << setprecision(16) << wtime2<< ", ";
         ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
+
+        explicit2D.calculate_error(solutionMatrixExplicit2D, solutionMatrixAnalytical2D, &computed_error, Nx, Nt);
+        normMatrix(0,0) = log2(dt);
+        normMatrix(0,1) = log2(dx);
+        normMatrix(0,2) = computed_error;
+
+        implicit2D.calculate_error(solutionMatrixImplicit2D, solutionMatrixAnalytical2D, &computed_error, Nx, Nt);
+        normMatrix(1,0) = log2(dt);
+        normMatrix(1,1) = log2(dx);
+        normMatrix(1,2) = computed_error;
+
+        normMatrix.save(outfileName + ".txt", raw_ascii);
     }
     else if (scenario == "2DJacobiIterations"){
         string outfileName2DImplicitJacobi;
@@ -172,7 +192,7 @@ mat analyticalU(string outfileName, double dt, double dx, int Nt, int Nx)
     analyticalMatrixU.save(outfileNameAnalytical , raw_ascii);
     return analyticalMatrixU;
 }
-void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver)
+mat analytical2D(string outfileName, double dt, double dx, double dy, int Nt, int Nx, int Ny, TwoDimensionalDiffusionSolver solver)
 {
     int t=0;int i=0;int j=0;int n=0;int m=0;
     string outfileNameAnalytical = outfileName + "AnalyticalSolutionMatrixU2D";
@@ -207,6 +227,7 @@ void analytical2D(string outfileName, double dt, double dx, double dy, int Nt, i
         analyticalMatrixU2D.save(outfileNameAnalytical+to_string(counter)+ ".txt" , raw_ascii);
         counter +=1;
     }
+    return analyticalMatrixU2D;
 }
 
 double gaussQuad(int numberOfSummationPoints, int n, int m, int numberOfIntegrationPoints){
