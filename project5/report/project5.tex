@@ -1640,7 +1640,7 @@ The next six figures show the numerical and analytical solutions in the case whe
 \end{minipage}\hfill
 \vspace{2ex}
 
-In all figures in this section, the implicit scheme is solved with Jacobi's iteration method.\\
+In all figures in this section, the implicit scheme is solved with Jacobi's iteration method. The results are not affected by the choise between Gauss-Seidel and Jacobi, see appendix A.\\
 
 From the figures above, we see that when the stability requirement of the explicit scheme is met, the analytical solution is well approximated by both schemes.\\
 
@@ -1822,6 +1822,62 @@ For 1D the Backward Euler and Crank-Nicolson seems to perform better compared to
 
 Potential extensions to this analysis could be a more detailed analysis of the Gaussian qadrature, comparing it with other integration methods with regards to number of needed points. Introduction of relaxation parameters to the iterative scheme and studying the effect of this on the efficiency is another potential direction of future work.
 
+\section*{Appendix A: Gauss-Seidel}
+The below figures show results for one of the 2D scenarios from the main text, but now including the results when the Gauss-Seidel method is used. 
+
+\begin{minipage}{.30\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpAnalytic_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{}}
+		\label{fig:gs1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpImplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Jacobi scheme.\\ \textit{}}
+		\label{fig:gs2}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpGaussSeidel_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Gauss-Seidel.\\ \textit{Similar too Jacobi.}}
+		\label{fig:gs3}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+\begin{minipage}{.30\textwidth}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpAnalytic_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{}}
+		\label{fig:gs4}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpImplicit_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Jacobi scheme.\\ \textit{}}
+		\label{fig:gs5}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/gaussSeidel/tmpGaussSeidel_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Gauss-Seidel scheme.\\ \textit{Similar too Jacobi.}}
+		\label{fig:gs6}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+The figures shows little difference between the results from Jacobi and Gauss-Seidel.
 
 
 \begin{thebibliography}{9}

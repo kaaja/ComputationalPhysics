@@ -81,56 +81,41 @@ int main(int argc, char* argv[])
         normMatrix.save(outfileName + ".txt", raw_ascii);
     }
     else if (scenario == "2D"){
-        mat solutionMatrixExplicit2D = zeros<mat>(Nx,Nx);
-        mat solutionMatrixImplicit2D = zeros<mat>(Nx,Nx);
-        mat solutionMatrixAnalytical2D = zeros<mat>(Nx,Nx);
-        int numberOfSchemes = 2;
-        int numberOfVariablesNormMatrix = 3;
-        mat normMatrix= zeros<mat>(numberOfSchemes, numberOfVariablesNormMatrix);
+            string outfileName2DExplicit;
+            string outfileName2DImplicit;
+            string outfileName2DImplicitGaussSeidel;
+
+            TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+            TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+            TwoDimensionalDiffusionSolver implicit2DGaussSeidel = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+
+            outfileName2DExplicit = outfileName + "Explicit";
+            wtime = omp_get_wtime ( );
+            explicit2D.solve(outfileName2DExplicit, "Explicit", threadNumberFromUser);
+            wtime = omp_get_wtime ( ) - wtime;
+            cout << "Time used explicit: " << wtime << endl;
+
+            outfileName2DImplicit = outfileName + "Implicit";
+            wtime2 = omp_get_wtime ( );
+            implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
+            wtime2 = omp_get_wtime ( ) - wtime2;
+            cout << "Time used implicit: " << wtime2 << endl;
+
+            outfileName2DImplicitGaussSeidel = outfileName + "GaussSeidel";
+            implicit2DGaussSeidel.solve(outfileName2DImplicitGaussSeidel, "ImplicitGaussSeidel", threadNumberFromUser);
+
+            wtime3 = omp_get_wtime ( );
+            analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
+            wtime3 = omp_get_wtime ( ) - wtime3;
+            cout << "Time used analytic: " << wtime3 << endl;
 
 
-        string outfileName2DExplicit;
-        string outfileName2DImplicit;
-
-        TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
-        TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
-
-        outfileName2DExplicit = outfileName + "Explicit";
-        wtime = omp_get_wtime ( );
-        solutionMatrixExplicit2D = explicit2D.solve(outfileName2DExplicit, "Explicit", threadNumberFromUser);
-        wtime = omp_get_wtime ( ) - wtime;
-        cout << "Time used explicit: " << wtime << endl;
-
-        outfileName2DImplicit = outfileName + "Implicit";
-        wtime2 = omp_get_wtime ( );
-        solutionMatrixImplicit2D = implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
-        wtime2 = omp_get_wtime ( ) - wtime2;
-        cout << "Time used implicit: " << wtime2 << endl;
-
-        wtime3 = omp_get_wtime ( );
-        solutionMatrixAnalytical2D = analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);
-        wtime3 = omp_get_wtime ( ) - wtime3;
-        cout << "Time used analytic: " << wtime3 << endl;
-
-
-        ofile1.open(outfileName + "Timing.txt");
-        ofile1 << "explicit,implicit,analytic" << endl;
-        ofile1 << setiosflags(ios::showpoint | ios::uppercase);
-        ofile1 << setw(15) << setprecision(16) << wtime<< ", ";
-        ofile1 << setw(15) << setprecision(16) << wtime2<< ", ";
-        ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
-
-        explicit2D.calculate_error(solutionMatrixExplicit2D, solutionMatrixAnalytical2D, &computed_error, Nx, Nt);
-        normMatrix(0,0) = log2(dt);
-        normMatrix(0,1) = log2(dx);
-        normMatrix(0,2) = computed_error;
-
-        implicit2D.calculate_error(solutionMatrixImplicit2D, solutionMatrixAnalytical2D, &computed_error, Nx, Nt);
-        normMatrix(1,0) = log2(dt);
-        normMatrix(1,1) = log2(dx);
-        normMatrix(1,2) = computed_error;
-
-        normMatrix.save(outfileName + ".txt", raw_ascii);
+            ofile1.open(outfileName + "Timing.txt");
+            ofile1 << "explicit,implicit,analytic" << endl;
+            ofile1 << setiosflags(ios::showpoint | ios::uppercase);
+            ofile1 << setw(15) << setprecision(16) << wtime<< ", ";
+            ofile1 << setw(15) << setprecision(16) << wtime2<< ", ";
+            ofile1 << setw(15) << setprecision(16) << wtime3<< endl;
     }
     else if (scenario == "2DJacobiIterations"){
         string outfileName2DImplicitJacobi;
