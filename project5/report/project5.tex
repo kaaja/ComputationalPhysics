@@ -1489,7 +1489,7 @@ From the figures above, we see that the Forward Euler scheme is very sensitive t
 
 The following two figures show the L2-norm for the schemes in the coarse mesh case. The L2-norm is calculated according to
 
-\begin{equation}
+\begin{equation}\label{eq:norm1d}
 	|E|_{L^2} = \sqrt{\Delta t \Delta x \sum_{t_j} \sum_{x_j} (u_{Numerical} - u_{Exact})^2},
 \end{equation}
 
@@ -1539,7 +1539,7 @@ The next two figures show the same teo types of discretizations with respect tot
 
 Again we see the sensitivity of Forward Euler to the stability requirement. A small breach of the stability requirement gives large oscillations, making the solution non-physical. So even if the mesh is much finer compared to the previous figures, this is not enough to avoid unphysical oscillations in the Forward Euler scheme when the stability requirement for Forward Euler is violated. On the other hand, the figure to the right shows that Forward Euler, and the other methods, gives very good fit to the analytical solution when the stability requirement is met.\\
 
-The next figure shows the same as the figure to the right above, with the difference that the results for Froward Euler is removed. Forward Euler is removed so that we can see the solutions of the other two schemes more clearly.
+The next figure shows the same as the figure to the left above, with the difference that the results for Froward Euler is removed. Forward Euler is removed so that we can see the solutions of the other two schemes more clearly.
 
 \begin{figure}[H]
 	\centering
@@ -1586,113 +1586,156 @@ From the above figure we see that, compared to the Backward Euler scheme, the Cr
 The rankings of the schemes are not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
 \subsection{2D}
-
-\subsubsection{Explicit scheme}
-The next four figures show the 2D results for the explicit scheme, at two different points in time, when the stability requirement is met.
-
-\begin{minipage}{.45\textwidth} 
+The next six figures show the numerical and analytical solutions in the case where the explicit scheme's stability requriement is satisfied. The first row displays the solutions at an early time, while the second row displays the solutions at a later time.
+ 
+\begin{minipage}{.30\textwidth}
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0005out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{Analytical solution seems correct.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpAnalytic_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{}}
 		\label{fig:fig2d1}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0005out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution when the stability requirement is satisfied.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpImplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Implicit scheme.\\ \textit{Good fit with analytical solution}}
 		\label{fig:fig2d2}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpExplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Good fit with analytical solution.}}
+		\label{fig:fig2d3}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0030out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Analytical Solution.\\ \textit{Analytical solution seems correct.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpAnalytic_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Analytical Solution.\\ \textit{}}
 		\label{fig:fig2d4}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0030out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{Explicit scheme produces results very similar to analytical solution when stability requirement is satisfied.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpImplicit_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Implicit scheme.\\ \textit{Good fit with analytical solution.}}
 		\label{fig:fig2d5}
 	\end{figure}
 \end{minipage}\hfill
-\vspace{2ex}
-
-From the figures above, we see that when the stability requirement of the explicit scheme is met, the analytical solution is well approximated by the explicit scheme both in the early time of simulations and at a time closer to the steady state.\\
-
-The next two figures show the analytical and numerical solution from the explicit scheme when the stability requirement of the explicit scheme is violated.
-
-
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0043out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Analytical Solution.\\ \textit{}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/safetfy2/tmpExplicit_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{Good fit with analytical solution.}}
 		\label{fig:fig2d6}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.45\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0043out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Explicit scheme.\\ \textit{The explicit scheme is unstable when the stability requirement is not met.}}
-		\label{fig:fig2d7}
-	\end{figure}
-\end{minipage}\hfill
 \vspace{2ex}
 
-From the above two figures we see once again the sensitivity of the explicit scheme to the stability requirement we derived. We see that a small violation of the stability requirement gives unphysical oscillations in the explicit solution, just as in the 1D case.
+In all figures in this section, the implicit scheme is solved with Jacobi's iteration method.\\
 
-\subsubsection{Implicit scheme}
-The four figures below show the 2D results for the implicit scheme at two points in time, one time being close to the starting time and one time closer to the steady state. The discretization violates the stability requirement for the explicit scheme.
+From the figures above, we see that when the stability requirement of the explicit scheme is met, the analytical solution is well approximated by both schemes.\\
 
-\begin{minipage}{.45\textwidth} 
+The next six figures display the same as the above six figures, but now in the case where the explicit's schemes stability limit is violated. 
+
+
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0005out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit. Early time. Analytical Solution. \\ \textit{}}
-		\label{fig:fig2d1}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Early time. Analytical Solution.\\ \textit{}}
+		\label{fig:fig2d7}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpImplicit_0005out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 0.96 \cdot$ stability limit. Early time. Implicit scheme.\\ \textit{Implicit scheme produces results very similar to analytical solution, when the stability requirement for Forward Euler is not satisfied.}}
-		\label{fig:fig2d2}
-	\end{figure}
-\end{minipage}\hfill
-\vspace{2ex}
-
-\begin{minipage}{.45\textwidth} 
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0043out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Analytical Solution.\\ \textit{}}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Early time. Implicit scheme.\\ \textit{Implicit scheme still produces results very similar to analytical solution when the stability requirement is satisfied.}}
 		\label{fig:fig2d8}
 	\end{figure}
 \end{minipage}\hfill
-\begin{minipage}{.45\textwidth} 
+\begin{minipage}{.30\textwidth} 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpImplicit_0043out5f.png}
-		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.1 \cdot$ stability limit.  Explicit scheme.\\ \textit{The implicit scheme is stable when the stability requirement for the explicit scheme is not met.}}
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0005out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Early time. Explicit scheme.\\ \textit{Explicit scheme seemingly produces OK results for early times when the stability requirement is violated.}}
 		\label{fig:fig2d9}
 	\end{figure}
 \end{minipage}\hfill
 \vspace{2ex}
 
-From the figures above, we see that the implicit scheme gives good approximatinos of the analytical solution, both for the early time and for the later time. We also not that the results are produced for the same discretization that gave oscillations from the explicit scheme, implying that the implicit scheme is less costly computational wise compared to the explicit scheme. With the implicit scheme, for a given space discreatization, a coarser time discretization can be chosen wihout getting bad unphysical results as in the explicit scheme. Once again we observe the good fit with our theoretical derivations that gave that the implicit scheme is unconditinally stable and the explicit scheme being conditionally stable.
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpAnalytic_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Later time. Analytical Solution.\\ \textit{}}
+		\label{fig:fig2d10}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpImplicit_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Later time. Implicit scheme.\\ \textit{Implicit scheme produces results very similar to analytical solution when the stability requirement is satisfied.}}
+		\label{fig:fig2d11}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.30\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5f/tmpExplicit_0021out5f.png}
+		\caption{2D. $\Delta x = 0.1$. $\Delta t = 1.25 \cdot$ stability limit. Later time. Explicit scheme.\\ \textit{For later time periods the explicit scheme produces unphysical oscilllation when the stability requirement is violated.}}
+		\label{fig:fig2d12}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
+From the above two figures we see once again the sensitivity of the explicit scheme to the stability requirement we derived. We see that a  violation of the stability requirement gives unphysical oscillations in the explicit solution, just as in the 1D case. It seems to take longer time before the instability sets in in the 2D case compared to the 1D case.\\
+
+We note that since the implicit scheme seems to give good fit also when the stability requriement of the explicit scheme is violated, the implicit scheme is less costly computational wise compared to the explicit scheme. With the implicit scheme, for a given space discreatization, a coarser time discretization can be chosen wihout getting bad unphysical results as in the explicit scheme. Once again we observe the good fit with our theoretical derivations that gave that the implicit scheme is unconditinally stable and the explicit scheme being conditionally stable.\\
+
+From the above figure it is hard to judge the performance of the different schemes, and to compare them to each other, especially in the case when the stability requirement is violated. In order to study the perfromance of the schemes closer, we calculate a $L_2$-norm, according to
+
+\begin{equation}\label{eq:ld2d}
+	E_{L_2} = \sqrt{\Delta x \Delta y \sum_{x_i} \sum_{y_j} (u_{Numerical} - u_{Analytical})^2}.
+\end{equation}
+
+We note that this is not the same kind of norm that we used for the 1D case, (\ref{eq:norm1d}), since we now only calculate the space norm at a given time, so the norm does not include time now.\\
+
+The following two figures show the norm from the figures above.
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/2dnorm/out5Norm2D1.png}
+		\caption{$L_2$ error norm. 2D. Coarse mesh. Stability requirement Forward Euler violated.\\ \textit{The error-norm of the explicit schemes explodes when the stability requirement is violated, while the error-norm of the implicit scheme behaves nicely.}}
+		\label{fig:norm2d1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/2dnorm/out5Norm2D2.png}
+		\caption{$L_2$ error norm. 2D. Coarse mesh. Stability requirement Forward satisfied.\\ \textit{When the stability requirement is met, the explicit scheme is stable and has an error-norm smaller compared to the implicit scheme.}}
+		\label{fig:norm2d2}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+The left figure above confirms what we already easlily saw from the previous figure, that the explicit schemes error is large when the stability requirement is not satisfied.\\
+
+The right figure shows that also the explicit scheme has stable errors when the stability requriement is satisified. ALso we see that the explicit scheme has a lower error than the omplicit scheme. It is not suprising that the explicit scheme performs better than the implicit scheme whene the stability requirement is satisfied. Firstly, we know from our theoreical derivations that both schemes have the same order of truncation error. Secondly, the fact that the implicit scheme is solved by iterative methods could explain the weaker performance of the implicit scheme. Iterative methods, in contrast to direct methods like the explicit scheme is solved with, are not exact.\\ 
+
+One way to imporve the implicit schemes performance could be by increasing the convergence limit requirements in the iterative scheme. For the simulations behind the convergence limit was $0.00001$. We think it is possible that the implicit scheme could do better with stronger convergence limit. We tested the sensitivity to the convergence requirement, by using a requirement equal to $0.001$, and found that this gave poorer results for the implicit scheme, suggesting that improvements are possible by adjusting the convergence criterion further.
 
 \subsection{Parallelization}
 The below two figures show the relation between solution times for the implicit method and the analytical solution. Also the effect of parallization of the analytical solution is shown.

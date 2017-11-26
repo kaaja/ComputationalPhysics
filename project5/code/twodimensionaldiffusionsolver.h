@@ -31,8 +31,9 @@ private:
 
 public:
     TwoDimensionalDiffusionSolver(double dt_, double dx_, double dy_, double theta_, double T_, int Nx_, int Ny_, int Nt_);
-    void solve(string outfileName_, string method_, int thread_num_);
+    mat solve(string outfileName_, string method_, int thread_num_);
     double uSteadyState(double x, double y);
+    void calculate_error(mat computed_numerical_solution, mat computed_exact_solution, double *computed_error, int Nx_, int Nt_);
 
 };
 

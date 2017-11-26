@@ -214,10 +214,88 @@ class Project5:
                 outfileNameCounter+= 1
         
         return data
+    
+    def project5d2D(self):
+        #dx = 0.1#, 0.05, 0.025, 0.0125]#, 0.00625]#, 0.025]#, 0.01]#, 0.01]
+        
+        #dtStart = .005
+        #dtStart = dtStart*(1./2)**7
+        #dtStart = dtStart*(1./2)**5
+        #numberOfDts = 2
+        #dtValues = [dtStart*(1./2)**i for i in xrange(numberOfDts)]
+        
+        safetyFacors = [0.8, 1.04]
+        dxValues = [0.1]#, 0.01]
+        times1 = [0.0125, 0.0625]#, 0.1167]
+        times2 = [0.0125, 0.0625]#, 0.1167]
+        #dt = dxValues[-1]**2/2.0*(1/safetyFactor)
+        theta = 0.5
+        dimension = "2D"
+        threadNumber = 8
+        outfileName ='out5Norm2D'
+        outfileName2 = os.getcwd() + '/results/' + outfileName
+        
+        
+        outfileNameCounter = 1
+        for dx in dxValues:
+            for safetyFactor in safetyFacors:
+                if dx == 0.01 and safetyFactor == 0.96:
+                    endTimeValues = times2
+                else:
+                    endTimeValues = times1
+                counter = 1
+                data = OrderedDict()
+                for T in endTimeValues:
+                    #dx = dt
+                    dt = dx**2/4.0*(1/safetyFactor)
+                    alpha = dt/dx**2
+                    self.runCpp(outfileName2, dt, dx, theta, T, dimension, threadNumber)            
+                    # Read data
+                    data[counter] = pd.read_csv(outfileName2 + '.txt', delim_whitespace=True, header=None) 
+                    counter += 1
+                    
+                #Plots
+                numberOfScenarios = 3
+                numerOfEndTimes = len(endTimeValues)
+        
+                numerOfDt = len(endTimeValues)
+                scenarioNr = range(1,numerOfEndTimes+1)
+                scenerios = ['Forward Euler', 'Backward Euler']#,'Crank-Nicolson']#, 'Analytical']
+                errorFe = [data[i].ix[0,2] for i in scenarioNr]
+                errorBe = [data[i].ix[1,2] for i in scenarioNr]
+                #errorCn = [data[i].ix[2,2] for i in scenarioNr]
+                errors = [np.asarray(errorFe), np.asarray(errorBe)]#, np.asarray(errorCn)]
+                
+                fig2,ax2 = plt.subplots()
+                #logDxValues = []
+        
+                ind = np.arange(numerOfEndTimes)  # the x locations for the groups
+                width = 0.25       # the width of the bars
+                rects1 = ax2.bar(ind, errors[0], width, color='r')#, yerr=men_std)
+                rects2 = ax2.bar(ind+width, errors[1], width, color='b')#, yerr=men_std)
+                #rects3 = ax2.bar(ind+2*width, errors[2], width, color='g')#, yerr=men_std)
+                ax2.set_xlabel(r'$Time$')
+                ax2.set_ylabel(r"$L_2$ norm")
+                '''if dx == 0.1:
+                    ax2.set_ylim(0,0.0150)'''
+                ax2.set_title(r'$\Delta x = %.g $' %dx + r' $\frac{\Delta t}{\Delta x^2} = %.2g $ ' %alpha + '\n')
+                ax2.set_xticks(ind + width / 2)
+                ax2.set_xticklabels(endTimeValues)
+                ax2.legend(scenerios, loc=0) 
+                #ax2.legend(scenerios,bbox_to_anchor=(1.04,1), borderaxespad=0)              
+                #fig2.tight_layout(rect=[0,0,0.75,1])
+                fig2.tight_layout()
+                fig2.savefig(outfileName2+ str(outfileNameCounter) + '.png')
+                #fig2.savefig(outfileName2+ str(outfileNameCounter) + '.png', bbox_inches="tight")
+                #plt.show()
+                plt.close()
+                outfileNameCounter+= 1
+        
+        return data
 
     def project5f(self):
             dxValues = [0.1]#, 0.01]
-            safetyFacors = [0.9]#, 1.04]
+            safetyFacors = [1.04] #[0.8]
             movieCounter = 0
             dimension = "2D"
             threadNumber = 8
@@ -237,7 +315,7 @@ class Project5:
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = .3
+                    T = .15
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -437,6 +515,10 @@ if __name__ == "__main__":
     if args.task  == '5h':
        project5h = Project5()
        data = project5h.project5h()
+       
+    if args.task  == '2dnorm':
+       project5d2D = Project5()
+       data = project5d2D.project5d2D()
        
 #%%
 
