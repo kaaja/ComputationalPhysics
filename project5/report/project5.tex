@@ -1487,6 +1487,36 @@ The two figures below show the 1D solutions for the three schemes for the coarse
 
 From the figures above, we see that the Forward Euler scheme is very sensitive to the stability requriement, implying that a very fine time step is needed for acceptable results for Forward Euler. We also see that the Backward Euler scheme and the Crank-Nicolson scheme are stable regardless of the stability requirement for Forward Euler being satisfied or not. From this point of view, the Backward and Crank-Nicolson schemes are prefered, since they need fewer time steps. All these observations fit well with our numerical findings, that except for Forward Euler, the other schemes are unconditionally stable.\\
 
+The following two figures show the L2-norm for the schemes in the coarse mesh case. The L2-norm is calculated according to
+
+\begin{equation}
+	|E|_{L^2} = \sqrt{\Delta t \Delta x \sum_{t_j} \sum_{x_j} (u_{Numerical} - u_{Exact})^2},
+\end{equation}
+
+so our error-norm contains errors in both space and time.
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5d/out5NormDx1.png}
+		\caption{$L_2$ error norm. 1D. Coarse mesh. Stability requirement Forward Euler not satisfied.\\ \textit{The error-norm increaes with time for Forward Euler when the stability requirement is violated. Crank-Nicolson has the lowest error-norm.}}
+		\label{fig:l21}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5d/out5NormDx2.png}
+		\caption{$L_2$ error norm. 1D. Coarse mesh. Stability requirement Forward satisfied.\\ \textit{When the stability requirement is met, Forward Euler produces error-norms with the same behavior as the other schemes. Crank-Nicolson has the lowest error-norm, while Forward Euler has the highest error-norm. The norms stabilizes as steady state is approached.}}
+		\label{fig:l22}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+From the above two figures we again see the sensitivity of Forward Euler to its stability requirement. Also we see that Crank-Nicolson is the best scheme, producing the lowest error-norm at all times. \\
+
+To study the schemes error towards equilibrium, we included two more time points in the error-norm figures above. We see that in the stable case, all schemes has error-norms that converges to scheme specific values. This is as expected, since little happends once steady state is reached, adding little to the error-norms.\\ 
+
 The next two figures show the same teo types of discretizations with respect tot he stability requuirement as the figures above, but now the mesh is finer, $\Delta x= 0.01$.
 
 \begin{minipage}{.45\textwidth} 
@@ -1520,17 +1550,40 @@ The next figure shows the same as the figure to the right above, with the differ
 
 From the figure above we see that both Backward Euler and Crank-Nicolson produces very good results in the case where the stability requirement of Forward Euler is violated.\\
 
-In order to compare Backward Euler to Crank-Nicolson, we study the coarse case in more detail making a zoom of Figure \ref{fig:unzoomed}:
+The following two figuers shows the $L_2$-norms for the schemes in the fine mesh case.
+
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5d/out5NormDx3.png}
+		\caption{$L_2$ error norm. 1D. Coarse mesh. Stability requirement Forward Euler not satisfied.\\ \textit{The error-norm for Forward Euler explodes, when the stability requirement is violated.}}
+		\label{fig:l23}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5d/out5NormDx4.png}
+		\caption{$L_2$ error norm. 1D. Coarse mesh. Stability requirement Forward satisfied.\\ \textit{The ranking of the three schemes is the same as for the coarse case: Forward Euler is worst, and Crank-Nicolson is best. All errors are smaller compared to the coarse mesh case.}}
+		\label{fig:l24}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
+
+Figure \ref{fig:l23} confirms the results shown in Figure \ref{fig:fig3}. The wild oscillations in Figure \ref{fig:fig3} gives a large error-norm. Figure \ref{fig:l24} reveals the rankings of the schemes, which was difficult to see from Figure \ref{fig:1dFineMeshAll}. It is pretty clear that the ranking of the schemes when it comes to our error-norm is the same as for the coarse case: Forward Euler being the best and Crank-Nicolson best. We also see that the magnitude of the errors is smaller for all schemes for the fine mesh compared case compared to the coarse mesh case.\\
+
+In order to check that the results from the error-norm figure in the fine mesh case, Figure \ref{fig:l24} correspond with Figure \ref{fig:1dFineMeshAll}, we make a zoom of Figure \ref{fig:1dFineMeshAll}:
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/5c/zoomed.png}
-	\caption{Same as Figure \ref{fig:unzoomed} without Forward Euler. Zoomed. \\ \textit{Crank-Nicolson is almost identical with analytical solution and outperforms Backward Euler.}}
+	\caption{Same as Figure \ref{fig:unzoomed} without Forward Euler. Zoomed. \\ \textit{Crank-Nicolson is almost identical with analytical solution and outperforms Backward Euler, confirming the results in Figure \ref{fig:l24}.}}
 	\label{1}
 \end{figure}
 
+From the above figure we see that, compared to the Backward Euler scheme, the Crank-Nicolson scheme is closer to the analytic solution, confirming what was shown in Figure \ref{fig:l24}.\\
 
-From the above figure we see that, compared to the Backward Euler scheme, the Crank-Nicolson scheme is closer to the analytic solution. This is not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
+The rankings of the schemes are not unexpected, given our derivations in the theory section, where we showed that the Crank-Nicolson scheme is one order higher in time than the other schemes when it comes to truncation error.
 
 \subsection{2D}
 
@@ -1724,7 +1777,7 @@ Our numerical results confirms the theoretical derivations. Forward Euler is sen
 
 For 1D the Backward Euler and Crank-Nicolson seems to perform better compared to the Forward Euler scheme, also when the stability condition for the Forward Euler scheme is satisfied. The Crank-Nicolson scheme looks more precise, giving results closer to the analytical solution, compared to the Backward Euler scheme. This last point was not unexpected, knowing from the theoretical derivations that the truncation error of the Crank-Nicolson scheme is one order higher in time compared to the Backward Euler scheme.\\
 
-Interesting extension to this analysis would be calculations of the numerical truncation errors, comparing these to the analytical derivations. A more detailed analysis of the Gaussian qadrature, comparing it with other integration methods with regards to number of needed points, would be interesting. Introduction of relaxation parameters to the iterative scheme and studying the effect of this on the efficiency is another potential direction of future work.
+Potential extensions to this analysis could be a more detailed analysis of the Gaussian qadrature, comparing it with other integration methods with regards to number of needed points. Introduction of relaxation parameters to the iterative scheme and studying the effect of this on the efficiency is another potential direction of future work.
 
 
 
