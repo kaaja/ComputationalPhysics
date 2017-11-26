@@ -16,7 +16,7 @@ The possible run alternatives are
     python runproject4.py 5g
 
 where the different cases do the following:
-  - 5c runs 1D simulation for a coarse mesh and a fine mesh, plots and compares results for three different schemes and analytical solution.
+  - 5c runs 1D simulation for a coarse mesh and a fine mesh, plots and compares results for Forward Euler, Backward Euler, Crank-Nicolson and analytical solution.
   - 5d runs 1D simulation and plots L2 norms for three different schemes with coarse and fine mesh.
   - 5f runs 2D simulation for an explicit and an implicit scheme, plots surfaces for both schemes and the analytical solution.
   - 5g runs 2D simulaton and compares number of iterations as mesh is refined for the implicit Jacobi scheme and the implicit Gauss-Seidel scheme
