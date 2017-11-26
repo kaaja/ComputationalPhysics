@@ -346,7 +346,7 @@ class Project5:
         return data
     
     def project5h(self):
-         dxValues = [0.1, 0.02]#, 0.01]#, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
+         dxValues = [0.1, 0.02, 0.01, 0.005]#, 0.025, 0.0125, 0.00625, 0.003125]#, 0.01]
          safetyFactor = 0.9#, 1.04]
          movieCounter = 0
          scenario = "2DJacobiIterations"

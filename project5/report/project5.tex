@@ -88,7 +88,7 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
-Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm. The Jacobi algorithm is showm to be very efficient compared to direct schemes like Gaussian elimination. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive around the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
+Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm and the implemented Gauss-Seidel algorithm. These iterative methods are showm to be very efficient compared to direct schemes like Gaussian elimination. Gauss-Seidel is shown to be more efficient than Jacbobi, Gauss-Seidel needing only $2/3$ of the iterations of Jacobi. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive around the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
 
 \section{Introduction}
 Partial differential equations (PDEs) describes most physical processes. Analytical solutions to PDEs are only known in a few special cases. Numerical solutions of PDEs are indespensable in modelling of physical processes. In this report we will derive the most used schemes for one of the most used PDEs, the diffusion equation. We will develop finite difference schemes for solution of the 1D and the 2D diffusion equation. For the 1D case we derive and implement the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D case we derive and implement an explicit scheme and an implicit scheme.\\
@@ -103,7 +103,7 @@ The word "error" always comes up when discussing numerical schemes, and it is ve
 
 We improve the efficiency of the 1D schemes by utilizing that the schemes, when written as the general $\theta$-scheme, are tridiagonal linear systems. The Thomas algorithm, which is much more efficient than e.g. Gaussian elimination and LU-decomposition, can be used for these systems. We further improve the efficiency of the Thomas algorithm by taking into account that all coefficients in the coefficient matrix of the linear system are constant.\\
 
-For the 2D implicit scheme, the matrix is no longer tridiagonal, so the Thomas algorithm cannot be used anymore. Other efficient alternatives to direct methods like Gaussian elimination and LU-decomposition are necessary. Iterative methods is one answer. We set up a general iterative method, the fixed point iteration method, and present convergence conditions and FLOP counts for this method. It is seen that this method quickly has the potential of being much more efficient than e.g. Gaussian elimination. Further the Jacobi method is related to the fixed point iteration method, and then implemented to the implicit 2D scheme.\\
+For the 2D implicit scheme, the matrix is no longer tridiagonal, so the Thomas algorithm cannot be used anymore. Other efficient alternatives to direct methods like Gaussian elimination and LU-decomposition are necessary. Iterative methods is one answer. We set up a general iterative method, the fixed point iteration method, and present convergence conditions and FLOP counts for this method. It is seen that this method quickly has the potential of being much more efficient than e.g. Gaussian elimination. Further the Jacobi iteration method and the Gauss-Seidel iteration methodn are related to the fixed point iteration method, and then implemented to the implicit 2D scheme.\\
 
 Improving the efficiency further, we parallize parts of our code, using open MP. A timing analysis reveals that evaluation of the analytical solution takes up considerably more time than the numerical schemes! As a result, we parallize the analytical solution. We also parallelize that Jacobi solver. \\
 
@@ -1352,7 +1352,7 @@ The iteration scheme (\ref{eq:iter1}) converges to the solution of the original 
 
 Next we will derive the Jacobi-algorithm and relate it to our genereal iterative system (\ref{eq:iter1}).
 
-\subsubsection{Jacobi's algorithm}
+\subsubsection{Jacobi's iteration algorithm}
 We begin by a rewrite of the linear system (\ref{eq:AuB}), where we split $A$ into one strictly lower triangular matrix, $L$, one strictly upper triangular matrix, $U$, and one diagonal matrix, $D$:
 
 \begin{subequations}
@@ -1390,9 +1390,8 @@ It is perhaps easier to see the workings of the Jacbi algoritm (\ref{eq:iterJaco
 
 From (\ref{eq:jacobiRow}) we see that only non-diagonal terms are used in the iteration on the right hand side, and that all terms are divided by the diagonal terms from the original matrix $A$. (\ref{eq:jacobiRow}) is very close to the form of the implemented algorithm.\\
 
-Using (\ref{eq:jacobiRow}) we will in the next section see that it is easy to formulate a Jacobi-solver for the 2D implicit scheme (\ref{eq:2dBe}).
+Using (\ref{eq:jacobiRow}) we will in the next section see that it is easy to formulate a Jacobi-solver for the 2D implicit scheme (\ref{eq:2dBe}).\\
 
-\subsubsection{Jacobi's algorithm applied to the 2D implicit diffusion}
 Now we will apply Jacobi's algorithm (\ref{eq:jacobiRow}) to the 2D implicit scheme (\ref{eq:2dBe}). We see that (\ref{eq:2dBe}) is already almost set up like a Jacobi-scheme. We get
 
 \begin{subequations}\label{eq:jacobi2D}
@@ -1417,21 +1416,49 @@ Following Hjorth-Jensen \cite{MHJ} p. 319, we get the following main algorithm f
 
 \begin{lstlisting}
 for time in times:
-	Guess starting values u_{new} (Alternatively set equal previous time step)
     while ((iterations < maxIterations) && (error > allowedError))
-	    u_{Old} = u_{new}
+	    u_{Previous iteration} = u_{new}
 		for x in xPoints:
 			for y in yPoints:
 				Calculate u_{new} = f(u_Old) (Jacobi expression)
-				Cacalucate error: error += u_{New}(x,y) - u_{Old}(x,y)
+				Cacalucate error: error += u_{New}(x,y) - u_{previous iteration}(x,y)
 			end y-loop
 		end x-loop
 		Caclculate average error: error /= (Nx*Ny);
 	end while-loop
+	Update u with iteration solution: u_{Previous time step} = u_{New}
 end time-loop
 \end{lstlisting}
 
+\subsubsection{Gauss-Seidel's iteration scheme}
+Looking at the row version of the Jacobi shceme, (\ref{eq:jacobiRow}), we see that all the $u$-terms on the right hand side applies values from the previous iteration. However, except for $i=1$, we will have calculated new $u$'s for all $j < i$. Assuming the method is converging, we could imporove our iteration by including the new values on the right hand side of (\ref{eq:jacobiRow}) for $j<i$. This is the Gauss-Seidel scheme, which we can write in row version as
 
+\begin{subequations}\label{eq:GSRow}
+	\begin{align}
+	u_i^{(k+1)} = - \frac{1}{a_{ii}} \Big(\sum_{j=1,j < i} a_{ij} u_j^{(k+1)} + \sum_{j=1,j > i} a_{ij} u_j^{(k)}\Big)+ \frac{b_i}{a_{ii}}.
+	\end{align}
+\end{subequations}
+
+(\ref{eq:GSRow}) is straight forward to implement, and gives an algorithm very similar to the algorithm for Jacobi's iteration scheme
+
+\begin{lstlisting}
+for time in times:
+	while ((iterations < maxIterations) && (error > allowedError))
+		u_{Previous iteration} = u_{new}
+		for x in xPoints:
+			for y in yPoints:
+				Calculate u_{new} = f(u_new}) (Gauss-Seidel expression)
+				Cacalucate error: error += u_{new}(x,y) - u_{previous iteration}(x,y)
+			end y-loop
+		end x-loop
+		Caclculate average error: error /= (Nx*Ny);
+	end while-loop
+	Update u with iteration solution: u_{Previous time step} = u_{New}
+end time-loop
+\end{lstlisting}
+
+Note that we in the above algorithm have wirtten "$u_{neq}$" in the Gauss-Seidel expression, while in (\ref{eq:GSRow}) there is both $u_{new\; iteration}$
+and $u_{old\; iteration}$. The reason we write only $u_{new}$, is that in the numerical implementation, we work directly on the $u_{new}$-array, so it will contain both old and new iteration values as it is updated as we go thorugh the loop. Hence  in Gauss-Seidel $u_{previous}$ only used for calculating the error and is only updated once per iteration in the while loop.
 
 \section{Results}
 The results following results are displayed in this section: 1D, 2D explicit, 2D implicit, Parallelization, Iterations.
@@ -1642,20 +1669,33 @@ We have tried implementing the anaytical solution in an efficient way, by using 
 The huge computational cost of calculating the analytical solution made us parallelize this part of the code (in addition to the implicit Jacobi iteration scheme) using open MP. The figure to the right above shows that the effect of parallizing the analytical solution is a speed up by a factor of 4, which is considerable.
 
 \section{Iterations}
+The figure below shows the number of iterations needed for convergence, when applying Jacobi's and Gauss-Seidel's iteration methods to the implicit 2D scheme, for different matrix sizes for the mcoefficient matrix of the linear system.
 
-\subsection{Jacobi}
-The figure below shows the number of iterations needed for convergence, when applying Jacobi's iteration method to the implicit 2D scheme, for different matrix sizes for the mcoefficient matrix of the linear system.
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/iterations/out5h.png}
+		\caption{Number of iterations at the last time step divided by $N$ ($A = N \times N$). Tolerance = $0.001$. \\ \textit{For both schemes the number of iterations considerable lower then $N$, making the iterative methods much faster than the classical direct solvers. Gauss-Seidel needs fewer iterations than Jacobi.}}
+		\label{fig:iterations1}
+	\end{figure}
+\end{minipage}\hfill
+\begin{minipage}{.45\textwidth} 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.99\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/iterations/out5h2.png}
+		\caption{Number of iterations in Gauss-Seidel divided by number of iterations Jacobi.\\ \textit{The number of iterations in Gauss-Seidel seems to stabilize to $2/3$ of the number of Jacobi-iterations as the system grows ($N$ increaes), giving a speed up of around $1/3$ going from Jacobi to Gauss-Seidel.}}
+		\label{fig:iterations2}
+	\end{figure}
+\end{minipage}\hfill
+\vspace{2ex}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.6\textwidth]{/home/karl/doc/subj/att/fys4150/project5/resultsKeep/iterations/out5Jacobi.png}
-	\caption{Number of Jacobi iterations at the last time step divided by $N$ ($A = N \times N$).\\ \textit{The number of iterations is considerable lower then $N$, making Jacobi's iteration method much faster than the classical direct solvers.}}
-	\label{1}
-\end{figure}
+The figure to the left above shows that for both iteration methods the number of iterations reduces to less than 10 per cent of the number of elements in one direction in the coefficient matrix, $N$. From our discussion of FLOP count in the theory section, we know that the fixed point iteration method, which Jacobi and Gauss-Seidel are examples of, is $\mathcal{O}(kN)$ with regards to FLOPS. With the figure above to the left showing that $k < 0.1N$, we get that the iteration methods are considerable more effiecient compared to LU, which goes like $\mathcal{O}(N^2)$ FLOPS, and even faster compared to Gaussian elimination, which goes like $\mathcal{O}(N^3)$ FLOPS, see Hjorth-Jensen \cite{MHJ} p. 173 for FLOP counts on the direct methods.\\
 
-The figure above shows that the number of iterations reduces to less than 10 per cent of the number of elements in one direction in the coefficient matrix, $N$. From our discussion of FLOP count in the theory section, we know that Jacobi's method is $\mathcal{O}(kN)$ with regards to FLOPS. With the figure above showing that $k < 0.1N$, we get that Jacobi's method is considerable more effiecient compared to LU, which goes like $\mathcal{O}(N^2)$ FLOPS, and even faster compared to Gaussian elimination, which goes like $\mathcal{O}(N^3)$ FLOPS.\\
+From the figure to the right we see that Gauss-Seidel needs about $2/3$ of the number of iterations that Jacobi needs. This share looks stable as the system increases, that is as $N$ grows.\\ 
 
-The results in the figure above are based on the iteration number for the last time period of simulations. We calcuated the iteration number for all time periods, and the variation in iteration number between time periods was very low, implying that the above figure is representable for all time periods.
+The fact that Gauss-Seidel needs $1/3$ less iterations than Jacobi suggests that Gauss-Seidel should be our preffered method for solving the 2D problem with the implicit scheme. However, the Jacobi algorithm is very easy to parallelize, since each point in the loop only depends on previous iterations. From the previous section we have seen that parallelization by Open MP can give a speed up by a factor of 4, which is considerable more than the $1/3$ FLOPS one saves by choosing Gauss-Seidel over Jacobi. Hence by parallizing Jacobi, we get a faster solver compared to running unparallized Gauss-Seidel.\\
+
+The results in the figures above are based on the iteration number for the last time period of simulations. We calcuated the iteration number for all time periods, and the variation in iteration number between time periods was very low, implying that the above figure is representable for all time periods.
 
 \section{Conclusions}
 Applying Taylor expansions, we have derived numerical finite difference schemes for both the 1D and the 2D diffusion equation. For the 1D diffusion equation we have derived the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D diffusion equation we derived an explicit scheme based on the Forward Euler time derivative approximation, and an implicit scheme, based on the Backward Euler approximation of the time derivative.\\
@@ -1674,7 +1714,7 @@ In the 2D case, the linear system is still sparse, but it is no longer tridiagon
 
 Iterative method are potentially very efficient methods solving the kind of system we have in the 2D implicit scheme. We present a general iterative scheme, the fixed point iteration scheme. Conditions for convergence of the iterative systems to the true solutions are presented. We derive a FLOP count of the iterative scheme, and find that it goes like $\mathcal{O}(k N)$ FLOPS, where $k$ is the number of iterations and $N$ is the dimension of the matrix $A$ of the linear system. \\
 
-We present one version of the general fixed point iteration scheme: the Jacobi method. It is shown how the Jacobi method relates to the iterative fixed point scheme. We derive a Jacobi-algorithm for the 2D implicit scheme, which is implemented. The number of iterations needed for convergence of the Jacobi schemes reveals huge savings regards to FLOPS compared to direct methods like Gaussian elimination and LU-decomposition.\\
+We present two versions of the general fixed point iteration scheme: the Jacobi method and the Gauss-Seidel method. It is shown how methods relates to the iterative fixed point scheme. We derive and implement algorithms for the 2D implicit scheme for both methods. The number of iterations needed for convergence of the iterative schemes reveals huge savings regards to FLOPS compared to direct methods like Gaussian elimination and LU-decomposition. Gauss-Seidel is shown to be more efficient than Jacbobi, Gauss-Seidel needing only $2/3$ of the iterations of Jacobi.\\
 
 In order to speed up the calculations further, we use parallel computing by applying Open MP. Open MP is applied to the Jacobi solver for the 2D implicit scheme and for the numerical evaluation of the analytical solution. We find that Open MP gives a speed up of these parts of the code by a factor of four.\\
 
