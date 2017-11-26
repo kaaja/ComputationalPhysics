@@ -26,7 +26,7 @@ If one wants to run the c++ files directly, not visualizing and only get data, t
 > c++  -fopenmp -o project5.x main.cpp solver.cpp lib.cpp twodimensionaldiffusionsolver.cpp -larmadillo -llapack -lblas
 
 
-> ./project5.x outfileName dt dx theta endTime scenario numberOfThreds
+> ./project5.x outfileName dt dx theta endTime scenario numberOfThreads
  
 Of the above command line inputs, the last two need extra mentioning.
 
@@ -34,5 +34,5 @@ Of the above command line inputs, the last two need extra mentioning.
 Type "1D" for simulating the one-dimensional case, and 2D for the two-dimensional case. 
 If one types "2DJacobiIterations", we can get the number of iterations for both Jacobi scheme and Gauss-Seidel scheme. 
 
-"numberOfThreds": 
+"numberOfThreads": 
 Sets number of threads one wants to use while running the program, e.g. 2,4,8.
