@@ -88,10 +88,10 @@ If the above Github-link does not work, it is eighter because you have not yet a
 
 
 \section*{Abstract}
-Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, wiht conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm and the implemented Gauss-Seidel algorithm. These iterative methods are showm to be very efficient compared to direct schemes like Gaussian elimination. Gauss-Seidel is shown to be more efficient than Jacbobi, Gauss-Seidel needing only $2/3$ of the iterations of Jacobi. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integraions. The simulations confirm that Forward Euler is sensitive around the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
+Numerical finite difference schemes displaying the truncation error for the 1D (Forward Euler, Backward Euler and Crank-Nicolson) and the 2D (explicit and implicit) diffusion equation are derived and simulated. All schemes has truncation error that is 2nd order in space. Except Crank-Nicolson, which is 2nd order in time, all schemes are 1st order in time. Except for Forward Euler , all schmes are shown to be unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case. Analytical solutions for the 1D and the 2D diffusion equation are derived. All 1D schemes are implemented through the $\theta$-rule. Linear system formulations are derived for all schemes. In 1D a more efficient version of the original Thomas algorithm is derived. The general fixed point iteration scheme, with conditions for convergence and FLOP count, is presented and related to the implemented Jacobi algorithm and the implemented Gauss-Seidel algorithm. These iterative methods are showm to be very efficient compared to direct schemes like Gaussian elimination. Gauss-Seidel is shown to be more efficient than Jacbobi, Gauss-Seidel needing only $2/3$ of the iterations of Jacobi. Parallelization by use of Open MP is used and shown to give a speed up of 4. It is shown that numerical evaluation of the analytical solution is far more demanding than the evaluation of the numerical schemes. Gaussian quadrature is applied for integrations. The simulations confirm that Forward Euler is sensitive around the stability limit, both in the 1D and the 2d case. In 1D, Crank-Nicolson outperforms the other schemes.
 
 \section{Introduction}
-Partial differential equations (PDEs) describes most physical processes. Analytical solutions to PDEs are only known in a few special cases. Numerical solutions of PDEs are indespensable in modelling of physical processes. In this report we will derive the most used schemes for one of the most used PDEs, the diffusion equation. We will develop finite difference schemes for solution of the 1D and the 2D diffusion equation. For the 1D case we derive and implement the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D case we derive and implement an explicit scheme and an implicit scheme.\\
+Partial differential equations (PDEs) describes most physical processes. Analytical solutions to PDEs are only known in a few special cases. Numerical solutions of PDEs are indespensable in modelling of physical processes. In this report we will derive the most used schemes for one of the most used PDEs, the diffusion equation. We will develop finite difference schemes for solution of the 1D and the 2D diffusion equation. For the 1D case we derive and implement the Forward Euler scheme, the Backward Euler scheme and the Crank-Nicolson scheme. For the 2D case we derive and implement an explicit scheme and implicit schemes.\\
 
 Numerical schemes involves approximations, and this implies errors. Knowledge about a numerical methods error is of great importance. All schemes we derive, will be derived from Taylor expansions, implying that we get terms representing the order of the truncation errors (the errors that is made by leaving out terms in the Taylor series). \\
 
@@ -99,13 +99,13 @@ Numerical instability is another type of error that may occour due to approximat
 
 Calculation of errors can be done in many ways. A very good method to calculate errors, is to compare the numerical solutions to analytical solutions. In our special case, we are so lucky that there exists known analytical solutions. Knowledge about how to derive these analytical solutions in itself is important. We derive, in full detail, the analytical solutions for both the 1D and 2D case.\\
 
-The word "error" always comes up when discussing numerical schemes, and it is very often mentioned along with another word: "efficiency". A scheme can produce as small an error as possible, but it is worth little if it cannot produce the results in a reasonable amount of time. Hence methods improving the efficiency of the schemes are very central when dealing with numerical simulations. Our schemes can be, and ars, written as linear systems. Typicall for PDEs, these systems involve large and sparse matrices. Standard methods like Gaussian elimination for solving linear system becomes very time consuming. Alternatives are needed. \\
+The word "error" always comes up when discussing numerical schemes, and it is very often mentioned along with another word: "efficiency". A scheme can produce as small an error as possible, but it is worth little if it cannot produce the results in a reasonable amount of time. Hence methods improving the efficiency of the schemes are very central when dealing with numerical simulations. Our schemes can be, and are, written as linear systems. Typicall for PDEs, these systems involve large and sparse matrices. Standard methods like Gaussian elimination for solving linear system becomes very time consuming. Alternatives are needed. \\
 
 We improve the efficiency of the 1D schemes by utilizing that the schemes, when written as the general $\theta$-scheme, are tridiagonal linear systems. The Thomas algorithm, which is much more efficient than e.g. Gaussian elimination and LU-decomposition, can be used for these systems. We further improve the efficiency of the Thomas algorithm by taking into account that all coefficients in the coefficient matrix of the linear system are constant.\\
 
 For the 2D implicit scheme, the matrix is no longer tridiagonal, so the Thomas algorithm cannot be used anymore. Other efficient alternatives to direct methods like Gaussian elimination and LU-decomposition are necessary. Iterative methods is one answer. We set up a general iterative method, the fixed point iteration method, and present convergence conditions and FLOP counts for this method. It is seen that this method quickly has the potential of being much more efficient than e.g. Gaussian elimination. Further the Jacobi iteration method and the Gauss-Seidel iteration methodn are related to the fixed point iteration method, and then implemented to the implicit 2D scheme.\\
 
-Improving the efficiency further, we parallize parts of our code, using open MP. A timing analysis reveals that evaluation of the analytical solution takes up considerably more time than the numerical schemes! As a result, we parallize the analytical solution. We also parallelize that Jacobi solver. \\
+Improving the efficiency further, we parallize parts of our code, using open MP. A timing analysis reveals that evaluation of the analytical solution takes up considerably more time than the numerical schemes! As a result, we parallize the analytical solution. We also parallelize the Jacobi solver. \\
 
 One reason for the high computational demands from evaluation of the analytical solution, is that there is a double integral that needs to be evaluated many times. In order to speed up the evaluation of this integral, we apply Gaussian quadrature with Legendre polynomials. Gaussian quadrature is known to be much more efficient compared to standard integration rules like e.g. Simpson's rule.\\
 
@@ -223,7 +223,7 @@ Reordering the equation we get the following:
 \begin{equation}
 \frac{T'}{T} = \frac{X''}{X} = k,
 \end{equation}
-where $k$ is an unknown constant. The reason we can insert $k$ into the above equation, is that the sides depends on different varirables, and so equality between the sides is only acheived if both sides equals a constant. We have homogenuous BCs, and for this to be achieved when we solve the $X$-part of the above equaion, we must have $k <0$. As can be seen later, with $k\geq 0$ we would not be able to satisfy the homogenupus BCs. For computationaly ease, we set $k = -\lambda^2$, where $\lambda > 0$. \\
+where $k$ is an unknown constant. The reason we can insert $k$ into the above equation, is that the sides depends on different varirables, and so equality between the sides is only acheived if both sides equals a constant. We have homogenuous BCs, and for this to be achieved when we solve the $X$-part of the above equation, we must have $k <0$. As can be seen later, with $k\geq 0$ we would not be able to satisfy the homogenupus BCs. For computationaly ease, we set $k = -\lambda^2$, where $\lambda > 0$. \\
 
 Starting with the $t$ dependent part, we get
 
@@ -282,8 +282,8 @@ X = Be^{-i\lambda x} + Ce^{i\lambda x},
 which can be written as
 
 \begin{equation}
-X(x) = B\cos(\lambda x) + C\sin(\lambda x) 
-\end{equation},
+X(x) = B\cos(\lambda x) + C\sin(\lambda x),
+\end{equation}
 
 where the constants have changed.\\
 
@@ -353,7 +353,7 @@ V(x,t) = 2\sum_{n=1}^{\infty} \frac{(-1)^k}{n\pi} e^{-(n\pi)^2 t}\sin(n\pi x)
 \label{eqn:transientSolution1D}
 \end{equation}
 
-Now we get an expression for the whole problem by putting combining the steady-state solution (\ref{eqn:UsteadyState1D}) and the transient solution (\ref{eqn:transientSolution1D}) such that we obtain 
+Now we get an expression for the whole problem by combining the steady-state solution (\ref{eqn:UsteadyState1D}) and the transient solution (\ref{eqn:transientSolution1D}) such that we obtain 
 
 \begin{equation}
 u(x,t) = U(x) + V(x,t) = x + 2\sum_{n=1}^{\infty}e^{-(n\pi)^2 t} \frac{(-1)^k}{n\pi}
@@ -376,7 +376,7 @@ In the two-dimensional case the differential equation becomes
 
 The boundary conditions is extended in such a way that the physical problem can be that of a flow whitin a box with infinite plates in the streamwise direction ($z$), where the fluid is initially at rest and the plate at $y=1$ is given a sudden movement. We have "no slip" boundary conditions i.e. the fluid has zero movement on all boundaries except at $y=1$.\\
 
-To obtain a closed form solution for the two-dimensional, we use the same argument as for the one-dimensional problem, i.e. we split the solution into a steady-state solution and a transient solution.\\
+To obtain a closed form solution for the two-dimensional problem, we use the same argument as for the one-dimensional problem, i.e. we split the solution into a steady-state solution and a transient solution.\\
 
 We end up with a solution defined as:
 \begin{equation}
@@ -430,7 +430,7 @@ Due to the independence of the terms on each side of the equation, we can solve 
 \frac{Y''}{Y} = \beta^2 \nonumber
 \end{equation}
 
-The sign on the right hand side in both of the above equations is determined by the fact that in the $x$ dependent term we have homogeneous boundaries, while in the $y$ dependent term we have non-homogeneous. By the same reasoning as in the 1D-case, homogenupus BCs in the $x$-direction, we get $\beta > 0$. \\
+The sign on the right hand side in both of the above equations is determined by the fact that in the $x$ dependent term we have homogeneous boundaries, while in the $y$ dependent term we have non-homogeneous. By the same reasoning as in the 1D-case, homogenuous BCs in the $x$-direction, we get $\beta > 0$. \\
 
 For the $x$ dependent term we get
 
@@ -478,7 +478,7 @@ and we end up with the following expression
 
 \begin{eqnarray}
 Y_n(y) &=& C_ne^{-n\pi y} + D_ne^{n\pi y} \\ 
-&\Rightarrow & C_n\cosh(n\pi y) + D_n\sinh(n\pi y)
+&\Rightarrow & Y_n(y) = C_n\cosh(n\pi y) + D_n\sinh(n\pi y)
 \end{eqnarray}
 for the family of particular solutions.
 \\
@@ -586,7 +586,7 @@ Solving for $Y$ we again use the anzats $Y=e^{\alpha y}$ and obtain the term
 	\end{eqnarray}
 \end{subequations}
 
-We are looking for a solution on the form that satisfies the homogenupus BCs for the transient term, resulting in
+We are looking for a solution on the form that satisfies the homogenuous BCs for the transient term, resulting in
 
 \begin{equation}
 Y = D\cos(\sqrt{k^2 - \gamma^2}y) + E\sin(\sqrt{k^2 - \gamma^2}y)
@@ -1321,7 +1321,7 @@ Taking the limit on both sides of (\ref{eq:iter1}) and using (\ref{eq:itConver})
 
 (\ref{eq:itFixedPoint}) is a fixed point equation, and we have that the solution to the iterative scheme has to converge to a fixed point, $\mathbf{u^{*}}$.\\
  
-Secondly, the convergent solution $\mathbf{u}^{*}$ that is approached  as $k \rightarrow \infty$ must become equal to the solution $\mathbf{u}$ of the original problem, $\mathbf{A}\mathbf{u} = \mathbf{b}$. If the affine iterative system (\ref{eq:iter1}) converges to a fixed point that differs from the true solution, $\mathbf{u}^{*} \neq \mathbf{u}$, the fixed point splution is of little use for us.\\
+Secondly, the convergent solution $\mathbf{u}^{*}$ that is approached  as $k \rightarrow \infty$ must become equal to the solution $\mathbf{u}$ of the original problem, $\mathbf{A}\mathbf{u} = \mathbf{b}$. If the affine iterative system (\ref{eq:iter1}) converges to a fixed point that differs from the true solution, $\mathbf{u}^{*} \neq \mathbf{u}$, the fixed point solution is of little use for us.\\
 
 Lets now look at conditions for the 1st condition, convergence to the fixed point $\mathbf{u^{*}}$, to hold. We study the error with respect to the fixed point
 
@@ -1410,7 +1410,7 @@ Now we will apply Jacobi's algorithm (\ref{eq:jacobiRow}) to the 2D implicit sch
 	\end{align}
 \end{subequations}
 
-in (\ref{eq:jacobi2D}) we see that (\ref{eq:jacobi2D}) corresponds to the Jacobi-algorithm (\ref{eq:jacobiRow}). We also note that only 4 neighboring pints are needed.\\
+in (\ref{eq:jacobi2D}) we see that (\ref{eq:jacobi2D}) corresponds to the Jacobi-algorithm (\ref{eq:jacobiRow}). We also note that only 4 neighboring points are needed.\\
 
 Following Hjorth-Jensen \cite{MHJ} p. 319, we get the following main algorithm for the Jacobi-solver
 
@@ -1517,7 +1517,7 @@ From the above two figures we again see the sensitivity of Forward Euler to its 
 
 To study the schemes error towards equilibrium, we included two more time points in the error-norm figures above. We see that in the stable case, all schemes has error-norms that converges to scheme specific values. This is as expected, since little happends once steady state is reached, adding little to the error-norms.\\ 
 
-The next two figures show the same teo types of discretizations with respect tot he stability requuirement as the figures above, but now the mesh is finer, $\Delta x= 0.01$.
+The next two figures show the same two types of discretizations with respect to the stability requuirement as the figures above, but now the mesh is finer, $\Delta x= 0.01$.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
@@ -1539,7 +1539,7 @@ The next two figures show the same teo types of discretizations with respect tot
 
 Again we see the sensitivity of Forward Euler to the stability requirement. A small breach of the stability requirement gives large oscillations, making the solution non-physical. So even if the mesh is much finer compared to the previous figures, this is not enough to avoid unphysical oscillations in the Forward Euler scheme when the stability requirement for Forward Euler is violated. On the other hand, the figure to the right shows that Forward Euler, and the other methods, gives very good fit to the analytical solution when the stability requirement is met.\\
 
-The next figure shows the same as the figure to the left above, with the difference that the results for Froward Euler is removed. Forward Euler is removed so that we can see the solutions of the other two schemes more clearly.
+To study the preformance of Backeard Euler and Crank-Nicolson, we remove Forward Euler.
 
 \begin{figure}[H]
 	\centering
@@ -1701,7 +1701,7 @@ The next six figures display the same as the above six figures, but now in the c
 
 From the above two figures we see once again the sensitivity of the explicit scheme to the stability requirement we derived. We see that a  violation of the stability requirement gives unphysical oscillations in the explicit solution, just as in the 1D case. It seems to take longer time before the instability sets in in the 2D case compared to the 1D case.\\
 
-We note that since the implicit scheme seems to give good fit also when the stability requriement of the explicit scheme is violated, the implicit scheme is less costly computational wise compared to the explicit scheme. With the implicit scheme, for a given space discreatization, a coarser time discretization can be chosen wihout getting bad unphysical results as in the explicit scheme. Once again we observe the good fit with our theoretical derivations that gave that the implicit scheme is unconditinally stable and the explicit scheme being conditionally stable.\\
+We note that since the implicit scheme seems to give good fit also when the stability requriement of the explicit scheme is violated, the implicit scheme is less costly computational wise compared to the explicit scheme. With the implicit scheme, for a given space discretization, a coarser time discretization can be chosen wihout getting bad unphysical results as in the explicit scheme. Once again we observe the good fit with our theoretical derivations that gave that the implicit scheme is unconditinally stable and the explicit scheme being conditionally stable.\\
 
 From the above figure it is hard to judge the performance of the different schemes, and to compare them to each other, especially in the case when the stability requirement is violated. In order to study the perfromance of the schemes closer, we calculate a $L_2$-norm, according to
 
@@ -1765,7 +1765,7 @@ We have tried implementing the anaytical solution in an efficient way, by using 
 The huge computational cost of calculating the analytical solution made us parallelize this part of the code (in addition to the implicit Jacobi iteration scheme) using open MP. The figure to the right above shows that the effect of parallizing the analytical solution is a speed up by a factor of 4, which is considerable.
 
 \section{Iterations}
-The figure below shows the number of iterations needed for convergence, when applying Jacobi's and Gauss-Seidel's iteration methods to the implicit 2D scheme, for different matrix sizes for the mcoefficient matrix of the linear system.
+The figure below shows the number of iterations needed for convergence, when applying Jacobi's and Gauss-Seidel's iteration methods to the implicit 2D scheme, for different matrix sizes for the coefficient matrix of the linear system.
 
 \begin{minipage}{.45\textwidth} 
 	\begin{figure}[H]
@@ -1798,15 +1798,15 @@ Applying Taylor expansions, we have derived numerical finite difference schemes 
 
 Truncation errors are derived for all schemes. We find that all schemes have truncation errors that are second order in the space variables, so the truncation error goes like $\mathcal{O}(\Delta h^2)$, where $h$ is a spatial step size. Exepct for the Crank-Nicolson scheme, which is second order also in time, all the other schemes are first order in time.\\
 
-We have performed stability analysis of all schemes, using Neumann stability analysis. Except for the Forward Euler scheme, all schmes are unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case.\\
+We have performed stability analysis of all schemes, using Neumann stability analysis. Except for the Forward Euler scheme, all schemes are unconditionally stable. The Forward Euler scheme is found to be stable for $\Delta t/\Delta x^2 < 1/2$, in the 1D case, and stable for $\Delta t /h^2 < 1/4$ in the quadratic ($h = \Delta x = \Delta y$) 2D case.\\
 
 Analytical solutions for the 1D and the 2D diffusion equation are derived using the separation of variables technique. \\
 
-The 1D cases are implemented in c++ by using one single scheme, the $\theta$-scheme. We show how all the schemes in the 1D case are special cases of the $\theta$-scheme.\\
+The 1D cases are implemented in C++ by using one single scheme, the $\theta$-scheme. We show how all the schemes in the 1D case are special cases of the $\theta$-scheme.\\
 
 Linear system formulations are derived for all schemes. In the 1D case, using the $\theta$-scheme, we find that all the schemes corresponds to versions of a tridiagonal linear systems. For tridiagonal systems, the Thomas algorithm, which is much more efficient with regard to FLOPS compared to Gaussian elimination and LU-decomposition, can, and is, used. We utilize the fact that the coefficients in the coefficient matrix are constants by creating a version of the Thomas algorithm that is more efficient than the original Thomas algorithm. \\
 
-In the 2D case, the linear system is still sparse, but it is no longer tridiagonal. The exlicit scheme is still straight forward to implement, while the implicit scheme no longer can be solved by the Thomas algorithm. Other methods are necessary for obtaining efficient solutions of the implicit 2D scheme.\\ 
+In the 2D case, the linear system is still sparse, but it is no longer tridiagonal. The explicit scheme is still straight forward to implement, while the implicit scheme no longer can be solved by the Thomas algorithm. Other methods are necessary for obtaining efficient solutions of the implicit 2D scheme.\\ 
 
 Iterative method are potentially very efficient methods solving the kind of system we have in the 2D implicit scheme. We present a general iterative scheme, the fixed point iteration scheme. Conditions for convergence of the iterative systems to the true solutions are presented. We derive a FLOP count of the iterative scheme, and find that it goes like $\mathcal{O}(k N)$ FLOPS, where $k$ is the number of iterations and $N$ is the dimension of the matrix $A$ of the linear system. \\
 
