@@ -1,7 +1,6 @@
 Project4 contains a program simulating phase transiotions with 2D Ising model.
 
-It contains c++ files that do the calculations, and a python file for visualizing the outputs from
-the c++ files.
+It contains c++ files that do the calculations, and a python file for visualizing the outputs from the c++ files.
 
 The file runProject4.py can be used to run different cases.
 
