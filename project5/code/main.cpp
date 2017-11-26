@@ -83,9 +83,11 @@ int main(int argc, char* argv[])
     else if (scenario == "2D"){
         string outfileName2DExplicit;
         string outfileName2DImplicit;
+        string outfileName2DImplicitGaussSeidel;
 
         TwoDimensionalDiffusionSolver explicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
         TwoDimensionalDiffusionSolver implicit2D = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
+        TwoDimensionalDiffusionSolver implicit2DGaussSeidel = TwoDimensionalDiffusionSolver( dt, dx, dy, thetaForwardEuler, T, Nx, Ny, Nt);
 
         outfileName2DExplicit = outfileName + "Explicit";
         wtime = omp_get_wtime ( );
@@ -98,6 +100,9 @@ int main(int argc, char* argv[])
         implicit2D.solve(outfileName2DImplicit, "ImplicitJacobi", threadNumberFromUser);
         wtime2 = omp_get_wtime ( ) - wtime2;
         cout << "Time used implicit: " << wtime2 << endl;
+
+        outfileName2DImplicitGaussSeidel = outfileName + "GaussSeidel";
+        implicit2DGaussSeidel.solve(outfileName2DImplicitGaussSeidel, "ImplicitGaussSeidel", threadNumberFromUser);
 
         wtime3 = omp_get_wtime ( );
         analytical2D(outfileName, dt, dx, dy, Nt, Nx, Ny, explicit2D);

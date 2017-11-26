@@ -240,7 +240,7 @@ class Project5:
                     dt = dx**2/4.0*(1/safetyFactor)
                     alpha = dt/dx**2
                     theta = 0.5
-                    T = .3
+                    T = .1
                     nT = int(round(T/dt+1))
                     outfileName ='out5f'
                     outfileName2 = os.getcwd() + '/results/' + outfileName
@@ -285,7 +285,13 @@ class Project5:
                                   colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
                                   shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
                             st.savefig('movie/tmpAnalytic_%04d' %fileCounter + outfileName + '.png')
-                            
+
+                            data4 = pd.read_csv(outfileName2 + 'GaussSeidelSolutionMatrixUTime%d.txt' %fileCounter, delim_whitespace=True, header=None)
+                            st.surfc(xv, yv, data4, title='Gauss-Seidel Time = %.4f' % ((fileCounter-1)*dt), fontsize = 30,zlim=[-0.1, 1.1],
+                                  colorbar=True, colormap=st.hot(), caxis=[-0.1, 1.1],
+                                  shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
+                            st.savefig('movie/tmpGaussSeidel_%04d' %fileCounter + outfileName + '.png')
+
                             st.surfc(xv, yv, (data/data3-1)*100, title='Implicit-Analytical time = %.4f' % ((fileCounter-1)*dt), zlim=[-100.1, 100.1],
                                   colorbar=True, colormap=st.hot(), caxis=[-100.1, 100.1],
                                   shading='flat', xlabel='x', ylabel='y', zlabel='u')  #
