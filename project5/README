@@ -28,7 +28,7 @@ If one wants to run the c++ files directly, not visualizing and only get data, t
 
 > ./project5.x outfileName dt dx theta endTime scenario numberOfThreds
  
-Of the above command line inputs, the three last need extra mentioning.
+Of the above command line inputs, the last two need extra mentioning.
 
 "scenario": 
 Type "1D" for simulating the one-dimensional case, and 2D for the two-dimensional case. 
