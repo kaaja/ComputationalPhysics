@@ -10,7 +10,7 @@ To get an overwiev of how to run runProject3.py, type the following comands in t
 > python runProject3.py -h
 
 The above command gives you the necesary commandline input and an explanation, to make the program run.  
-You will then get a list of argument inputs to run different cases: 
+You will then get a list of argument inputs to run different cases:  
     --twoBodyVelocityVerlet  
     --twoBodyFEuler  
     --threeBodyFixedSun  
